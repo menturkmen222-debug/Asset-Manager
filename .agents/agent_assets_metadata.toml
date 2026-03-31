@@ -1,0 +1,20 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "qpp8xOKbtpkCnMYVTtQl4"
+uri = "file://artifacts/toy-makon-reklama/public/hall.jpg"
+type = "image"
+title = "luxury wedding hall interior wide shot gold and white decorations premium"
+
+[[outputs]]
+id = "mCqlZMZlb7-Df7iCTQ2cU"
+uri = "file://artifacts/toy-makon-reklama/public/food.jpg"
+type = "image"
+title = "luxury fine dining catering food plating premium restaurant"
+
+[[outputs]]
+id = "8Wt-GcW_YdY2rJWmScZqn"
+uri = "file://artifacts/toy-makon-reklama/public/garden.jpg"
+type = "image"
+title = "beautiful luxury outdoor wedding reception garden night lights"
