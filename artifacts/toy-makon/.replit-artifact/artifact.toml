@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Toý Makon — Premium Wedding Venue"
+version = "1.0.0"
+id = "artifacts/toy-makon"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19903
+
+[services.development]
+run = "pnpm --filter @workspace/toy-makon run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/toy-makon", "run", "build" ]
+publicDir = "artifacts/toy-makon/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19903"
+BASE_PATH = "/"
