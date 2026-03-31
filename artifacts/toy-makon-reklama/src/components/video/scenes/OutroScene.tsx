@@ -18,7 +18,7 @@ export function OutroScene() {
       {...sceneTransitions.morphExpand}
     >
       <video
-        src="/bg-particles.mp4"
+        src={`${import.meta.env.BASE_URL}bg-particles.mp4`}
         autoPlay
         loop
         muted

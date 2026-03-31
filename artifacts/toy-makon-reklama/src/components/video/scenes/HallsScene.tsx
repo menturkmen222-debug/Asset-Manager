@@ -24,7 +24,7 @@ export function HallsScene() {
     >
       {/* Background with Ken Burns */}
       <motion.img
-        src="/hall.jpg"
+        src={`${import.meta.env.BASE_URL}hall.jpg`}
         alt="Hall"
         initial={{ scale: 1.2 }}
         animate={{ scale: 1 }}

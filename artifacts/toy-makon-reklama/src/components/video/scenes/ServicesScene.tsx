@@ -25,7 +25,7 @@ export function ServicesScene() {
       {...sceneTransitions.splitVertical}
     >
       <motion.img
-        src="/food.jpg"
+        src={`${import.meta.env.BASE_URL}food.jpg`}
         alt="Food"
         initial={{ x: '-10%', scale: 1.1 }}
         animate={{ x: '0%', scale: 1 }}

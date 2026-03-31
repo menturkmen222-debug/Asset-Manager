@@ -19,7 +19,7 @@ export function IntroScene() {
     >
       {/* Background Video */}
       <video
-        src="/bg-particles.mp4"
+        src={`${import.meta.env.BASE_URL}bg-particles.mp4`}
         autoPlay
         loop
         muted

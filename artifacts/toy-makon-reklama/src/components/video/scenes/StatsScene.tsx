@@ -23,7 +23,7 @@ export function StatsScene() {
       {...sceneTransitions.clipCircle}
     >
       <motion.img
-        src="/garden.jpg"
+        src={`${import.meta.env.BASE_URL}garden.jpg`}
         alt="Garden"
         initial={{ scale: 1.1, y: '5vw' }}
         animate={{ scale: 1, y: 0 }}
