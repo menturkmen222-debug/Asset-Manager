@@ -1,6 +1,6 @@
 kind = "web"
 previewPath = "/"
-title = "Toý Makon — Premium Toý Mekany"
+title = "Toý Mekan — Premium Toý Mekany"
 version = "1.0.0"
 id = "artifacts/toy-makon"
 router = "path"
