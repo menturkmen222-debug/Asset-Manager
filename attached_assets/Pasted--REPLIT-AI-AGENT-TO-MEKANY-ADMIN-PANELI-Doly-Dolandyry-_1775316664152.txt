@@ -1,0 +1,1067 @@
+# 👑 REPLIT AI AGENT — TOÝ MEKANY ADMIN PANELI
+## Doly Dolandyryş Ulgamy | Türkmen Dili | Ýeňil Web Agency
+
+---
+
+## 🎯 NÄMÄ GURÝARSYŇ
+
+Toý mekanynyň işgärleri we dolandyryjylary üçin **doly admin paneli**.  
+Bu panel öňki döredilen `index.html` toý mekany saýtynyň ähli maglumatlaryny,  
+bronlaryny, maliýe hasaplaryny we analitikasyny dolandyrýar.
+
+**Çykyş:** Ýeke `admin.html` faýly — hiç hili backend ýok.  
+Ähli maglumatlar `localStorage`-da saklanýar.  
+Real işe goýlanda bu panel arka tarap (backend) bilen çalşylmaga taýýar arhitekturada ýazylmaly.
+
+---
+
+## 🛠️ TEHNIKI GURLUŞ
+
+```
+Faýl:         admin.html (HTML + CSS + JS — ählisi bir ýerde)
+Maglumat:     localStorage (JSON görnüşde, CRUD operasiýalary)
+Grafik:       Chart.js (CDN) — animirleýän diagrammalar
+Şrift:        Google Fonts — Outfit + Space Grotesk (CDN)
+Ikonlar:      Lucide Icons (CDN)
+Animasiýa:    CSS transitions + Vanilla JS
+Eksport:      CSV we JSON görnüşde maglumat çykarma
+Habar:        Browser Notification API (täze bron bildirişi)
+```
+
+---
+
+## 🔐 GİRİŞ SAHYPASY
+
+Admin panel açylanda ilki **giriş ekrany** görünmeli.
+
+```javascript
+// Ulanyjy maglumatlary (localStorage-da saklanýar, demo üçin şu)
+const DEFAULT_USERS = [
+  {
+    id: 1,
+    name: 'Baş Admin',
+    login: 'admin',
+    password: 'admin123',   // Demo — real işde hash edilmeli
+    role: 'superadmin',
+    avatar: 'BA',
+    color: '#C9A843'
+  },
+  {
+    id: 2,
+    name: 'Menejer',
+    login: 'menejer',
+    password: 'menejer123',
+    role: 'manager',
+    avatar: 'MN',
+    color: '#4F46E5'
+  },
+  {
+    id: 3,
+    name: 'Kabul Işgäri',
+    login: 'kabul',
+    password: 'kabul123',
+    role: 'receptionist',
+    avatar: 'KI',
+    color: '#10B981'
+  }
+];
+
+// Rol rugsatlary
+const PERMISSIONS = {
+  superadmin:   ['dashboard','bookings','halls','services','gallery','team','pricing','finance','reports','settings','users'],
+  manager:      ['dashboard','bookings','halls','services','gallery','team','pricing','finance','reports'],
+  receptionist: ['dashboard','bookings']
+};
+```
+
+**Giriş ekrany dizaýny:**
+- Garaňky fon, merkez kart (max-width: 420px)
+- Logo/at ýokarda
+- Login + Parol meýdanlary
+- "Meni ýatla" checkbox
+- Giriş düwmesi (altyn gradient)
+- Ýalňyş giriş: Kartoçka silkme animasiýasy + gyzyl habar
+- Üstünlikli giriş: Dashboard-a smooth geçiş
+
+---
+
+## 🏗️ UMUMY GURLUŞ
+
+```
+┌─────────────────────────────────────────────────┐
+│ [SIDEBAR — çep, 260px, sticky]                  │
+│                                                 │
+│  Logo + [VENUE.name]                            │
+│  ─────────────                                  │
+│  [Ulanyjy avatar + at + rol]                    │
+│  ─────────────                                  │
+│  ESASY MENÝU                                    │
+│  📊 Dolandyryş Tagtasy                         │
+│  📅 Bron Dolandyrma                             │
+│  🏛️ Zal Dolandyrma                              │
+│  ⚙️ Hyzmat Dolandyrma                           │
+│  🖼️ Galereýa                                    │
+│  👥 Topar & Işgärler                            │
+│  💰 Maliýe                                      │
+│  📈 Hasabatlar                                  │
+│  ─────────────                                  │
+│  SAZLAMALAR                                     │
+│  🔔 Bildirişler                                 │
+│  👤 Ulanyjylar                                  │
+│  ⚙️ Ulgam Sazlamalary                          │
+│  ─────────────                                  │
+│  🚪 Çykmak                                      │
+│                                                 │
+├─────────────────────────────────────────────────┤
+│ [ÜST ZOLAK — sticky, full-width]                │
+│  Häzirki bölüm ady | Breadcrumb                 │
+│  [Gözleg] [🔔 Bildiriş ikony] [Ulanyjy avatar]  │
+├─────────────────────────────────────────────────┤
+│ [ESASY MAZMUN BÖLÜMI]                           │
+│  (Her bölüm aşakda doly beýan edilýär)          │
+└─────────────────────────────────────────────────┘
+```
+
+**Sidebar häsiýetleri:**
+- Aktiiw bölüm: Altyn gradient arka fon, çep ýan çyzgy
+- Hover: Inçe açylma, ikonjanyň reňki
+- Mobilde: Süýşdirip açylýan drawer (hamburger bilen)
+- Çöküpdür düwmesi: Sidebar 60px-e çekilýär (diňe ikonlar)
+
+**Reňk Ulgamy:**
+```css
+:root {
+  --bg:          #070510;
+  --sidebar:     #0D0A1A;
+  --surface:     #130F22;
+  --surface2:    #1C1730;
+  --border:      rgba(201,168,67, 0.15);
+  --gold:        #C9A843;
+  --gold2:       #E8C96B;
+  --gold-rgb:    201, 168, 67;
+  --text:        #F1EEF8;
+  --muted:       #6B5F80;
+  --success:     #10B981;
+  --warning:     #F59E0B;
+  --danger:      #EF4444;
+  --info:        #06B6D4;
+}
+```
+
+---
+
+## 📊 BÖLÜM 1: DOLANDYRYŞ TAGTASY (Dashboard)
+
+**Maksat:** Bir bäşden ähli möhüm maglumat görünmeli.
+
+### 1A — Ýokary KPI Kartlary (4 sany)
+
+```
+┌────────────────┐  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐
+│ 📅 Bu Aý Bron  │  │ 💰 Bu Aý Girdeji│  │ 👥 Garaşýan    │  │ 🏛️ Dolan Zallar│
+│                │  │                │  │    Bronlar     │  │                │
+│ [28]           │  │ [124,500 TMT]  │  │ [7]            │  │ [2/3]          │
+│ +12% geçen aý  │  │ +8% geçen aý   │  │ Jogap gerek    │  │ Bu hepde       │
+│ ████████░░ 80% │  │ ████████░░ 80% │  │ !! Üns gerek   │  │ ███████░░░ 67% │
+└────────────────┘  └────────────────┘  └────────────────┘  └────────────────┘
+```
+
+Her kart:
+- Uly san (Space Grotesk, bold)
+- Ösüş / peseliş görkez: `▲ +12%` ýaşyl ýa-da `▼ -5%` gyzyl
+- Kiçijik progress bar aşakda
+- Hover: lift + glow
+
+### 1B — Bron Senenamasy (Mini Karta)
+
+**Häzirki aý görnüşinde interaktiw senenama:**
+
+```javascript
+// Her günüň ýagdaýy reňk bilen:
+// Bron bar: Altyn reňk
+// Doly: Gyzyl
+// Mugt: Garaňky
+// Şu gün: Çarçuwa bilen
+
+function renderMiniCalendar(year, month, bookings) {
+  // Ähli günleri döredir
+  // Her güne degen bronlary sanar
+  // Reňki şoňa görä berer
+}
+```
+
+Günüň üstüne basanda: Şol günüň bronlary görünýär (popup).
+
+### 1C — Girdeji Diagrammasy (Chart.js)
+
+```javascript
+// Soňky 6 aýyň girdejisi — çyzyk diagrammasy
+const revenueChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['Ýan', 'Few', 'Mar', 'Apr', 'Maý', 'Iýun'],
+    datasets: [{
+      label: 'Girdeji (TMT)',
+      data: [45000, 62000, 38000, 78000, 91000, 124500],
+      borderColor: '#C9A843',
+      backgroundColor: 'rgba(201,168,67, 0.08)',
+      borderWidth: 2,
+      tension: 0.4,
+      fill: true,
+      pointBackgroundColor: '#C9A843',
+      pointRadius: 5,
+      pointHoverRadius: 8,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false }, tooltip: { /* özboluşly stil */ } },
+    scales: {
+      x: { grid: { color:'rgba(255,255,255,0.05)' }, ticks: { color:'#6B5F80' } },
+      y: { grid: { color:'rgba(255,255,255,0.05)' }, ticks: { color:'#6B5F80' } }
+    }
+  }
+});
+```
+
+### 1D — Soňky Bronlar Tablisy
+
+```
+| Toý Güni     | Gelin & Ýigit | Zal     | Myhmany | Jemi (TMT) | Ýagdaýy    | Işler   |
+|--------------|---------------|---------|---------|------------|------------|---------|
+| 15 Iýul 2025 | Merdan & Aýgül| Şa Zaly | 350     | 87,500     | ✅ Tassykly | [👁️✏️🗑️] |
+| 22 Iýul 2025 | Serdar & Läle | Altyn   | 120     | 28,800     | ⏳ Garaşyl | [👁️✏️🗑️] |
+| 5 Awg 2025   | Döwlet & Ogul | Bahar   | 200     | 42,000     | 📝 Täze    | [👁️✏️🗑️] |
+```
+
+"Täze bron" görünende gözüňi tutýan ýaşyl badge + ses bildirişi.
+
+### 1E — Zal Dolulyk Diagrammasy
+
+```javascript
+// Doughnut diagramma — her zal üçin
+const hallChart = new Chart(ctx2, {
+  type: 'doughnut',
+  data: {
+    labels: ['Şa Zaly', 'Bahar Zaly', 'Altyn Zal'],
+    datasets: [{
+      data: [85, 60, 40],
+      backgroundColor: ['#C9A843', '#4F46E5', '#10B981'],
+      borderWidth: 0,
+      hoverOffset: 8
+    }]
+  }
+});
+```
+
+### 1F — Çalt Işler Paneli
+
+```
+[+ Täze Bron Gir]   [Garaşýan Bron Gör (7)]   [Bu Hepde Toýlar]   [PDF Hasabat Al]
+```
+
+---
+
+## 📅 BÖLÜM 2: BRON DOLANDYRMA
+
+Bu admin paneliň iň möhüm bölümi.
+
+### 2A — Bron Sanawy
+
+**Ýokarky Filter Paneli:**
+```
+[Gözleg: at, telefon, sene...]  
+[Ýagdaý ▼: Hemmesi / Täze / Garaşyl / Tassykly / Tamamlanan / Ýatyryldy]
+[Zal ▼: Hemmesi / Şa Zaly / Bahar / Altyn]  
+[Sene: başlangyç — soň]
+[Eksport CSV] [Eksport JSON]
+```
+
+**Bron Sanawy Tablisy:**
+
+```javascript
+// Demo bron maglumatlary (localStorage-dan okalýar)
+const SAMPLE_BOOKINGS = [
+  {
+    id: 'BRN-2025-001',
+    status: 'confirmed',       // new / pending / confirmed / completed / cancelled
+    
+    // Jübüt maglumatlary
+    groom:   { name: 'Merdan Hydyrow',   phone: '+993 65 123456' },
+    bride:   { name: 'Aýgül Annagurbanowa', phone: '+993 62 654321' },
+    contact: 'groom',          // Habarlaşmak kimi bilen
+    
+    // Toý maglumatlary
+    weddingDate:  '2025-07-15',
+    weddingTime:  '18:00',
+    endTime:      '02:00',
+    hall:         'sha',       // sha / bahar / altyn / howly
+    guestCount:   350,
+    
+    // Paket
+    package:      'premium',   // basic / premium / luxury
+    services:     ['food_national', 'decor_full', 'music_band', 'photo_video'],
+    specialNotes: 'Daşary ýurtdan gelýän myhmanlary bar, iňlis dilinde salama gerek',
+    
+    // Maliýe
+    pricePerPerson: 250,
+    totalPrice:     87500,
+    deposit:        26250,     // 30%
+    depositPaid:    true,
+    depositDate:    '2025-01-15',
+    remainingAmount: 61250,
+    remainingPaid:  false,
+    
+    // Meta
+    source:       'website',   // website / phone / instagram / referral / walk_in
+    createdAt:    '2025-01-15T10:23:00',
+    updatedAt:    '2025-01-18T14:00:00',
+    assignedTo:   2,           // Menejer ID
+    internalNote: 'Müşderi VIP, alahida üns gerek',
+    
+    // Kommunikasiýa taryhy
+    communications: [
+      { date: '2025-01-15', type: 'call', note: 'Ilkinji jaň. Zal we bahalar bilen tanyşdyryldy.' },
+      { date: '2025-01-16', type: 'whatsapp', note: 'Şertnama nusgasy iberildi.' },
+      { date: '2025-01-18', type: 'visit', note: 'Şahsy geldi, zaly gördi. Şertnama gol çekildi.' },
+    ]
+  },
+  // ... başga bron maglumatlary
+];
+```
+
+**Tablisy Sütunlary (seçip açyp-ýapyp bolýar):**
+```
+☐ | ID | Toý Güni | Jübüt | Zal | Myhmany | Jemi | Öňpul | Galanы | Ýagdaý | Çeşme | Işler
+```
+
+**Tablisyda Ýagdaý Badgeler:**
+```css
+.badge-new       { background: rgba(6,182,212,0.15);  color:#06B6D4; }
+.badge-pending   { background: rgba(245,158,11,0.15); color:#F59E0B; }
+.badge-confirmed { background: rgba(16,185,129,0.15); color:#10B981; }
+.badge-completed { background: rgba(107,95,128,0.15); color:#9D8FB5; }
+.badge-cancelled { background: rgba(239,68,68,0.15);  color:#EF4444; }
+```
+
+**Satyr Amallary (Sag tarap):**
+- 👁️ Görüş — doly modal açylýar
+- ✏️ Düzetme — redaktirlemek modal
+- 📱 Habarlaş — Telefon/WA/TG düwmeleri
+- 🗑️ Öçür — tassyklama bilen
+
+**Tablisynyň aşagynda:**
+- Sahyfalaýyş (10/20/50 setir)
+- Seçilen setirler üçin toplu işler: Ýagdaý üýtget / Eksport / Öçür
+
+### 2B — Bron Görüş Modaly (Detail)
+
+Bron ID basmak ýa-da 👁️ basmak — doly modal açylýar:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  BRN-2025-001  |  [Tassykly Badge]        [Düzet] [Ýap ✕]      │
+├─────────────────┬───────────────────────────────────────────────┤
+│  JÜBÜT          │  TOÝ MAGLUMATLARY                             │
+│                 │                                               │
+│  Ýigit:         │  📅 Toý güni: 15 Iýul 2025, Sişenbe          │
+│  Merdan Hydyrow │  ⏰ Wagt: 18:00 — 02:00                       │
+│  +993 65 123456 │  🏛️ Zal: Şa Zaly (350 adam)                  │
+│  [📞] [📱] [💬] │  👥 Myhmanlar: 350 adam                      │
+│                 │  📦 Paket: Premium                            │
+│  Gelin:         │                                               │
+│  Aýgül A.       │  GOŞMAÇA HYZMATLAR:                          │
+│  +993 62 654321 │  ✅ Milli Tagam  ✅ Gül Bezeg                 │
+│  [📞] [📱] [💬] │  ✅ Saz Topary  ✅ Foto & Wideo              │
+├─────────────────┴───────────────────────────────────────────────┤
+│  MALİÝE ÝAGDAÝY                                                 │
+│                                                                 │
+│  Umumy baha:    87,500 TMT    ████████████████████ 100%         │
+│  Tölenilen:     26,250 TMT    ██████░░░░░░░░░░░░░░  30%         │
+│  Galany:        61,250 TMT    ░░░░░░░░░░░░░░░░░░░░  70%         │
+│                                                                 │
+│  [✅ Öňpul tölenildi — 15.01.2025]                             │
+│  [⏳ Galan bölegi: 61,250 TMT — 08.07.2025-a çenli]           │
+│                                                                 │
+│  [+ Töleg Giriş Bellik]   [Töleg Taryhy]                       │
+├─────────────────────────────────────────────────────────────────┤
+│  HABARLAŞMA TARYHY                                              │
+│                                                                 │
+│  🟢 15 Ýan  📞  Ilkinji jaň. Zal we bahalar bilen tanyşdyryldy.│
+│  🔵 16 Ýan  💬  Şertnama nusgasy iberildi.                     │
+│  🟣 18 Ýan  🏠  Şahsy geldi, zaly gördi. Şertnama gol çekildi. │
+│                                                                 │
+│  [+ Bellik goş]                                                 │
+├─────────────────────────────────────────────────────────────────┤
+│  IÇERKI BELLIK                                                  │
+│  "Müşderi VIP, alahida üns gerek"                               │
+├─────────────────────────────────────────────────────────────────┤
+│  [Tassykla ✅]  [Ýatyrt ❌]  [Şertnama PDF 📄]  [Çap et 🖨️]  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 2C — Täze Bron Formy
+
+`[+ Täze Bron Giriş]` düwmesi — doly forma modaly açylýar.  
+Ähli meýdanlar `2B`-daky maglumat gurluşyna laýyk.  
+Çalt giriş üçin: Ýygy ulanylýan bahalar awtomatik getirilýär.
+
+### 2D — Bron Senenamasy (Doly Görnüş)
+
+Görünüş togly: `[Aý] [Hepde] [Gün]`
+
+**Aý görnüşi:**
+- Her gün kartoçka
+- Şol günüň bronlary içinde (reňk koded)
+- Yzy kesişen bron gyzyl bilen bellenilýär (çaknyşyk bildirişi)
+
+**Çaknyşyk Barlagy:**
+```javascript
+function checkConflicts(bookings) {
+  return bookings.filter((b1, i) =>
+    bookings.some((b2, j) =>
+      i !== j &&
+      b1.hall === b2.hall &&
+      b1.weddingDate === b2.weddingDate &&
+      b1.status !== 'cancelled' &&
+      b2.status !== 'cancelled'
+    )
+  );
+}
+// Çaknyşan bronlar gyzyl bilen bellenilýär + bildiriş çykýar
+```
+
+---
+
+## 🏛️ BÖLÜM 3: ZAL DOLANDYRMA
+
+### 3A — Zal Kartlary
+
+Her zal üçin:
+```
+┌─────────────────────────────────────────────┐
+│  [Emoji]  Şa Zaly               [Düzet ✏️] │
+│                                             │
+│  📐 800 m²    👥 500 adam    💰 250 TMT/adam│
+│                                             │
+│  ████████████░░░░ Bu ay: 85% dolulyk        │
+│                                             │
+│  Geljek 30 gün:                             │
+│  ████░░░░░░░░░░░░ Bron: 8/22 gün            │
+│                                             │
+│  [Bron Görüş] [Täze Bron] [Sazlamalar]      │
+└─────────────────────────────────────────────┘
+```
+
+### 3B — Zal Düzetme Formy
+
+```
+Zal ady *
+Sygymy (max adam sany) *
+Meýdany (m²)
+Belentligi
+Başlangyç baha (TMT/adam) *
+Goşmaça beýan (textarea)
+Aýratynlyklary (checkboxlar: Sahna / Kristal çyralar / LED diwar / Öz giriş / ...)
+Häzirki ýagdaýy: [Açyk / Abatlaýyş / Ýapyk]
+```
+
+---
+
+## ⚙️ BÖLÜM 4: HYZMAT DOLANDYRMA
+
+### 4A — Hyzmat Sanawy
+
+```javascript
+const serviceCategories = ['food', 'decor', 'music', 'photo', 'hotel', 'transport'];
+
+// Her hyzmat üçin:
+{
+  id: 'food_national',
+  category: 'food',
+  name: 'Premium Milli Tagam',
+  description: '...',
+  priceType: 'per_person',   // per_person / fixed / custom
+  price: 120,
+  active: true,
+  bookingsCount: 45,          // Näçe gezek saýlandy
+}
+```
+
+**Hyzmat Kartlary:**
+- Kategoriýa boýunça tab bölümi
+- Her hyzmat üçin: At, baha, saýlanyş sany, aktiw/ýok togly
+- Düzetme + öçür düwmeleri
+- `[+ Täze Hyzmat Goş]` düwmesi
+
+### 4B — Paket Dolandyrma
+
+3 paket (Başlangyç / Premium / Lýuks) üçin:
+- At
+- Goşulýan hyzmatlar (checkboxlar)
+- Nyrhlar
+- Görünüş: Saýtda görünsin ýa görünmesin
+
+---
+
+## 🖼️ BÖLÜM 5: GALEREÝA DOLANDYRMA
+
+### 5A — Surat Kartlary Grid
+
+```
+┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐
+│ [Surat 1]│ │ [Surat 2]│ │ [Surat 3]│ │[+ Goş]   │
+│          │ │          │ │          │ │          │
+│Zal Bezegi│ │ Toý Agşam│ │ Ilkinji  │ │ Drag &   │
+│          │ │          │ │ Tans     │ │ Drop     │
+│[✏️][🗑️] │ │[✏️][🗑️] │ │[✏️][🗑️] │ │ ýa-da   │
+└──────────┘ └──────────┘ └──────────┘ │ URL giriş│
+                                        └──────────┘
+```
+
+**Surat goşmak:**
+
+```javascript
+// 1. URL arkaly (daşary ýurt surat)
+// 2. Base64 (ýerli faýl ýüklemek)
+// 3. CSS gradient + emoji (demo üçin)
+
+function addGalleryItem(data) {
+  const item = {
+    id: Date.now(),
+    type: data.type,      // 'url' | 'base64' | 'gradient'
+    src: data.src,
+    label: data.label,
+    category: data.category,
+    order: getNextOrder(),
+    active: true,
+    createdAt: new Date().toISOString()
+  };
+  saveToStorage('gallery', [...getFromStorage('gallery'), item]);
+}
+```
+
+**Drag & Drop tertipleme:**
+Surat kartlaryny süýräp tertibini üýtgetmek.
+
+---
+
+## 👥 BÖLÜM 6: TOPAR & IŞGÄRLER
+
+### 6A — Işgär Sanawy
+
+```
+At          | Wezipe         | Bölüm     | Telefon      | Ýagdaýy | Işler
+────────────────────────────────────────────────────────────────────────
+Maýagül N.  | Baş Florist    | Bezeg     | +993 65 xxx  | ✅ Işleýär | [👁️✏️]
+Güljeren O. | Tamada         | Çäre      | +993 62 xxx  | ✅ Işleýär | [👁️✏️]
+Mekan A.    | Aşpez          | Aşhana    | +993 65 xxx  | ✅ Işleýär | [👁️✏️]
+```
+
+### 6B — Işgär Profili
+
+```javascript
+const staffMember = {
+  id: 1,
+  name: 'Maýagül Nurlyýewa',
+  position: 'Baş Florist',
+  department: 'decor',
+  phone: '+993 65 123456',
+  email: 'mayagul@venue.tm',
+  hireDate: '2020-03-15',
+  salary: 2500,
+  active: true,
+  skills: ['gül bezegi', 'toý sazlaşygy', 'gelin buketi'],
+  assignedEvents: 145,
+  notes: ''
+};
+```
+
+**Işgäriň bu aý bellenen toýlary** görünmeli.
+
+---
+
+## 💰 BÖLÜM 7: MALİÝE
+
+### 7A — Girdeji Tablisy
+
+```
+Bron ID    | Müşderi     | Zal   | Toý Güni  | Jemi     | Tölenilen | Galany  | Ýagdaýy
+──────────────────────────────────────────────────────────────────────────────────────
+BRN-001    | Merdan H.   | Şa    | 15.07.25  | 87,500   | 26,250    | 61,250  | ⏳ Garaşyl
+BRN-002    | Serdar G.   | Altyn | 22.07.25  | 28,800   | 28,800    | 0       | ✅ Tölendi
+```
+
+**Süzgüçler:** Döwür / Ýagdaý / Zal / Töleg görnüşi
+
+### 7B — Maliýe Diagrammalary
+
+```javascript
+// Aýlyk girdeji diagrammasy (bar chart)
+const monthlyRevenue = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['Ýan','Few','Mar','Apr','Maý','Iýun','Iýul','Awg','Sen','Okt','Noý','Des'],
+    datasets: [
+      { label: 'Jemi Girdeji', data: [...], backgroundColor: 'rgba(201,168,67,0.7)' },
+      { label: 'Tölenilen',    data: [...], backgroundColor: 'rgba(16,185,129,0.7)'  },
+      { label: 'Galany',       data: [...], backgroundColor: 'rgba(239,68,68,0.5)'   }
+    ]
+  }
+});
+```
+
+### 7C — Maliýe Jemi Kartlary
+
+```
+┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+│ 💰 Bu Ýyl Jemi   │  │ ✅ Tölenilen      │  │ ⏳ Alynmaly      │  │ 📊 Ortaça Bron   │
+│  847,500 TMT     │  │  612,000 TMT     │  │  235,500 TMT    │  │   65,000 TMT    │
+└──────────────────┘  └──────────────────┘  └──────────────────┘  └──────────────────┘
+```
+
+### 7D — Töleg Bellik
+
+Her bron üçin töleg giriş (Maliýe → Töleg Giriş):
+
+```
+Bron ID saýla *
+Töleg möçberi (TMT) *
+Töleg görnüşi: [Nagt / Geçiriş / Kart]
+Töleg senesi *
+Töleg belgisi / amalat №
+Bellik (goşmaça)
+[Sakla]
+```
+
+---
+
+## 📈 BÖLÜM 8: HASABATLAR
+
+### 8A — Awtomatik Hasabatlar
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  HASABAT DÖREDIJI                                       │
+│                                                         │
+│  Hasabat görnüşi *                                      │
+│  ◉ Bron Hasabaty                                        │
+│  ○ Maliýe Hasabaty                                      │
+│  ○ Zal Dolulyk Hasabaty                                 │
+│  ○ Hyzmat Meşhurlygy                                    │
+│  ○ Müşderi Çeşme Analizi                                │
+│                                                         │
+│  Döwür *                                                │
+│  [Bu aý] [Geçen aý] [Bu çaryýyl] [Bu ýyl] [Özboluşly]  │
+│                                                         │
+│  Format *                                               │
+│  [HTML Görnüş] [CSV Ýükle] [JSON Ýükle]                 │
+│                                                         │
+│  [Hasabat Döreder]                                      │
+└─────────────────────────────────────────────────────────┘
+```
+
+### 8B — Görsel Analitik
+
+**Zal Meşhurlyk Diagrammasy:**
+```javascript
+// Horizontal bar — haýsy zal has köp bronlandy
+const hallPopularity = new Chart(ctx, {
+  type: 'bar',
+  options: { indexAxis: 'y' },  // Horizontal bar
+  data: {
+    labels: ['Şa Zaly', 'Bahar Zaly', 'Altyn Zal', 'Açyk Howly'],
+    datasets: [{
+      data: [45, 32, 18, 12],
+      backgroundColor: ['#C9A843','#4F46E5','#10B981','#06B6D4']
+    }]
+  }
+});
+```
+
+**Müşderi Çeşmesi (Doughnut):**
+```javascript
+// Saýt / Telefon / Instagram / Maslahat / Şahsy
+```
+
+**Aý Boýunça Bron Sany (Çyzyk):**
+Geçen ýyl vs bu ýyl deňeşdirmesi.
+
+**Ortaça Myhman Sany (Histogram):**
+0-100 / 100-200 / 200-300 / 300-400 / 400+ aralyklarda bron paýlanmasy.
+
+---
+
+## 🔔 BÖLÜM 9: BİLDİRİŞLER
+
+### 9A — Bildiriş Merkezi
+
+```
+┌─────────────────────────────────────────────────┐
+│  Ähli Bildirişler             [Hemmesini Oka ✓] │
+├─────────────────────────────────────────────────┤
+│ 🆕 ●  Täze bron geldi — Merdan & Aýgül          │
+│         BRN-2025-008 · 2 min öň · [Gör]         │
+├─────────────────────────────────────────────────┤
+│ 💰 ●  Töleg alyndy — BRN-2025-005               │
+│         61,250 TMT · 30 min öň · [Gör]          │
+├─────────────────────────────────────────────────┤
+│ ⚠️ ●  Bron çaknyşygy — 22 Iýul, Bahar Zaly      │
+│         2 bron bir güne · 1 sag öň · [Çöz]      │
+├─────────────────────────────────────────────────┤
+│ 📅    Ertir toý bar — Serdar & Läle             │
+│         Altyn Zal, 120 myhmam · 14 sag öň        │
+└─────────────────────────────────────────────────┘
+```
+
+### 9B — Bildiriş Sazlamalary
+
+```
+✅ Täze bron gelende habar et
+✅ Töleg alynanda habar et
+✅ Bron çaknyşygynda habar et
+✅ Toýdan 1 gün öň ýatlatma
+✅ Galanja töleg möhleti geçende
+☐  Her gün hasabat al (09:00-da)
+```
+
+---
+
+## 👤 BÖLÜM 10: ULANYJYLAR (Diňe Superadmin)
+
+### 10A — Ulanyjy Sanawy
+
+```
+At             | Login    | Rol             | Soňky Giriş      | Ýagdaýy | Işler
+───────────────────────────────────────────────────────────────────────────────
+Baş Admin      | admin    | Superadmin      | 5 min öň         | ✅      | [✏️]
+Menejer        | menejer  | Menejer         | 2 sag öň         | ✅      | [✏️🗑️]
+Kabul Işgäri   | kabul    | Kabul           | Düýn             | ✅      | [✏️🗑️]
+```
+
+### 10B — Ulanyjy Döretme / Düzetme
+
+```
+At *
+Login ady *
+Parol *  [👁️ görkez]
+Rol *: [Superadmin / Menejer / Kabul Işgäri]
+Rugsat beriş: (Rol saýlananda awtomatik bolýar, el bilen hem üýtgedip bolýar)
+  ✅ Dashboard   ✅ Bronlar   ☐ Maliýe ...
+Ýagdaýy: [Aktiw / Ýapyk]
+```
+
+---
+
+## ⚙️ BÖLÜM 11: ULGAM SAZLAMALARY
+
+### 11A — Mekany Maglumatlary
+
+```
+Mekan ady *
+Tagline / slogan
+Telefon 1 *
+Telefon 2
+Adres *
+Şäher *
+E-poçta
+Telegram @
+Instagram @
+```
+
+### 11B — Işleýiş Wagty
+
+```
+Duşenbe — Anna:   [09:00] — [20:00]  ✅ Açyk
+Şenbe:            [09:00] — [18:00]  ✅ Açyk
+Ýekşenbe:         [--:--] — [--:--]  ☐ Ýapyk
+```
+
+### 11C — Töleg Sazlamalary
+
+```
+Öňpul göterimi *:    [30]  %
+Galanyny töleme möhleti (toýdan kaçe gün öň) *: [7]  gün
+Nagt töleg:   ✅
+Bank geçiriş: ✅
+Kart bilen:   ✅
+```
+
+### 11D — Maglumatlary Dolandyrma
+
+```
+[📤 Maglumatlary Eksport Et — JSON]
+[📥 Maglumatlary Import Et — JSON]
+[🗑️ Tamamlanan Bronlary Arassala]   ← tassyklama bilen
+[🔄 Demo Maglumatlary Ýükle]
+[⚠️ Ähli Maglumatlary Pozmak]       ← gyzyl, 2x tassyklama bilen
+```
+
+---
+
+## 🎨 DIZAÝN JIKME-JİKLİKLERİ
+
+### Umumy Kart Stili:
+```css
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.3s;
+}
+.card:hover {
+  border-color: rgba(var(--gold-rgb), 0.35);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4),
+              0 0 30px rgba(var(--gold-rgb), 0.05);
+  transform: translateY(-2px);
+}
+```
+
+### Tablisy Stili:
+```css
+.table-wrap  { overflow-x: auto; border-radius: 12px; }
+table        { width:100%; border-collapse: collapse; }
+thead tr     { background: var(--surface2); }
+thead th     { padding:12px 16px; text-align:left; font-size:0.75rem;
+               font-weight:600; letter-spacing:1px; color:var(--muted);
+               text-transform:uppercase; white-space:nowrap; }
+tbody tr     { border-top: 1px solid var(--border); transition: background 0.2s; }
+tbody tr:hover { background: rgba(var(--gold-rgb), 0.04); }
+tbody td     { padding:14px 16px; font-size:0.875rem; }
+```
+
+### Modal Stili:
+```css
+.modal-overlay {
+  position:fixed; inset:0;
+  background: rgba(5,3,15, 0.85);
+  backdrop-filter: blur(8px);
+  display:flex; align-items:center; justify-content:center;
+  z-index:200;
+  animation: fadeIn 0.2s ease;
+}
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  width: min(90vw, 800px);
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+```
+
+### Forma Meýdany Stili:
+```css
+.form-input, .form-select, .form-textarea {
+  width:100%;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: var(--text);
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  outline: none;
+}
+.form-input:focus {
+  border-color: rgba(var(--gold-rgb), 0.6);
+  box-shadow: 0 0 0 3px rgba(var(--gold-rgb), 0.1);
+}
+```
+
+### Toast Bildirişler:
+```javascript
+function showToast(message, type = 'success') {
+  const colors = {
+    success: '#10B981', error: '#EF4444',
+    warning: '#F59E0B', info: '#06B6D4'
+  };
+  const icons = { success:'✅', error:'❌', warning:'⚠️', info:'ℹ️' };
+
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position:fixed; bottom:24px; right:24px; z-index:999;
+    background:var(--surface2); border:1px solid ${colors[type]}40;
+    border-left: 3px solid ${colors[type]};
+    border-radius:10px; padding:14px 20px;
+    display:flex; align-items:center; gap:10px;
+    font-size:0.875rem; color:var(--text);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    animation: slideInRight 0.3s ease;
+    max-width: 360px;
+  `;
+  toast.innerHTML = `${icons[type]} <span>${message}</span>`;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.style.animation = 'slideOutRight 0.3s ease forwards';
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
+}
+```
+
+### Tassyklama Dialogy:
+```javascript
+function confirmAction(message, onConfirm, danger = false) {
+  // Özboluşly modal
+  // danger=true bolsa gyzyl düwme
+  // Hawa / Ýok
+}
+```
+
+---
+
+## 💾 localStorage MAGLUMAT DOLANDYRMA
+
+```javascript
+// Merkezi maglumat dolandyryjy
+const DB = {
+  get: (key) => {
+    try {
+      return JSON.parse(localStorage.getItem('venue_' + key)) || [];
+    } catch { return []; }
+  },
+  
+  set: (key, data) => {
+    localStorage.setItem('venue_' + key, JSON.stringify(data));
+  },
+  
+  add: (key, item) => {
+    const items = DB.get(key);
+    items.push({ ...item, id: Date.now(), createdAt: new Date().toISOString() });
+    DB.set(key, items);
+    return items;
+  },
+  
+  update: (key, id, updates) => {
+    const items = DB.get(key).map(item =>
+      item.id === id
+        ? { ...item, ...updates, updatedAt: new Date().toISOString() }
+        : item
+    );
+    DB.set(key, items);
+    return items;
+  },
+  
+  remove: (key, id) => {
+    const items = DB.get(key).filter(item => item.id !== id);
+    DB.set(key, items);
+    return items;
+  }
+};
+
+// Başlangyçda demo maglumatlary ýükle (ilkinji açylanda)
+function initDemoData() {
+  if (!localStorage.getItem('venue_initialized')) {
+    DB.set('bookings', SAMPLE_BOOKINGS);
+    DB.set('halls', SAMPLE_HALLS);
+    DB.set('services', SAMPLE_SERVICES);
+    DB.set('gallery', SAMPLE_GALLERY);
+    DB.set('staff', SAMPLE_STAFF);
+    DB.set('settings', DEFAULT_SETTINGS);
+    DB.set('users', DEFAULT_USERS);
+    localStorage.setItem('venue_initialized', 'true');
+  }
+}
+```
+
+---
+
+## 📱 MOBİL GOLDAW
+
+```css
+@media (max-width: 768px) {
+  /* Sidebar drawer görnüşine geçýär */
+  .sidebar {
+    position: fixed; left: -260px;
+    transition: left 0.3s ease;
+    z-index: 50;
+  }
+  .sidebar.open { left: 0; }
+  .sidebar-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 49;
+    display: none;
+  }
+  .sidebar-overlay.visible { display: block; }
+
+  /* Tablisylarda gorizontal syrylma */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* KPI kartlary 2×2 bolýar */
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Modal doly ekran */
+  .modal { width: 100%; height: 100%; border-radius: 0; }
+}
+```
+
+---
+
+## ✅ HIL BARLAG SANAWY
+
+### Giriş:
+- [ ] Giriş ekrany dogry işleýär (ýalňyş parol görkezilýär)
+- [ ] "Meni ýatla" checkbox localStorage-da saklaýar
+- [ ] Çykmak düwmesi sessioni pozýar
+- [ ] Rol boýunça menýu rugsatlar işleýär
+
+### Dashboard:
+- [ ] KPI kartlary dogry sanlar görkezýär
+- [ ] Mini senenama bronlary reňk bilen görkezýär
+- [ ] Chart.js diagrammalar render bolýar
+- [ ] Soňky bronlar tablisy işleýär
+
+### Bron Dolandyrma:
+- [ ] Sanawy süzgüçleme işleýär
+- [ ] Detail modal açylýar we ähli maglumatlary görkezýär
+- [ ] Täze bron goşmak işleýär
+- [ ] Ýagdaý üýtgetmek işleýär
+- [ ] Çaknyşyk barlagy işleýär
+- [ ] Senenama görnüşi dogry
+
+### Maliýe:
+- [ ] Töleg giriş işleýär
+- [ ] Tablisyda galany dogry hasaplanýar
+- [ ] Diagrammalar dogry maglumat görkezýär
+- [ ] CSV eksport işleýär
+
+### Ulgam:
+- [ ] Sazlamalar saklanýar
+- [ ] Ulanyjy döretme/düzetme işleýär
+- [ ] Maglumat eksport/import işleýär
+- [ ] Toast bildirişler çykýar
+- [ ] Ähli tassyklama dialoglar işleýär
+
+### Mobil:
+- [ ] Sidebar drawer işleýär
+- [ ] Tablisylar gorizontal syrylýar
+- [ ] Modallar doly ekran açylýar
+- [ ] Düwmeler uly (44px min)
+
+---
+
+## 🚀 REPLIT AGENTINE SON SÖZ
+
+Bu diňe bir admin paneli däl —  
+bu **toý mekanyny dolandyrmak üçin iş guraly**.
+
+Her düwme bir işi çözmeli.  
+Her tablisa — hakyky maglumaty görkezmeli.  
+Her modal — wagtyny tygşytlamaly.
+
+Dolandyryjy bu paneli açanda şuny duýmaly:  
+*"Ähli zat elde — hiç zat gözlemeli däl."*
+
+**`admin.html` — bir faýl, ähli güýç içinde.**
+
+Gurluşy planlaşdyr → Giriş → Sidebar → Her bölüm yzygiderli → Test et.  
+Hataly işleýän zat ýok — Sakla → Okla → Düzet. 💪
+
+Gur ony. Kämil et. 👑

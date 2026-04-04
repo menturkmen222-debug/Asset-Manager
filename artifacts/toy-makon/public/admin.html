@@ -1,0 +1,3142 @@
+<!DOCTYPE html>
+<html lang="tk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Panel — Toý Mekany</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#070510;--sidebar:#0D0A1A;--surface:#130F22;--surface2:#1C1730;
+  --border:rgba(201,168,67,0.15);--gold:#C9A843;--gold2:#E8C96B;
+  --gold-rgb:201,168,67;--text:#F1EEF8;--muted:#6B5F80;
+  --success:#10B981;--warning:#F59E0B;--danger:#EF4444;--info:#06B6D4;
+  --sidebar-w:260px;--topbar-h:64px;
+}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;font-family:inherit;}
+input,select,textarea{font-family:inherit;}
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar-thumb{background:rgba(201,168,67,0.3);border-radius:3px;}
+
+/* ─── LOGIN ──────────────────────────────────────────── */
+#login-screen{
+  position:fixed;inset:0;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  z-index:1000;transition:opacity 0.4s;
+}
+#login-screen.hidden{opacity:0;pointer-events:none;}
+.login-wrap{
+  background:radial-gradient(ellipse at 50% 0%, rgba(201,168,67,0.07) 0%, transparent 70%),
+             var(--surface);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:48px 40px;
+  width:100%;max-width:420px;
+  box-shadow:0 40px 80px rgba(0,0,0,0.6);
+}
+.login-logo{text-align:center;margin-bottom:32px;}
+.login-logo-icon{
+  width:64px;height:64px;border-radius:16px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:28px;margin-bottom:12px;
+  box-shadow:0 8px 24px rgba(201,168,67,0.3);
+}
+.login-title{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;color:var(--gold);}
+.login-sub{color:var(--muted);font-size:0.85rem;margin-top:4px;}
+.form-group{margin-bottom:20px;}
+.form-label{display:block;font-size:0.8rem;color:var(--muted);margin-bottom:6px;font-weight:500;letter-spacing:0.5px;text-transform:uppercase;}
+.form-input,.form-select,.form-textarea{
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:12px 16px;color:var(--text);font-size:0.9rem;
+  transition:all 0.2s;outline:none;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  border-color:rgba(201,168,67,0.6);
+  box-shadow:0 0 0 3px rgba(201,168,67,0.1);
+}
+.form-textarea{resize:vertical;min-height:80px;}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B5F80' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+.input-wrap{position:relative;}
+.input-wrap .form-input{padding-right:44px;}
+.input-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;display:flex;}
+.checkbox-wrap{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.85rem;color:var(--muted);}
+.checkbox-wrap input[type=checkbox]{accent-color:var(--gold);width:15px;height:15px;}
+.btn-gold{
+  width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#1a1400;font-weight:700;border:none;border-radius:10px;
+  padding:14px;font-size:0.95rem;transition:all 0.2s;
+  box-shadow:0 4px 20px rgba(201,168,67,0.3);
+}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(201,168,67,0.4);}
+.btn-gold:active{transform:translateY(0);}
+.login-error{
+  background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);
+  border-radius:8px;padding:10px 14px;color:var(--danger);
+  font-size:0.85rem;margin-bottom:16px;display:none;
+}
+.shake{animation:shake 0.4s ease;}
+@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-6px);}80%{transform:translateX(6px)};}
+
+/* ─── APP LAYOUT ───────────────────────────────────────── */
+#app{display:none;min-height:100vh;}
+#app.visible{display:flex;}
+.sidebar{
+  width:var(--sidebar-w);min-height:100vh;
+  background:var(--sidebar);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;z-index:50;
+  transition:width 0.3s,left 0.3s;overflow:hidden;
+}
+.sidebar.collapsed{width:60px;}
+.sidebar-logo{
+  padding:20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;min-height:70px;
+}
+.sidebar-logo-icon{
+  width:40px;height:40px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+}
+.sidebar-logo-text{white-space:nowrap;overflow:hidden;}
+.sidebar-logo-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.95rem;color:var(--gold);}
+.sidebar-logo-sub{font-size:0.7rem;color:var(--muted);}
+.sidebar-user{
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;overflow:hidden;
+}
+.avatar{
+  width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.75rem;font-weight:700;color:#fff;
+}
+.sidebar-user-info{white-space:nowrap;overflow:hidden;}
+.sidebar-user-name{font-size:0.85rem;font-weight:600;}
+.sidebar-user-role{font-size:0.72rem;color:var(--muted);}
+.sidebar-nav{flex:1;overflow-y:auto;padding:12px 8px;}
+.nav-section-label{
+  font-size:0.65rem;font-weight:600;letter-spacing:1.5px;
+  color:var(--muted);text-transform:uppercase;
+  padding:10px 12px 6px;white-space:nowrap;overflow:hidden;
+}
+.sidebar.collapsed .nav-section-label{opacity:0;}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:10px;cursor:pointer;
+  transition:all 0.2s;white-space:nowrap;overflow:hidden;
+  color:var(--muted);font-size:0.875rem;font-weight:500;
+  border:none;background:none;width:100%;text-align:left;
+}
+.nav-item:hover{background:rgba(201,168,67,0.08);color:var(--text);}
+.nav-item.active{
+  background:linear-gradient(90deg,rgba(201,168,67,0.15),rgba(201,168,67,0.05));
+  color:var(--gold);
+  box-shadow:inset 3px 0 0 var(--gold);
+}
+.nav-item svg{width:18px;height:18px;flex-shrink:0;}
+.sidebar-footer{padding:12px 8px;border-top:1px solid var(--border);}
+.sidebar-collapse-btn{
+  width:100%;display:flex;align-items:center;justify-content:center;
+  padding:8px;border-radius:8px;background:none;border:none;
+  color:var(--muted);transition:all 0.2s;
+}
+.sidebar-collapse-btn:hover{background:var(--surface2);color:var(--text);}
+.sidebar-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.6);z-index:49;
+}
+.sidebar-overlay.visible{display:block;}
+
+/* ─── TOPBAR ──────────────────────────────────────────── */
+.topbar{
+  height:var(--topbar-h);background:var(--sidebar);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:16px;
+  padding:0 24px;position:sticky;top:0;z-index:40;
+}
+.hamburger{
+  display:none;background:none;border:none;
+  color:var(--text);padding:4px;cursor:pointer;
+}
+.topbar-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.1rem;flex:1;}
+.topbar-search{
+  position:relative;display:flex;align-items:center;
+}
+.topbar-search input{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:8px 12px 8px 36px;
+  color:var(--text);font-size:0.85rem;width:220px;
+  outline:none;transition:all 0.2s;
+}
+.topbar-search input:focus{border-color:rgba(201,168,67,0.4);width:280px;}
+.topbar-search-icon{position:absolute;left:10px;color:var(--muted);}
+.topbar-actions{display:flex;align-items:center;gap:8px;}
+.icon-btn{
+  width:36px;height:36px;border-radius:8px;
+  background:var(--surface2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted);cursor:pointer;transition:all 0.2s;position:relative;
+}
+.icon-btn:hover{border-color:rgba(201,168,67,0.3);color:var(--text);}
+.notif-badge{
+  position:absolute;top:-4px;right:-4px;
+  background:var(--danger);color:#fff;
+  font-size:0.6rem;font-weight:700;
+  width:16px;height:16px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* ─── MAIN CONTENT ─────────────────────────────────────── */
+.main-wrap{
+  margin-left:var(--sidebar-w);flex:1;
+  display:flex;flex-direction:column;
+  transition:margin-left 0.3s;
+}
+.sidebar.collapsed~.main-wrap{margin-left:60px;}
+.content-area{flex:1;padding:24px;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* ─── CARDS & GRID ─────────────────────────────────────── */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:24px;
+  transition:all 0.3s;
+}
+.card:hover{
+  border-color:rgba(201,168,67,0.35);
+  box-shadow:0 8px 40px rgba(0,0,0,0.4),0 0 30px rgba(201,168,67,0.05);
+  transform:translateY(-2px);
+}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;transition:all 0.3s;}
+.kpi-card:hover{border-color:rgba(201,168,67,0.4);box-shadow:0 8px 32px rgba(0,0,0,0.4);transform:translateY(-2px);}
+.kpi-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:18px;}
+.kpi-value{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;line-height:1;}
+.kpi-label{font-size:0.8rem;color:var(--muted);margin-top:4px;}
+.kpi-change{font-size:0.78rem;font-weight:600;margin-top:8px;}
+.kpi-change.up{color:var(--success);}
+.kpi-change.down{color:var(--danger);}
+.kpi-bar{background:var(--surface2);border-radius:4px;height:4px;margin-top:10px;overflow:hidden;}
+.kpi-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width 1s;}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.grid-auto{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+
+/* ─── SECTION HEADER ──────────────────────────────────── */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.section-title{font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:700;}
+.section-sub{color:var(--muted);font-size:0.85rem;margin-top:2px;}
+
+/* ─── BUTTONS ──────────────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 16px;border-radius:9px;font-size:0.85rem;
+  font-weight:600;border:none;cursor:pointer;
+  transition:all 0.2s;white-space:nowrap;
+}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1400;box-shadow:0 2px 12px rgba(201,168,67,0.25);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(201,168,67,0.4);}
+.btn-outline{background:none;border:1px solid var(--border);color:var(--text);}
+.btn-outline:hover{border-color:rgba(201,168,67,0.4);background:rgba(201,168,67,0.05);}
+.btn-danger{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--danger);}
+.btn-danger:hover{background:var(--danger);color:#fff;}
+.btn-success{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:var(--success);}
+.btn-success:hover{background:var(--success);color:#fff;}
+.btn-sm{padding:6px 12px;font-size:0.8rem;}
+.btn svg{width:15px;height:15px;}
+
+/* ─── TABLE ──────────────────────────────────────────── */
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--surface2);}
+thead th{
+  padding:12px 16px;text-align:left;font-size:0.72rem;
+  font-weight:600;letter-spacing:1px;color:var(--muted);
+  text-transform:uppercase;white-space:nowrap;
+}
+tbody tr{border-top:1px solid var(--border);transition:background 0.2s;}
+tbody tr:hover{background:rgba(201,168,67,0.04);}
+tbody td{padding:13px 16px;font-size:0.875rem;}
+.actions-cell{display:flex;align-items:center;gap:4px;}
+.tbl-btn{
+  width:30px;height:30px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--muted);cursor:pointer;transition:all 0.2s;
+}
+.tbl-btn:hover{border-color:rgba(201,168,67,0.4);color:var(--gold);}
+.tbl-btn.danger:hover{border-color:rgba(239,68,68,0.4);color:var(--danger);}
+
+/* ─── BADGES ──────────────────────────────────────────── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;}
+.badge-new{background:rgba(6,182,212,0.15);color:#06B6D4;}
+.badge-pending{background:rgba(245,158,11,0.15);color:#F59E0B;}
+.badge-confirmed{background:rgba(16,185,129,0.15);color:#10B981;}
+.badge-completed{background:rgba(107,95,128,0.15);color:#9D8FB5;}
+.badge-cancelled{background:rgba(239,68,68,0.15);color:#EF4444;}
+.badge-open{background:rgba(16,185,129,0.15);color:#10B981;}
+.badge-maintenance{background:rgba(245,158,11,0.15);color:#F59E0B;}
+.badge-closed{background:rgba(239,68,68,0.15);color:#EF4444;}
+
+/* ─── FILTER BAR ──────────────────────────────────────── */
+.filter-bar{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:16px;margin-bottom:16px;
+  display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;
+}
+.filter-group{display:flex;flex-direction:column;gap:6px;}
+.filter-label{font-size:0.72rem;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:0.5px;}
+.filter-input{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:8px 12px;color:var(--text);
+  font-size:0.85rem;outline:none;transition:all 0.2s;min-width:140px;
+}
+.filter-input:focus{border-color:rgba(201,168,67,0.4);}
+.filter-actions{margin-left:auto;display:flex;gap:8px;align-items:flex-end;}
+
+/* ─── PAGINATION ──────────────────────────────────────── */
+.pagination{display:flex;align-items:center;gap:8px;margin-top:16px;justify-content:flex-end;}
+.page-btn{
+  min-width:32px;height:32px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--muted);cursor:pointer;font-size:0.8rem;
+  transition:all 0.2s;
+}
+.page-btn:hover,.page-btn.active{border-color:var(--gold);color:var(--gold);}
+.page-size{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:6px;padding:4px 8px;color:var(--text);
+  font-size:0.8rem;outline:none;
+}
+.pagination-info{font-size:0.8rem;color:var(--muted);margin-right:auto;}
+
+/* ─── MODAL ──────────────────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(5,3,15,0.85);backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;
+  z-index:200;animation:fadeIn 0.2s ease;
+}
+.modal-overlay.open{display:flex;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;width:min(92vw,800px);
+  max-height:90vh;overflow-y:auto;
+  animation:slideUp 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.modal-sm{width:min(92vw,480px);}
+.modal-lg{width:min(94vw,960px);}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;border-bottom:1px solid var(--border);
+  position:sticky;top:0;background:var(--surface);z-index:1;
+}
+.modal-title{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:700;}
+.modal-close{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--surface2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted);cursor:pointer;transition:all 0.2s;
+}
+.modal-close:hover{background:var(--danger);border-color:var(--danger);color:#fff;}
+.modal-body{padding:24px;}
+.modal-footer{
+  padding:16px 24px;border-top:1px solid var(--border);
+  display:flex;gap:10px;justify-content:flex-end;
+  position:sticky;bottom:0;background:var(--surface);
+}
+
+/* ─── FORM GRID ──────────────────────────────────────── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.col-span-2{grid-column:span 2;}
+.col-span-3{grid-column:span 3;}
+.form-section-title{
+  font-size:0.78rem;font-weight:600;letter-spacing:1px;
+  color:var(--muted);text-transform:uppercase;
+  padding-bottom:8px;border-bottom:1px solid var(--border);
+  margin-bottom:16px;margin-top:8px;
+}
+.checkbox-list{display:flex;flex-wrap:wrap;gap:8px;}
+.check-item{
+  display:flex;align-items:center;gap:6px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:6px 10px;cursor:pointer;
+  font-size:0.8rem;transition:all 0.2s;
+}
+.check-item input{accent-color:var(--gold);}
+.check-item:has(input:checked){border-color:rgba(201,168,67,0.5);background:rgba(201,168,67,0.08);}
+
+/* ─── MINI CALENDAR ─────────────────────────────────── */
+.mini-cal{user-select:none;}
+.mini-cal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;
+}
+.mini-cal-nav{
+  background:none;border:1px solid var(--border);border-radius:6px;
+  width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+  color:var(--muted);cursor:pointer;transition:all 0.2s;
+}
+.mini-cal-nav:hover{border-color:rgba(201,168,67,0.4);color:var(--gold);}
+.mini-cal-title{font-weight:600;font-size:0.9rem;}
+.mini-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.mini-cal-dow{
+  text-align:center;font-size:0.65rem;font-weight:600;
+  color:var(--muted);text-transform:uppercase;padding:4px 0;
+}
+.mini-cal-day{
+  aspect-ratio:1;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;font-size:0.78rem;cursor:pointer;
+  transition:all 0.15s;position:relative;
+}
+.mini-cal-day:hover{background:rgba(201,168,67,0.1);}
+.mini-cal-day.today{border:1px solid var(--gold);color:var(--gold);font-weight:700;}
+.mini-cal-day.has-booking{background:rgba(201,168,67,0.15);color:var(--gold);}
+.mini-cal-day.full{background:rgba(239,68,68,0.15);color:var(--danger);}
+.mini-cal-day.empty{color:var(--surface2);}
+.mini-cal-day.other-month{opacity:0.3;}
+.booking-dot{
+  position:absolute;bottom:2px;left:50%;transform:translateX(-50%);
+  width:4px;height:4px;border-radius:50%;background:var(--gold);
+}
+
+/* ─── CHARTS ─────────────────────────────────────────── */
+.chart-wrap{position:relative;height:200px;}
+.chart-wrap.tall{height:260px;}
+
+/* ─── QUICK ACTIONS ──────────────────────────────────── */
+.quick-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
+
+/* ─── DASHBOARD RECENT TABLE ─────────────────────────── */
+.recent-scroll{overflow-x:auto;}
+
+/* ─── HALL CARD ──────────────────────────────────────── */
+.hall-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;}
+.hall-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.hall-card-name{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;display:flex;align-items:center;gap:8px;}
+.hall-card-meta{display:flex;gap:16px;margin-bottom:14px;flex-wrap:wrap;}
+.hall-meta-item{font-size:0.8rem;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.hall-meta-item strong{color:var(--text);}
+.hall-bar-label{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--muted);margin-bottom:4px;}
+.hall-bar{background:var(--surface2);border-radius:4px;height:6px;overflow:hidden;margin-bottom:12px;}
+.hall-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--gold2));}
+.hall-card-actions{display:flex;gap:8px;margin-top:8px;}
+
+/* ─── SERVICE CATEGORY TABS ──────────────────────────── */
+.tabs{display:flex;gap:4px;background:var(--surface2);border-radius:10px;padding:4px;margin-bottom:16px;flex-wrap:wrap;}
+.tab{
+  padding:7px 14px;border-radius:7px;font-size:0.82rem;font-weight:500;
+  cursor:pointer;transition:all 0.2s;border:none;background:none;color:var(--muted);
+}
+.tab.active{background:var(--surface);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+
+/* ─── GALLERY GRID ───────────────────────────────────── */
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;}
+.gallery-item{
+  aspect-ratio:4/3;border-radius:12px;overflow:hidden;
+  position:relative;cursor:pointer;border:1px solid var(--border);
+  transition:all 0.2s;background:var(--surface2);
+}
+.gallery-item:hover{border-color:rgba(201,168,67,0.4);transform:scale(1.02);}
+.gallery-item img,.gallery-item .gallery-gradient{
+  width:100%;height:100%;object-fit:cover;
+  display:flex;align-items:center;justify-content:center;font-size:3rem;
+}
+.gallery-item-overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,0.7);
+  display:none;align-items:center;justify-content:center;gap:8px;
+}
+.gallery-item:hover .gallery-item-overlay{display:flex;}
+.gallery-add{
+  border:2px dashed var(--border);border-radius:12px;aspect-ratio:4/3;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;cursor:pointer;color:var(--muted);font-size:0.85rem;
+  transition:all 0.2s;
+}
+.gallery-add:hover{border-color:rgba(201,168,67,0.4);color:var(--gold);}
+.gallery-label{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);
+  color:#fff;font-size:0.72rem;padding:8px 8px 6px;
+}
+
+/* ─── FINANCE ────────────────────────────────────────── */
+.fin-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.fin-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:16px;
+}
+.fin-card-label{font-size:0.75rem;color:var(--muted);margin-bottom:6px;}
+.fin-card-val{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;}
+
+/* ─── REPORT ─────────────────────────────────────────── */
+.report-type-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.report-type-item{
+  display:flex;align-items:center;gap:10px;padding:12px 14px;
+  border-radius:10px;border:1px solid var(--border);cursor:pointer;
+  transition:all 0.2s;
+}
+.report-type-item:has(input:checked){border-color:rgba(201,168,67,0.5);background:rgba(201,168,67,0.05);}
+.report-type-item input{accent-color:var(--gold);}
+.period-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.period-btn{
+  padding:6px 12px;border-radius:8px;font-size:0.8rem;
+  border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;
+  transition:all 0.2s;
+}
+.period-btn.active,.period-btn:hover{border-color:rgba(201,168,67,0.4);color:var(--gold);background:rgba(201,168,67,0.05);}
+
+/* ─── NOTIFS ─────────────────────────────────────────── */
+.notif-list{display:flex;flex-direction:column;gap:1px;}
+.notif-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:14px 16px;border-bottom:1px solid var(--border);
+  transition:background 0.2s;
+}
+.notif-item:hover{background:rgba(201,168,67,0.03);}
+.notif-item.unread{background:rgba(201,168,67,0.04);}
+.notif-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px;
+}
+.notif-dot.new{background:var(--gold);}
+.notif-dot.read{background:transparent;border:1px solid var(--muted);}
+.notif-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.notif-content{flex:1;}
+.notif-msg{font-size:0.875rem;font-weight:500;}
+.notif-meta{font-size:0.75rem;color:var(--muted);margin-top:3px;}
+
+/* ─── SETTINGS ───────────────────────────────────────── */
+.settings-tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.stab{
+  padding:10px 16px;font-size:0.85rem;font-weight:500;
+  border:none;background:none;color:var(--muted);cursor:pointer;
+  border-bottom:2px solid transparent;transition:all 0.2s;
+}
+.stab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.stab-panel{display:none;}
+.stab-panel.active{display:block;}
+
+/* ─── COMM HISTORY ───────────────────────────────────── */
+.comm-timeline{display:flex;flex-direction:column;gap:2px;}
+.comm-item{display:flex;gap:12px;padding:10px 0;}
+.comm-dot{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+  margin-top:2px;
+}
+.comm-body{flex:1;}
+.comm-date{font-size:0.72rem;color:var(--muted);}
+.comm-note{font-size:0.85rem;margin-top:2px;}
+
+/* ─── CALENDAR FULL ──────────────────────────────────── */
+.cal-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.cal-grid-month{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-dow{text-align:center;font-size:0.72rem;color:var(--muted);padding:6px;text-transform:uppercase;font-weight:600;}
+.cal-cell{
+  min-height:90px;background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:6px;
+  transition:background 0.15s;
+}
+.cal-cell:hover{background:var(--surface2);}
+.cal-cell.today{border-color:rgba(201,168,67,0.5);}
+.cal-cell.other-month{opacity:0.4;}
+.cal-cell-day{font-size:0.78rem;color:var(--muted);margin-bottom:4px;}
+.cal-cell.today .cal-cell-day{color:var(--gold);font-weight:700;}
+.cal-event{
+  font-size:0.68rem;padding:2px 6px;border-radius:4px;
+  margin-bottom:2px;truncate:true;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  cursor:pointer;
+}
+.cal-event.confirmed{background:rgba(16,185,129,0.15);color:var(--success);}
+.cal-event.pending{background:rgba(245,158,11,0.15);color:var(--warning);}
+.cal-event.new{background:rgba(6,182,212,0.15);color:var(--info);}
+.cal-event.conflict{background:rgba(239,68,68,0.2);color:var(--danger);}
+
+/* ─── PROGRESS BAR ───────────────────────────────────── */
+.progress-bar-wrap{background:var(--surface2);border-radius:4px;height:8px;overflow:hidden;margin:6px 0;}
+.progress-bar-fill{height:100%;border-radius:4px;transition:width 0.8s;}
+
+/* ─── TOAST ──────────────────────────────────────────── */
+#toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+.toast{
+  background:var(--surface2);border-radius:10px;padding:14px 20px;
+  display:flex;align-items:center;gap:10px;
+  font-size:0.875rem;color:var(--text);
+  box-shadow:0 8px 30px rgba(0,0,0,0.5);
+  min-width:280px;max-width:360px;
+  animation:slideInRight 0.3s ease;
+}
+@keyframes slideInRight{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes slideOutRight{from{transform:translateX(0);opacity:1}to{transform:translateX(120%);opacity:0}}
+
+/* ─── CONFIRM DIALOG ─────────────────────────────────── */
+#confirm-overlay{
+  position:fixed;inset:0;background:rgba(5,3,15,0.9);
+  display:none;align-items:center;justify-content:center;
+  z-index:500;
+}
+#confirm-overlay.open{display:flex;}
+.confirm-box{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:28px;width:min(90vw,400px);
+  animation:slideUp 0.2s ease;text-align:center;
+}
+.confirm-icon{font-size:2.5rem;margin-bottom:12px;}
+.confirm-title{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:8px;}
+.confirm-msg{font-size:0.875rem;color:var(--muted);margin-bottom:20px;line-height:1.5;}
+.confirm-actions{display:flex;gap:10px;justify-content:center;}
+
+/* ─── SEARCH RESULT HIGHLIGHT ──────────────────────────  */
+.hl{background:rgba(201,168,67,0.25);border-radius:2px;padding:0 2px;}
+
+/* ─── STAFF CARD ─────────────────────────────────────── */
+.staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
+.staff-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:18px;transition:all 0.2s;
+}
+.staff-card:hover{border-color:rgba(201,168,67,0.3);transform:translateY(-2px);}
+.staff-card-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.staff-info{flex:1;}
+.staff-name{font-weight:600;font-size:0.9rem;}
+.staff-pos{font-size:0.75rem;color:var(--muted);}
+.staff-card-meta{display:flex;flex-direction:column;gap:4px;}
+.staff-meta-row{display:flex;align-items:center;gap:6px;font-size:0.78rem;color:var(--muted);}
+
+/* ─── RESPONSIVE ─────────────────────────────────────── */
+@media(max-width:1100px){.kpi-grid,.fin-summary{grid-template-columns:1fr 1fr;}.grid-2{grid-template-columns:1fr;}.grid-3{grid-template-columns:1fr 1fr;}}
+@media(max-width:768px){
+  .sidebar{position:fixed;left:-260px;z-index:50;}
+  .sidebar.mobile-open{left:0;}
+  .main-wrap{margin-left:0!important;}
+  .hamburger{display:flex!important;}
+  .kpi-grid,.fin-summary{grid-template-columns:1fr 1fr;}
+  .form-grid,.form-grid-3{grid-template-columns:1fr;}
+  .col-span-2,.col-span-3{grid-column:span 1;}
+  .topbar-search input{width:140px;}
+  .topbar-search input:focus{width:180px;}
+  .modal{width:100%;max-height:100vh;border-radius:0;}
+  .modal-overlay{align-items:flex-end;}
+  .grid-3{grid-template-columns:1fr;}
+  .cal-grid-month{grid-template-columns:repeat(7,1fr);}
+  .cal-cell{min-height:60px;}
+  .content-area{padding:14px;}
+}
+@media(max-width:480px){
+  .kpi-grid,.fin-summary{grid-template-columns:1fr;}
+  .section-header{flex-direction:column;align-items:flex-start;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div id="toast-container"></div>
+
+<!-- CONFIRM DIALOG -->
+<div id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-icon" id="confirm-icon">⚠️</div>
+    <div class="confirm-title" id="confirm-title">Tassyklama</div>
+    <div class="confirm-msg" id="confirm-msg"></div>
+    <div class="confirm-actions">
+      <button class="btn btn-outline" onclick="confirmClose()">Ýok</button>
+      <button class="btn btn-danger" id="confirm-ok-btn" onclick="confirmOk()">Hawa, Dowam Et</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-wrap" id="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">👑</div>
+      <div class="login-title">Toý Mekany</div>
+      <div class="login-sub">Admin Paneli</div>
+    </div>
+    <div class="login-error" id="login-error">Ulanyjy ady ýa-da parol ýalňyş!</div>
+    <div class="form-group">
+      <label class="form-label">Ulanyjy Ady</label>
+      <input class="form-input" type="text" id="login-username" placeholder="admin" autocomplete="username"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Parol</label>
+      <div class="input-wrap">
+        <input class="form-input" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"/>
+        <button class="input-eye" onclick="togglePwd('login-password',this)"><i data-lucide="eye" style="width:16px;height:16px"></i></button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="checkbox-wrap">
+        <input type="checkbox" id="login-remember"/>
+        Meni ýatla
+      </label>
+    </div>
+    <button class="btn-gold" onclick="doLogin()">Giriş</button>
+    <div style="margin-top:16px;font-size:0.78rem;color:var(--muted);text-align:center">
+      Demo: admin / admin123 &nbsp;|&nbsp; menejer / menejer123
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">👑</div>
+      <div class="sidebar-logo-text">
+        <div class="sidebar-logo-name" id="sb-venue-name">Toý Mekany</div>
+        <div class="sidebar-logo-sub">Admin Panel</div>
+      </div>
+    </div>
+    <div class="sidebar-user">
+      <div class="avatar" id="sb-avatar" style="background:#C9A843;">BA</div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="sb-username">Baş Admin</div>
+        <div class="sidebar-user-role" id="sb-role">Superadmin</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav">
+      <div class="nav-section-label">ESASY MENÝU</div>
+      <button class="nav-item active" data-section="dashboard" onclick="navigate('dashboard',this)">
+        <i data-lucide="layout-dashboard"></i><span>Dolandyryş Tagtasy</span>
+      </button>
+      <button class="nav-item" data-section="bookings" onclick="navigate('bookings',this)">
+        <i data-lucide="calendar-check"></i><span>Bron Dolandyrma</span>
+      </button>
+      <button class="nav-item" data-section="halls" onclick="navigate('halls',this)">
+        <i data-lucide="building-2"></i><span>Zal Dolandyrma</span>
+      </button>
+      <button class="nav-item" data-section="services" onclick="navigate('services',this)">
+        <i data-lucide="settings-2"></i><span>Hyzmat Dolandyrma</span>
+      </button>
+      <button class="nav-item" data-section="gallery" onclick="navigate('gallery',this)">
+        <i data-lucide="image"></i><span>Galereýa</span>
+      </button>
+      <button class="nav-item" data-section="team" onclick="navigate('team',this)">
+        <i data-lucide="users"></i><span>Topar & Işgärler</span>
+      </button>
+      <button class="nav-item" data-section="finance" onclick="navigate('finance',this)">
+        <i data-lucide="banknote"></i><span>Maliýe</span>
+      </button>
+      <button class="nav-item" data-section="reports" onclick="navigate('reports',this)">
+        <i data-lucide="bar-chart-3"></i><span>Hasabatlar</span>
+      </button>
+      <div class="nav-section-label" style="margin-top:8px">SAZLAMALAR</div>
+      <button class="nav-item" data-section="notifications" onclick="navigate('notifications',this)">
+        <i data-lucide="bell"></i><span>Bildirişler</span>
+      </button>
+      <button class="nav-item" data-section="users" onclick="navigate('users',this)" id="nav-users" style="display:none">
+        <i data-lucide="user-cog"></i><span>Ulanyjylar</span>
+      </button>
+      <button class="nav-item" data-section="settings" onclick="navigate('settings',this)">
+        <i data-lucide="sliders-horizontal"></i><span>Ulgam Sazlamalary</span>
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="nav-item" onclick="doLogout()" style="color:var(--danger)">
+        <i data-lucide="log-out"></i><span>Çykmak</span>
+      </button>
+      <button class="sidebar-collapse-btn" onclick="toggleSidebar()">
+        <i data-lucide="panel-left-close" id="collapse-icon"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-wrap" id="main-wrap">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <button class="hamburger" onclick="openSidebar()"><i data-lucide="menu"></i></button>
+      <div class="topbar-title" id="topbar-title">Dolandyryş Tagtasy</div>
+      <div class="topbar-search">
+        <i data-lucide="search" class="topbar-search-icon" style="width:15px;height:15px"></i>
+        <input type="text" placeholder="Gözleg..." id="global-search" oninput="globalSearch(this.value)"/>
+      </div>
+      <div class="topbar-actions">
+        <div class="icon-btn" onclick="navigate('notifications',document.querySelector('[data-section=notifications]'))">
+          <i data-lucide="bell" style="width:16px;height:16px"></i>
+          <span class="notif-badge" id="notif-count">3</span>
+        </div>
+        <div class="icon-btn" style="gap:6px;width:auto;padding:0 10px;" id="topbar-user">
+          <div class="avatar" id="top-avatar" style="background:#C9A843;width:26px;height:26px;font-size:0.65rem">BA</div>
+          <span id="top-username" style="font-size:0.82rem">Admin</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content-area">
+
+      <!-- ═══════════════ DASHBOARD ═══════════════ -->
+      <div class="section active" id="sec-dashboard">
+        <!-- KPI -->
+        <div class="kpi-grid" id="kpi-grid"></div>
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <button class="btn btn-primary" onclick="openNewBookingModal()"><i data-lucide="plus"></i> Täze Bron Gir</button>
+          <button class="btn btn-outline" onclick="navigate('bookings',document.querySelector('[data-section=bookings]'));filterBookingStatus('pending')"><i data-lucide="clock"></i> Garaşýan Bronlar (<span id="pending-count">0</span>)</button>
+          <button class="btn btn-outline" onclick="showThisWeekWeddings()"><i data-lucide="calendar"></i> Bu Hepde Toýlar</button>
+          <button class="btn btn-outline" onclick="exportCSV('bookings')"><i data-lucide="download"></i> CSV Eksport</button>
+        </div>
+        <!-- Charts Row -->
+        <div class="grid-2" style="margin-bottom:16px">
+          <div class="card">
+            <div class="section-header" style="margin-bottom:12px">
+              <div><div class="section-title" style="font-size:1rem">Girdeji (6 Aý)</div></div>
+            </div>
+            <div class="chart-wrap tall"><canvas id="revenue-chart"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="section-header" style="margin-bottom:12px">
+              <div><div class="section-title" style="font-size:1rem">Zal Dolulyk</div></div>
+            </div>
+            <div class="chart-wrap tall"><canvas id="hall-chart"></canvas></div>
+          </div>
+        </div>
+        <!-- Calendar + Recent -->
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-header" style="margin-bottom:12px">
+              <div class="section-title" style="font-size:1rem">Bron Senenamasy</div>
+              <div style="display:flex;gap:6px">
+                <button class="mini-cal-nav" onclick="calNav(-1)">‹</button>
+                <button class="mini-cal-nav" onclick="calNav(1)">›</button>
+              </div>
+            </div>
+            <div class="mini-cal" id="mini-cal"></div>
+            <div id="cal-day-popup" style="margin-top:12px;display:none"></div>
+          </div>
+          <div class="card">
+            <div class="section-title" style="font-size:1rem;margin-bottom:12px">Soňky Bronlar</div>
+            <div class="recent-scroll">
+              <table>
+                <thead><tr>
+                  <th>Toý Güni</th><th>Jübüt</th><th>Zal</th><th>Myhmany</th><th>Jemi</th><th>Ýagdaý</th><th>Işler</th>
+                </tr></thead>
+                <tbody id="dashboard-bookings-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ BOOKINGS ════════════════ -->
+      <div class="section" id="sec-bookings">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Bron Dolandyrma</div>
+            <div class="section-sub" id="bookings-count-label">Ähli bronlar</div>
+          </div>
+          <button class="btn btn-primary" onclick="openNewBookingModal()"><i data-lucide="plus"></i> Täze Bron</button>
+        </div>
+        <!-- Filter -->
+        <div class="filter-bar">
+          <div class="filter-group">
+            <div class="filter-label">Gözleg</div>
+            <input class="filter-input" type="text" id="bk-search" placeholder="at, telefon, ID..." oninput="renderBookings()"/>
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">Ýagdaý</div>
+            <select class="filter-input" id="bk-status" onchange="renderBookings()">
+              <option value="">Hemmesi</option>
+              <option value="new">Täze</option>
+              <option value="pending">Garaşyl</option>
+              <option value="confirmed">Tassykly</option>
+              <option value="completed">Tamamlanan</option>
+              <option value="cancelled">Ýatyryldy</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">Zal</div>
+            <select class="filter-input" id="bk-hall" onchange="renderBookings()">
+              <option value="">Hemmesi</option>
+              <option value="sha">Şa Zaly</option>
+              <option value="bahar">Bahar Zaly</option>
+              <option value="altyn">Altyn Zal</option>
+              <option value="howly">Açyk Howly</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">Başl. Sene</div>
+            <input class="filter-input" type="date" id="bk-date-from" onchange="renderBookings()"/>
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">Soňky Sene</div>
+            <input class="filter-input" type="date" id="bk-date-to" onchange="renderBookings()"/>
+          </div>
+          <div class="filter-actions">
+            <button class="btn btn-outline btn-sm" onclick="exportCSV('bookings')"><i data-lucide="download"></i> CSV</button>
+            <button class="btn btn-outline btn-sm" onclick="exportJSON('bookings')"><i data-lucide="file-json"></i> JSON</button>
+          </div>
+        </div>
+        <!-- View toggle -->
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <button class="tab active" id="bk-view-list" onclick="setBookingView('list')">Sanaw</button>
+          <button class="tab" id="bk-view-cal" onclick="setBookingView('calendar')">Senenama</button>
+        </div>
+        <!-- List View -->
+        <div id="bk-list-view">
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th><input type="checkbox" id="bk-select-all" onchange="toggleSelectAll(this)"/></th>
+                <th>ID</th><th>Toý Güni</th><th>Jübüt</th><th>Zal</th>
+                <th>Myhmany</th><th>Jemi (TMT)</th><th>Galany</th><th>Ýagdaý</th><th>Çeşme</th><th>Işler</th>
+              </tr></thead>
+              <tbody id="bookings-tbody"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <span class="pagination-info" id="bk-pagination-info"></span>
+            <select class="page-size" id="bk-page-size" onchange="renderBookings()">
+              <option value="10">10</option><option value="20">20</option><option value="50">50</option>
+            </select>
+            <div id="bk-pagination-btns"></div>
+          </div>
+        </div>
+        <!-- Calendar View -->
+        <div id="bk-cal-view" style="display:none">
+          <div class="card">
+            <div class="cal-header">
+              <button class="btn btn-outline btn-sm" onclick="fullCalNav(-1)">‹ Öňki</button>
+              <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1rem" id="full-cal-title"></div>
+              <button class="btn btn-outline btn-sm" onclick="fullCalNav(1)">Soňky ›</button>
+            </div>
+            <div class="cal-grid-month">
+              <div class="cal-dow">Du</div><div class="cal-dow">Si</div><div class="cal-dow">Çar</div>
+              <div class="cal-dow">Pe</div><div class="cal-dow">An</div><div class="cal-dow">Şen</div><div class="cal-dow">Ýek</div>
+            </div>
+            <div class="cal-grid-month" id="full-cal-grid" style="margin-top:4px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ HALLS ══════════════════ -->
+      <div class="section" id="sec-halls">
+        <div class="section-header">
+          <div><div class="section-title">Zal Dolandyrma</div><div class="section-sub">Zallary sazla we bron statistikasyny gör</div></div>
+          <button class="btn btn-primary" onclick="openHallModal()"><i data-lucide="plus"></i> Täze Zal</button>
+        </div>
+        <div class="grid-auto" id="halls-grid"></div>
+      </div>
+
+      <!-- ═══════════════ SERVICES ═══════════════ -->
+      <div class="section" id="sec-services">
+        <div class="section-header">
+          <div><div class="section-title">Hyzmat Dolandyrma</div><div class="section-sub">Hyzmatlar we paketler</div></div>
+          <button class="btn btn-primary" onclick="openServiceModal()"><i data-lucide="plus"></i> Täze Hyzmat</button>
+        </div>
+        <div class="tabs" id="service-tabs"></div>
+        <div class="grid-auto" id="services-grid"></div>
+        <div style="margin-top:24px">
+          <div class="section-title" style="font-size:1rem;margin-bottom:12px">Paket Dolandyrma</div>
+          <div class="grid-3" id="packages-grid"></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ GALLERY ════════════════ -->
+      <div class="section" id="sec-gallery">
+        <div class="section-header">
+          <div><div class="section-title">Galereýa Dolandyrma</div><div class="section-sub">Suratlary we wideolary dolandyr</div></div>
+          <button class="btn btn-primary" onclick="openGalleryModal()"><i data-lucide="plus"></i> Surat Goş</button>
+        </div>
+        <div class="gallery-grid" id="gallery-grid"></div>
+      </div>
+
+      <!-- ═══════════════ TEAM ═══════════════════ -->
+      <div class="section" id="sec-team">
+        <div class="section-header">
+          <div><div class="section-title">Topar & Işgärler</div><div class="section-sub">Işgärleri dolandyr</div></div>
+          <button class="btn btn-primary" onclick="openStaffModal()"><i data-lucide="user-plus"></i> Işgär Goş</button>
+        </div>
+        <div class="filter-bar" style="margin-bottom:12px">
+          <div class="filter-group">
+            <div class="filter-label">Gözleg</div>
+            <input class="filter-input" type="text" id="staff-search" placeholder="at, wezipe..." oninput="renderStaff()"/>
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">Bölüm</div>
+            <select class="filter-input" id="staff-dept" onchange="renderStaff()">
+              <option value="">Hemmesi</option>
+              <option value="decor">Bezeg</option>
+              <option value="kitchen">Aşhana</option>
+              <option value="event">Çäre</option>
+              <option value="tech">Tehniki</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </div>
+        <div class="staff-grid" id="staff-grid"></div>
+      </div>
+
+      <!-- ═══════════════ FINANCE ════════════════ -->
+      <div class="section" id="sec-finance">
+        <div class="section-header">
+          <div><div class="section-title">Maliýe</div><div class="section-sub">Girdeji we tölegleri dolandyr</div></div>
+          <button class="btn btn-primary" onclick="openPaymentModal()"><i data-lucide="plus"></i> Töleg Giriş</button>
+        </div>
+        <div class="fin-summary" id="fin-summary"></div>
+        <div class="grid-2" style="margin-bottom:20px">
+          <div class="card">
+            <div class="section-title" style="font-size:1rem;margin-bottom:12px">Aýlyk Girdeji (Bar)</div>
+            <div class="chart-wrap tall"><canvas id="monthly-chart"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="section-title" style="font-size:1rem;margin-bottom:12px">Töleg Ýagdaýy</div>
+            <div class="chart-wrap tall"><canvas id="payment-status-chart"></canvas></div>
+          </div>
+        </div>
+        <div class="filter-bar">
+          <div class="filter-group">
+            <div class="filter-label">Ýagdaý</div>
+            <select class="filter-input" id="fin-status" onchange="renderFinance()">
+              <option value="">Hemmesi</option>
+              <option value="paid">Tölendi</option>
+              <option value="partial">Bölekli</option>
+              <option value="unpaid">Tölenilmedik</option>
+            </select>
+          </div>
+          <div class="filter-actions">
+            <button class="btn btn-outline btn-sm" onclick="exportCSV('finance')"><i data-lucide="download"></i> CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Bron ID</th><th>Müşderi</th><th>Zal</th><th>Toý Güni</th>
+              <th>Jemi (TMT)</th><th>Tölenilen</th><th>Galany</th><th>Ýagdaý</th><th>Işler</th>
+            </tr></thead>
+            <tbody id="finance-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══════════════ REPORTS ════════════════ -->
+      <div class="section" id="sec-reports">
+        <div class="section-header">
+          <div><div class="section-title">Hasabatlar & Analitik</div></div>
+        </div>
+        <div class="grid-2" style="margin-bottom:20px">
+          <div class="card">
+            <div class="section-title" style="font-size:1rem;margin-bottom:16px">Hasabat Dörediji</div>
+            <div class="form-group">
+              <label class="form-label">Hasabat Görnüşi</label>
+              <div class="report-type-list">
+                <label class="report-type-item"><input type="radio" name="rtype" value="bookings" checked/> Bron Hasabaty</label>
+                <label class="report-type-item"><input type="radio" name="rtype" value="finance"/> Maliýe Hasabaty</label>
+                <label class="report-type-item"><input type="radio" name="rtype" value="halls"/> Zal Dolulyk Hasabaty</label>
+                <label class="report-type-item"><input type="radio" name="rtype" value="services"/> Hyzmat Meşhurlyk</label>
+                <label class="report-type-item"><input type="radio" name="rtype" value="sources"/> Müşderi Çeşme Analizi</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Döwür</label>
+              <div class="period-btns">
+                <button class="period-btn active" onclick="setPeriod(this,'month')">Bu aý</button>
+                <button class="period-btn" onclick="setPeriod(this,'last_month')">Geçen aý</button>
+                <button class="period-btn" onclick="setPeriod(this,'quarter')">Bu çaryýyl</button>
+                <button class="period-btn" onclick="setPeriod(this,'year')">Bu ýyl</button>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:16px">
+              <button class="btn btn-primary" onclick="generateReport()"><i data-lucide="file-text"></i> Hasabat Döreder</button>
+              <button class="btn btn-outline" onclick="exportCSV('bookings')"><i data-lucide="download"></i> CSV Ýükle</button>
+              <button class="btn btn-outline" onclick="exportJSON('bookings')"><i data-lucide="file-json"></i> JSON</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-title" style="font-size:1rem;margin-bottom:12px">Müşderi Çeşmesi</div>
+            <div class="chart-wrap"><canvas id="source-chart"></canvas></div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-title" style="font-size:1rem;margin-bottom:12px">Zal Meşhurlyk</div>
+            <div class="chart-wrap"><canvas id="hall-pop-chart"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="section-title" style="font-size:1rem;margin-bottom:12px">Aý Boýunça Bron Sany</div>
+            <div class="chart-wrap"><canvas id="monthly-bk-chart"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ NOTIFICATIONS ══════════ -->
+      <div class="section" id="sec-notifications">
+        <div class="section-header">
+          <div><div class="section-title">Bildirişler</div></div>
+          <button class="btn btn-outline btn-sm" onclick="markAllRead()"><i data-lucide="check-check"></i> Hemmesini Oka</button>
+        </div>
+        <div class="grid-2">
+          <div class="card" style="padding:0;overflow:hidden">
+            <div class="notif-list" id="notif-list"></div>
+          </div>
+          <div class="card">
+            <div class="section-title" style="font-size:1rem;margin-bottom:16px">Bildiriş Sazlamalary</div>
+            <div id="notif-settings-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ USERS ══════════════════ -->
+      <div class="section" id="sec-users">
+        <div class="section-header">
+          <div><div class="section-title">Ulanyjylar</div><div class="section-sub">Diňe Superadmin üçin</div></div>
+          <button class="btn btn-primary" onclick="openUserModal()"><i data-lucide="user-plus"></i> Ulanyjy Goş</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>At</th><th>Login</th><th>Rol</th><th>Soňky Giriş</th><th>Ýagdaýy</th><th>Işler</th>
+            </tr></thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══════════════ SETTINGS ════════════════ -->
+      <div class="section" id="sec-settings">
+        <div class="section-header"><div class="section-title">Ulgam Sazlamalary</div></div>
+        <div class="settings-tabs">
+          <button class="stab active" onclick="showStab(this,'stab-venue')">Mekan Maglumaty</button>
+          <button class="stab" onclick="showStab(this,'stab-hours')">Işleýiş Wagty</button>
+          <button class="stab" onclick="showStab(this,'stab-payment')">Töleg Sazl.</button>
+          <button class="stab" onclick="showStab(this,'stab-data')">Maglumat</button>
+        </div>
+        <!-- Venue -->
+        <div class="stab-panel active card" id="stab-venue">
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Mekan Ady *</label><input class="form-input" id="cfg-name"/></div>
+            <div class="form-group"><label class="form-label">Tagline</label><input class="form-input" id="cfg-tagline"/></div>
+            <div class="form-group"><label class="form-label">Telefon 1 *</label><input class="form-input" id="cfg-phone"/></div>
+            <div class="form-group"><label class="form-label">Telefon 2</label><input class="form-input" id="cfg-phone2"/></div>
+            <div class="form-group col-span-2"><label class="form-label">Adres *</label><input class="form-input" id="cfg-address"/></div>
+            <div class="form-group"><label class="form-label">Şäher</label><input class="form-input" id="cfg-city"/></div>
+            <div class="form-group"><label class="form-label">E-poçta</label><input class="form-input" id="cfg-email"/></div>
+            <div class="form-group"><label class="form-label">Telegram @</label><input class="form-input" id="cfg-telegram"/></div>
+            <div class="form-group"><label class="form-label">Instagram @</label><input class="form-input" id="cfg-instagram"/></div>
+          </div>
+          <button class="btn btn-primary" onclick="saveSettings()" style="margin-top:8px"><i data-lucide="save"></i> Sakla</button>
+        </div>
+        <!-- Hours -->
+        <div class="stab-panel card" id="stab-hours">
+          <div id="hours-form"></div>
+          <button class="btn btn-primary" onclick="saveHours()" style="margin-top:16px"><i data-lucide="save"></i> Sakla</button>
+        </div>
+        <!-- Payment -->
+        <div class="stab-panel card" id="stab-payment">
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Öňpul göterimi (%)</label><input class="form-input" type="number" id="cfg-deposit-pct" value="30"/></div>
+            <div class="form-group"><label class="form-label">Töleg möhleti (gün)</label><input class="form-input" type="number" id="cfg-payment-days" value="7"/></div>
+          </div>
+          <div class="form-section-title">Töleg görnüşleri</div>
+          <div class="checkbox-list">
+            <label class="check-item"><input type="checkbox" id="cfg-cash" checked/> Nagt</label>
+            <label class="check-item"><input type="checkbox" id="cfg-transfer" checked/> Bank geçiriş</label>
+            <label class="check-item"><input type="checkbox" id="cfg-card" checked/> Kart</label>
+          </div>
+          <button class="btn btn-primary" onclick="savePaymentSettings()" style="margin-top:16px"><i data-lucide="save"></i> Sakla</button>
+        </div>
+        <!-- Data -->
+        <div class="stab-panel card" id="stab-data">
+          <div style="display:flex;flex-direction:column;gap:10px;max-width:400px">
+            <button class="btn btn-outline" onclick="exportAllData()"><i data-lucide="upload"></i> Maglumatlary Eksport Et (JSON)</button>
+            <label class="btn btn-outline" style="cursor:pointer"><i data-lucide="download"></i> Maglumatlary Import Et (JSON)<input type="file" accept=".json" style="display:none" onchange="importData(this)"/></label>
+            <button class="btn btn-outline" onclick="loadDemoData()"><i data-lucide="refresh-cw"></i> Demo Maglumatlary Ýükle</button>
+            <button class="btn btn-danger" onclick="confirmClearCompleted()"><i data-lucide="trash-2"></i> Tamamlanan Bronlary Arassala</button>
+            <button class="btn btn-danger" style="background:rgba(239,68,68,0.2)" onclick="confirmNuke()"><i data-lucide="alert-triangle"></i> Ähli Maglumatlary Pozmak</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end content-area -->
+  </div><!-- end main-wrap -->
+</div><!-- end app -->
+
+<!-- ═══════════════ MODALS ═══════════════ -->
+
+<!-- BOOKING DETAIL MODAL -->
+<div class="modal-overlay" id="modal-booking-detail">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="bk-detail-id">BRN-2025-001</div>
+        <div id="bk-detail-badge" style="margin-top:4px"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-outline btn-sm" id="bk-detail-edit-btn"><i data-lucide="edit-2"></i> Düzet</button>
+        <button class="modal-close" onclick="closeModal('modal-booking-detail')"><i data-lucide="x"></i></button>
+      </div>
+    </div>
+    <div class="modal-body" id="bk-detail-body"></div>
+    <div class="modal-footer" id="bk-detail-footer"></div>
+  </div>
+</div>
+
+<!-- BOOKING FORM MODAL -->
+<div class="modal-overlay" id="modal-booking-form">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title" id="bk-form-title">Täze Bron</div>
+      <button class="modal-close" onclick="closeModal('modal-booking-form')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-section-title">Jübüt Maglumatlary</div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Ýigitiň Ady *</label><input class="form-input" id="bk-groom-name" placeholder="Merdan Hydyrow"/></div>
+        <div class="form-group"><label class="form-label">Ýigitiň Telefony</label><input class="form-input" id="bk-groom-phone" placeholder="+993 65 000000"/></div>
+        <div class="form-group"><label class="form-label">Gelniň Ady *</label><input class="form-input" id="bk-bride-name" placeholder="Aýgül Annagurbanowa"/></div>
+        <div class="form-group"><label class="form-label">Gelniň Telefony</label><input class="form-input" id="bk-bride-phone" placeholder="+993 62 000000"/></div>
+      </div>
+      <div class="form-section-title">Toý Maglumatlary</div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Toý Güni *</label><input class="form-input" type="date" id="bk-date"/></div>
+        <div class="form-group"><label class="form-label">Başlangyç Wagt</label><input class="form-input" type="time" id="bk-time" value="18:00"/></div>
+        <div class="form-group"><label class="form-label">Gutaryş Wagty</label><input class="form-input" type="time" id="bk-end-time" value="02:00"/></div>
+        <div class="form-group"><label class="form-label">Zal *</label>
+          <select class="form-select" id="bk-hall">
+            <option value="sha">Şa Zaly</option>
+            <option value="bahar">Bahar Zaly</option>
+            <option value="altyn">Altyn Zal</option>
+            <option value="howly">Açyk Howly</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Myhman Sany *</label><input class="form-input" type="number" id="bk-guests" placeholder="300"/></div>
+        <div class="form-group"><label class="form-label">Paket</label>
+          <select class="form-select" id="bk-package">
+            <option value="basic">Başlangyç</option>
+            <option value="premium" selected>Premium</option>
+            <option value="luxury">Lýuks</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Adam Başy Baha (TMT)</label><input class="form-input" type="number" id="bk-price-pp" placeholder="250" oninput="calcTotal()"/></div>
+        <div class="form-group"><label class="form-label">Jemi Baha (TMT)</label><input class="form-input" type="number" id="bk-total" placeholder="0" readonly style="opacity:0.7"/></div>
+      </div>
+      <div class="form-section-title">Goşmaça Hyzmatlar</div>
+      <div class="checkbox-list" id="bk-services-checks"></div>
+      <div class="form-section-title">Maliýe</div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Öňpul (TMT)</label><input class="form-input" type="number" id="bk-deposit"/></div>
+        <div class="form-group"><label class="form-label">Öňpul Ýagdaýy</label>
+          <select class="form-select" id="bk-deposit-paid">
+            <option value="false">Tölenilmedi</option>
+            <option value="true">Tölenildi</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Çeşme</label>
+          <select class="form-select" id="bk-source">
+            <option value="website">Saýt</option>
+            <option value="phone">Telefon</option>
+            <option value="instagram">Instagram</option>
+            <option value="referral">Maslahat</option>
+            <option value="walk_in">Şahsy</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Ýagdaý</label>
+          <select class="form-select" id="bk-status-input">
+            <option value="new">Täze</option>
+            <option value="pending">Garaşyl</option>
+            <option value="confirmed">Tassykly</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Goşmaça Bellik</label><textarea class="form-textarea" id="bk-notes" placeholder="Toý barada goşmaça maglumat..."></textarea></div>
+      <div class="form-group"><label class="form-label">Içerki Bellik</label><textarea class="form-textarea" id="bk-internal-note" placeholder="Işgärler üçin maglumat..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-booking-form')">Ýap</button>
+      <button class="btn btn-primary" id="bk-save-btn" onclick="saveBooking()"><i data-lucide="save"></i> Sakla</button>
+    </div>
+  </div>
+</div>
+
+<!-- HALL MODAL -->
+<div class="modal-overlay" id="modal-hall">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="hall-modal-title">Zal Maglumatlaryny Düzet</div>
+      <button class="modal-close" onclick="closeModal('modal-hall')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="hall-edit-id"/>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Zal Ady *</label><input class="form-input" id="hall-name"/></div>
+        <div class="form-group"><label class="form-label">Emoji</label><input class="form-input" id="hall-emoji" maxlength="2"/></div>
+        <div class="form-group"><label class="form-label">Max Myhman Sany *</label><input class="form-input" type="number" id="hall-capacity"/></div>
+        <div class="form-group"><label class="form-label">Meýdany (m²)</label><input class="form-input" type="number" id="hall-area"/></div>
+        <div class="form-group"><label class="form-label">Başl. Baha (TMT/adam) *</label><input class="form-input" type="number" id="hall-price"/></div>
+        <div class="form-group"><label class="form-label">Ýagdaýy</label>
+          <select class="form-select" id="hall-status">
+            <option value="open">Açyk</option>
+            <option value="maintenance">Abatlaýyş</option>
+            <option value="closed">Ýapyk</option>
+          </select>
+        </div>
+        <div class="form-group col-span-2"><label class="form-label">Beýany</label><textarea class="form-textarea" id="hall-desc"></textarea></div>
+      </div>
+      <div class="form-section-title">Aýratynlyklary</div>
+      <div class="checkbox-list">
+        <label class="check-item"><input type="checkbox" class="hall-feature" value="stage"/> Sahna</label>
+        <label class="check-item"><input type="checkbox" class="hall-feature" value="crystal"/> Kristal çyralar</label>
+        <label class="check-item"><input type="checkbox" class="hall-feature" value="led"/> LED diwar</label>
+        <label class="check-item"><input type="checkbox" class="hall-feature" value="entrance"/> Öz giriş</label>
+        <label class="check-item"><input type="checkbox" class="hall-feature" value="vip"/> VIP otaglar</label>
+        <label class="check-item"><input type="checkbox" class="hall-feature" value="parking"/> Duralgaly</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-hall')">Ýap</button>
+      <button class="btn btn-primary" onclick="saveHall()"><i data-lucide="save"></i> Sakla</button>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICE MODAL -->
+<div class="modal-overlay" id="modal-service">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title" id="svc-modal-title">Täze Hyzmat</div>
+      <button class="modal-close" onclick="closeModal('modal-service')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="svc-edit-id"/>
+      <div class="form-group"><label class="form-label">Hyzmat Ady *</label><input class="form-input" id="svc-name"/></div>
+      <div class="form-group"><label class="form-label">Kategoriýa</label>
+        <select class="form-select" id="svc-category">
+          <option value="food">Tagam</option>
+          <option value="decor">Bezeg</option>
+          <option value="music">Saz</option>
+          <option value="photo">Foto & Wideo</option>
+          <option value="hotel">Myhmanhana</option>
+          <option value="transport">Ulag</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Baha Görnüşi</label>
+        <select class="form-select" id="svc-price-type">
+          <option value="per_person">Adam başy</option>
+          <option value="fixed">Umumy baha</option>
+          <option value="custom">Gepleşik</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Baha (TMT)</label><input class="form-input" type="number" id="svc-price"/></div>
+      <div class="form-group"><label class="form-label">Beýany</label><textarea class="form-textarea" id="svc-desc"></textarea></div>
+      <label class="checkbox-wrap"><input type="checkbox" id="svc-active" checked/> Aktiw</label>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-service')">Ýap</button>
+      <button class="btn btn-primary" onclick="saveService()"><i data-lucide="save"></i> Sakla</button>
+    </div>
+  </div>
+</div>
+
+<!-- GALLERY MODAL -->
+<div class="modal-overlay" id="modal-gallery">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title">Surat Goş</div>
+      <button class="modal-close" onclick="closeModal('modal-gallery')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Surat URL (ýa-da saýla)</label>
+        <input class="form-input" id="gallery-url" placeholder="https://..."/>
+      </div>
+      <div style="text-align:center;margin:8px 0;color:var(--muted);font-size:0.8rem">ýa-da</div>
+      <div class="form-group">
+        <label class="btn btn-outline" style="cursor:pointer;width:100%;justify-content:center">
+          <i data-lucide="upload"></i> Faýldan Ýükle
+          <input type="file" accept="image/*" style="display:none" onchange="loadImageFile(this)"/>
+        </label>
+      </div>
+      <div class="form-group"><label class="form-label">Bellik</label><input class="form-input" id="gallery-label" placeholder="Zal Bezegi"/></div>
+      <div class="form-group"><label class="form-label">Kategoriýa</label>
+        <select class="form-select" id="gallery-cat">
+          <option value="hall">Zal</option>
+          <option value="wedding">Toý</option>
+          <option value="food">Tagam</option>
+          <option value="decor">Bezeg</option>
+          <option value="team">Topar</option>
+        </select>
+      </div>
+      <div id="gallery-preview" style="margin-top:8px;display:none">
+        <img id="gallery-preview-img" style="width:100%;border-radius:8px;max-height:150px;object-fit:cover"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-gallery')">Ýap</button>
+      <button class="btn btn-primary" onclick="saveGalleryItem()"><i data-lucide="save"></i> Goş</button>
+    </div>
+  </div>
+</div>
+
+<!-- STAFF MODAL -->
+<div class="modal-overlay" id="modal-staff">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="staff-modal-title">Täze Işgär</div>
+      <button class="modal-close" onclick="closeModal('modal-staff')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="staff-edit-id"/>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Ady Familiýasy *</label><input class="form-input" id="staff-name"/></div>
+        <div class="form-group"><label class="form-label">Wezipesi *</label><input class="form-input" id="staff-position"/></div>
+        <div class="form-group"><label class="form-label">Bölüm</label>
+          <select class="form-select" id="staff-dept-input">
+            <option value="decor">Bezeg</option>
+            <option value="kitchen">Aşhana</option>
+            <option value="event">Çäre</option>
+            <option value="tech">Tehniki</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Telefon</label><input class="form-input" id="staff-phone"/></div>
+        <div class="form-group"><label class="form-label">E-poçta</label><input class="form-input" id="staff-email"/></div>
+        <div class="form-group"><label class="form-label">Işe Başlan Güni</label><input class="form-input" type="date" id="staff-hire-date"/></div>
+        <div class="form-group"><label class="form-label">Aýlygy (TMT)</label><input class="form-input" type="number" id="staff-salary"/></div>
+        <div class="form-group" style="display:flex;align-items:flex-end">
+          <label class="checkbox-wrap"><input type="checkbox" id="staff-active" checked/> Işleýär</label>
+        </div>
+        <div class="form-group col-span-2"><label class="form-label">Bellik</label><textarea class="form-textarea" id="staff-notes"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-staff')">Ýap</button>
+      <button class="btn btn-primary" onclick="saveStaff()"><i data-lucide="save"></i> Sakla</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="modal-payment">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title">Töleg Giriş</div>
+      <button class="modal-close" onclick="closeModal('modal-payment')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Bron ID *</label>
+        <select class="form-select" id="pay-booking-id"></select>
+      </div>
+      <div class="form-group"><label class="form-label">Töleg Möçberi (TMT) *</label><input class="form-input" type="number" id="pay-amount"/></div>
+      <div class="form-group"><label class="form-label">Töleg Görnüşi</label>
+        <select class="form-select" id="pay-type">
+          <option value="cash">Nagt</option>
+          <option value="transfer">Bank Geçiriş</option>
+          <option value="card">Kart</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Töleg Senesi *</label><input class="form-input" type="date" id="pay-date"/></div>
+      <div class="form-group"><label class="form-label">Amalat №</label><input class="form-input" id="pay-ref" placeholder="TXN-..."/></div>
+      <div class="form-group"><label class="form-label">Bellik</label><textarea class="form-textarea" id="pay-note" style="min-height:60px"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-payment')">Ýap</button>
+      <button class="btn btn-primary" onclick="savePayment()"><i data-lucide="save"></i> Sakla</button>
+    </div>
+  </div>
+</div>
+
+<!-- USER MODAL -->
+<div class="modal-overlay" id="modal-user">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title" id="user-modal-title">Ulanyjy Goş</div>
+      <button class="modal-close" onclick="closeModal('modal-user')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="user-edit-id"/>
+      <div class="form-group"><label class="form-label">Ady *</label><input class="form-input" id="user-name"/></div>
+      <div class="form-group"><label class="form-label">Login *</label><input class="form-input" id="user-login"/></div>
+      <div class="form-group"><label class="form-label">Parol *</label>
+        <div class="input-wrap">
+          <input class="form-input" type="password" id="user-password"/>
+          <button class="input-eye" onclick="togglePwd('user-password',this)"><i data-lucide="eye" style="width:16px;height:16px"></i></button>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Rol *</label>
+        <select class="form-select" id="user-role">
+          <option value="superadmin">Superadmin</option>
+          <option value="manager">Menejer</option>
+          <option value="receptionist">Kabul Işgäri</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="checkbox-wrap"><input type="checkbox" id="user-active" checked/> Aktiw</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-user')">Ýap</button>
+      <button class="btn btn-primary" onclick="saveUser()"><i data-lucide="save"></i> Sakla</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD COMM MODAL -->
+<div class="modal-overlay" id="modal-comm">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title">Habarlaşma Bellik Goş</div>
+      <button class="modal-close" onclick="closeModal('modal-comm')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="comm-booking-id"/>
+      <div class="form-group"><label class="form-label">Görnüş</label>
+        <select class="form-select" id="comm-type">
+          <option value="call">📞 Jaň</option>
+          <option value="whatsapp">💬 WhatsApp</option>
+          <option value="telegram">✈️ Telegram</option>
+          <option value="visit">🏠 Şahsy gelmek</option>
+          <option value="email">📧 E-poçta</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Bellik *</label><textarea class="form-textarea" id="comm-note" placeholder="Habarlaşmanyň mazmuny..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-comm')">Ýap</button>
+      <button class="btn btn-primary" onclick="saveComm()"><i data-lucide="save"></i> Goş</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+//  DATA LAYER
+// ═══════════════════════════════════════════════════════════════════
+const DB = {
+  get:(k)=>{try{return JSON.parse(localStorage.getItem('venue_'+k))||[];}catch{return[];}},
+  getObj:(k,def={})=>{try{return JSON.parse(localStorage.getItem('venue_'+k))||def;}catch{return def;}},
+  set:(k,v)=>localStorage.setItem('venue_'+k,JSON.stringify(v)),
+  add:(k,item)=>{const a=DB.get(k);a.push({...item,id:item.id||Date.now(),createdAt:new Date().toISOString()});DB.set(k,a);return a;},
+  update:(k,id,upd)=>{const a=DB.get(k).map(i=>i.id===id?{...i,...upd,updatedAt:new Date().toISOString()}:i);DB.set(k,a);return a;},
+  remove:(k,id)=>{const a=DB.get(k).filter(i=>i.id!==id);DB.set(k,a);return a;}
+};
+
+// ─── DEMO DATA ──────────────────────────────────────────────────────
+const DEFAULT_USERS=[
+  {id:1,name:'Baş Admin',login:'admin',password:'admin123',role:'superadmin',avatar:'BA',color:'#C9A843',active:true,lastLogin:new Date().toISOString()},
+  {id:2,name:'Menejer',login:'menejer',password:'menejer123',role:'manager',avatar:'MN',color:'#4F46E5',active:true,lastLogin:null},
+  {id:3,name:'Kabul Işgäri',login:'kabul',password:'kabul123',role:'receptionist',avatar:'KI',color:'#10B981',active:true,lastLogin:null}
+];
+const PERMISSIONS={
+  superadmin:['dashboard','bookings','halls','services','gallery','team','pricing','finance','reports','settings','users','notifications'],
+  manager:['dashboard','bookings','halls','services','gallery','team','pricing','finance','reports','notifications'],
+  receptionist:['dashboard','bookings','notifications']
+};
+const SAMPLE_BOOKINGS=[
+  {id:'BRN-2025-001',status:'confirmed',groom:{name:'Merdan Hydyrow',phone:'+993 65 123456'},bride:{name:'Aýgül Annagurbanowa',phone:'+993 62 654321'},weddingDate:'2025-07-15',weddingTime:'18:00',endTime:'02:00',hall:'sha',guestCount:350,package:'premium',services:['food_national','decor_full','music_band','photo_video'],specialNotes:'Daşary ýurtdan gelýän myhmanlary bar',pricePerPerson:250,totalPrice:87500,deposit:26250,depositPaid:true,depositDate:'2025-01-15',remainingAmount:61250,remainingPaid:false,source:'website',createdAt:'2025-01-15T10:23:00',assignedTo:2,internalNote:'Müşderi VIP',communications:[{date:'2025-01-15',type:'call',note:'Ilkinji jaň. Zal we bahalar bilen tanyşdyryldy.'},{date:'2025-01-16',type:'whatsapp',note:'Şertnama nusgasy iberildi.'},{date:'2025-01-18',type:'visit',note:'Şahsy geldi, zaly gördi. Şertnama gol çekildi.'}]},
+  {id:'BRN-2025-002',status:'pending',groom:{name:'Serdar Gurbanow',phone:'+993 65 234567'},bride:{name:'Läle Muradowa',phone:'+993 62 765432'},weddingDate:'2025-07-22',weddingTime:'17:00',endTime:'02:00',hall:'altyn',guestCount:120,package:'basic',services:['food_national'],specialNotes:'',pricePerPerson:240,totalPrice:28800,deposit:8640,depositPaid:false,remainingAmount:28800,remainingPaid:false,source:'instagram',createdAt:'2025-02-01T09:00:00',assignedTo:2,internalNote:'',communications:[]},
+  {id:'BRN-2025-003',status:'new',groom:{name:'Döwlet Amanow',phone:'+993 65 345678'},bride:{name:'Ogulgerek Haýytowa',phone:'+993 62 876543'},weddingDate:'2025-08-05',weddingTime:'18:00',endTime:'03:00',hall:'bahar',guestCount:200,package:'premium',services:['food_national','decor_full'],specialNotes:'Balkon gerek',pricePerPerson:210,totalPrice:42000,deposit:12600,depositPaid:false,remainingAmount:42000,remainingPaid:false,source:'phone',createdAt:'2025-02-10T14:00:00',assignedTo:2,internalNote:'',communications:[]},
+  {id:'BRN-2025-004',status:'confirmed',groom:{name:'Baýram Nurlyýew',phone:'+993 65 456789'},bride:{name:'Maýsa Ataýewa',phone:'+993 62 987654'},weddingDate:'2025-06-10',weddingTime:'17:00',endTime:'01:00',hall:'sha',guestCount:450,package:'luxury',services:['food_national','decor_full','music_band','photo_video'],specialNotes:'',pricePerPerson:300,totalPrice:135000,deposit:40500,depositPaid:true,depositDate:'2025-01-20',remainingAmount:94500,remainingPaid:false,source:'referral',createdAt:'2025-01-20T11:00:00',assignedTo:2,internalNote:'VIP müşderi',communications:[]},
+  {id:'BRN-2025-005',status:'completed',groom:{name:'Aýmyrat Orazow',phone:'+993 65 567890'},bride:{name:'Dürje Seýitliýewa',phone:'+993 62 098765'},weddingDate:'2025-03-15',weddingTime:'18:00',endTime:'02:00',hall:'altyn',guestCount:180,package:'premium',services:['food_national','music_band'],specialNotes:'',pricePerPerson:240,totalPrice:43200,deposit:12960,depositPaid:true,remainingAmount:0,remainingPaid:true,source:'website',createdAt:'2024-12-01T10:00:00',assignedTo:2,internalNote:'',communications:[]},
+  {id:'BRN-2025-006',status:'cancelled',groom:{name:'Myrat Gurbangeldiyew',phone:'+993 65 678901'},bride:{name:'Gülnara Annadurdyýewa',phone:'+993 62 109876'},weddingDate:'2025-05-20',weddingTime:'17:00',endTime:'01:00',hall:'bahar',guestCount:100,package:'basic',services:['food_national'],specialNotes:'',pricePerPerson:200,totalPrice:20000,deposit:0,depositPaid:false,remainingAmount:20000,remainingPaid:false,source:'phone',createdAt:'2025-01-05T09:00:00',assignedTo:3,internalNote:'Müşderi ýatyrdy',communications:[]},
+  {id:'BRN-2025-007',status:'pending',groom:{name:'Hemra Ýollyýew',phone:'+993 65 789012'},bride:{name:'Altyn Omarowa',phone:'+993 62 210987'},weddingDate:'2025-09-12',weddingTime:'18:00',endTime:'03:00',hall:'sha',guestCount:400,package:'luxury',services:['food_national','decor_full','music_band','photo_video'],specialNotes:'Aýratyn giriş gerek',pricePerPerson:280,totalPrice:112000,deposit:33600,depositPaid:false,remainingAmount:112000,remainingPaid:false,source:'instagram',createdAt:'2025-02-15T10:00:00',assignedTo:2,internalNote:'',communications:[]},
+  {id:'BRN-2025-008',status:'new',groom:{name:'Nurmuhammet Orazdurdyýew',phone:'+993 65 890123'},bride:{name:'Gülälek Aşyrowa',phone:'+993 62 321098'},weddingDate:'2025-10-25',weddingTime:'17:00',endTime:'02:00',hall:'altyn',guestCount:130,package:'premium',services:['food_national','photo_video'],specialNotes:'',pricePerPerson:250,totalPrice:32500,deposit:9750,depositPaid:false,remainingAmount:32500,remainingPaid:false,source:'walk_in',createdAt:'2025-02-18T16:00:00',assignedTo:3,internalNote:'',communications:[]}
+];
+const SAMPLE_HALLS=[
+  {id:'sha',name:'Şa Zaly',emoji:'👑',capacity:500,area:800,price:250,status:'open',desc:'Iň uly we lýuks zalymyz. Kristal çyralar we aýratyn giriş.',features:['stage','crystal','led','entrance','vip','parking']},
+  {id:'bahar',name:'Bahar Zaly',emoji:'🌸',capacity:300,area:500,price:210,status:'open',desc:'Ýakymly atmosfera bilen orta möçberli toýlar üçin amatly.',features:['stage','crystal','entrance']},
+  {id:'altyn',name:'Altyn Zal',emoji:'✨',capacity:150,area:280,price:200,status:'open',desc:'Kiçiräk we ýakyn toýlar üçin amatly, altyn bezeg.',features:['stage','led']},
+  {id:'howly',name:'Açyk Howly',emoji:'🌿',capacity:400,area:1200,price:180,status:'maintenance',desc:'Uly açyk howly meýdany, ýaz-tomus döwri üçin.',features:['parking']}
+];
+const SAMPLE_SERVICES=[
+  {id:'food_national',category:'food',name:'Premium Milli Tagam',desc:'Türkmen milli tagamlary, doly hyzmat bilen',priceType:'per_person',price:120,active:true,bookingsCount:45},
+  {id:'food_intl',category:'food',name:'Halkara Tagam Menu',desc:'Dünýä tagamlary saýlamasy',priceType:'per_person',price:150,active:true,bookingsCount:22},
+  {id:'decor_full',category:'decor',name:'Doly Gül Bezeg',desc:'Içerde we daşarda doly gül bezeg',priceType:'fixed',price:3500,active:true,bookingsCount:38},
+  {id:'decor_basic',category:'decor',name:'Esasy Bezeg',desc:'Esasy stol we giriş bezegi',priceType:'fixed',price:1500,active:true,bookingsCount:15},
+  {id:'music_band',category:'music',name:'Saz Topary',desc:'5 adamdan ybarat professional saz topary',priceType:'fixed',price:2000,active:true,bookingsCount:30},
+  {id:'music_dj',category:'music',name:'DJ Ulgamy',desc:'Kisä ulgamy we DJ hyzmat',priceType:'fixed',price:1200,active:true,bookingsCount:18},
+  {id:'photo_video',category:'photo',name:'Foto & Wideo',desc:'Doly gün foto we wideo ýazgy',priceType:'fixed',price:2500,active:true,bookingsCount:41},
+  {id:'photo_only',category:'photo',name:'Diňe Foto',desc:'Doly gün professional fotograf',priceType:'fixed',price:1500,active:true,bookingsCount:20},
+  {id:'hotel_vip',category:'hotel',name:'VIP Otag',desc:'Gelin-ýigit üçin VIP myhmanhana otag',priceType:'fixed',price:500,active:true,bookingsCount:12},
+  {id:'transport',category:'transport',name:'Gelin Awtoulag',desc:'Owadan bezelen awtoulag',priceType:'fixed',price:800,active:true,bookingsCount:35}
+];
+const SAMPLE_GALLERY=[
+  {id:1,type:'gradient',src:'linear-gradient(135deg,#C9A843,#1C1730)',label:'Şa Zaly',category:'hall',order:1,active:true,emoji:'👑'},
+  {id:2,type:'gradient',src:'linear-gradient(135deg,#4F46E5,#0D0A1A)',label:'Bahar Zaly',category:'hall',order:2,active:true,emoji:'🌸'},
+  {id:3,type:'gradient',src:'linear-gradient(135deg,#10B981,#070510)',label:'Açyk Howly',category:'hall',order:3,active:true,emoji:'🌿'},
+  {id:4,type:'gradient',src:'linear-gradient(135deg,#EF4444,#1C1730)',label:'Toý Agşamy',category:'wedding',order:4,active:true,emoji:'💒'},
+  {id:5,type:'gradient',src:'linear-gradient(135deg,#F59E0B,#070510)',label:'Gül Bezeg',category:'decor',order:5,active:true,emoji:'💐'},
+  {id:6,type:'gradient',src:'linear-gradient(135deg,#06B6D4,#0D0A1A)',label:'Tagam',category:'food',order:6,active:true,emoji:'🍽️'}
+];
+const SAMPLE_STAFF=[
+  {id:1,name:'Maýagül Nurlyýewa',position:'Baş Florist',department:'decor',phone:'+993 65 111111',email:'mayagul@venue.tm',hireDate:'2020-03-15',salary:2500,active:true,assignedEvents:145,notes:''},
+  {id:2,name:'Güljeren Orazowa',position:'Tamada',department:'event',phone:'+993 62 222222',email:'guljeren@venue.tm',hireDate:'2019-06-01',salary:3000,active:true,assignedEvents:200,notes:''},
+  {id:3,name:'Mekan Amanow',position:'Baş Aşpez',department:'kitchen',phone:'+993 65 333333',email:'mekan@venue.tm',hireDate:'2018-01-20',salary:3500,active:true,assignedEvents:180,notes:''},
+  {id:4,name:'Aýbölek Muradowa',position:'Foto & Wideo Ussady',department:'tech',phone:'+993 62 444444',email:'aybolek@venue.tm',hireDate:'2021-07-10',salary:2800,active:true,assignedEvents:120,notes:''},
+  {id:5,name:'Döwran Ataýew',position:'Administrator',department:'admin',phone:'+993 65 555555',email:'dowran@venue.tm',hireDate:'2022-01-01',salary:2000,active:true,assignedEvents:0,notes:''}
+];
+const DEFAULT_SETTINGS={
+  name:'Şa Toý Mekany',tagline:'Premium Toý Mekany',
+  phone:'+993 12 345678',phone2:'+993 65 123456',
+  address:'Bitarap Türkmenistan şaýoly 120',city:'Aşgabat',
+  email:'info@shatok.tm',telegram:'shatoy',instagram:'shatoy_tm',
+  depositPct:30,paymentDays:7,
+  cash:true,transfer:true,card:true,
+  hours:{mon:{open:'09:00',close:'20:00',active:true},tue:{open:'09:00',close:'20:00',active:true},wed:{open:'09:00',close:'20:00',active:true},thu:{open:'09:00',close:'20:00',active:true},fri:{open:'09:00',close:'20:00',active:true},sat:{open:'09:00',close:'18:00',active:true},sun:{open:'',close:'',active:false}}
+};
+const SAMPLE_NOTIFICATIONS=[
+  {id:1,type:'new_booking',icon:'📅',msg:'Täze bron geldi — Nurmuhammet & Gülälek',sub:'BRN-2025-008 · 2 min öň',read:false,link:'bookings'},
+  {id:2,type:'payment',icon:'💰',msg:'Töleg alyndy — BRN-2025-001',sub:'26,250 TMT öňpul · 30 min öň',read:false,link:'finance'},
+  {id:3,type:'conflict',icon:'⚠️',msg:'Üns: Garaşýan bronlar bar',sub:'7 bron tassyklanmadyk · 1 sag öň',read:false,link:'bookings'},
+  {id:4,type:'reminder',icon:'📅',msg:'Ertir toý bar — Serdar & Läle',sub:'Altyn Zal, 120 myhman · 14 sag öň',read:true,link:'bookings'},
+  {id:5,type:'info',icon:'ℹ️',msg:'Sistem sazlamalary täzelendi',sub:'Düýn',read:true,link:'settings'}
+];
+const PACKAGES=[
+  {id:'basic',name:'Başlangyç',price:'200',services:['food_national'],desc:'Esasy paket',visible:true},
+  {id:'premium',name:'Premium',price:'250',services:['food_national','decor_full','music_band'],desc:'Meşhur saýlaw',visible:true},
+  {id:'luxury',name:'Lýuks',price:'300',services:['food_national','decor_full','music_band','photo_video','hotel_vip','transport'],desc:'Doly hyzmat',visible:true}
+];
+const NOTIF_SETTINGS=[
+  {id:'new_booking',label:'Täze bron gelende habar et',enabled:true},
+  {id:'payment',label:'Töleg alynanda habar et',enabled:true},
+  {id:'conflict',label:'Bron çaknyşygynda habar et',enabled:true},
+  {id:'reminder',label:'Toýdan 1 gün öň ýatlatma',enabled:true},
+  {id:'overdue',label:'Galanja töleg möhleti geçende',enabled:true},
+  {id:'daily',label:'Her gün hasabat al (09:00-da)',enabled:false}
+];
+const DAYS_TM=['Du','Si','Çar','Pe','An','Şen','Ýek'];
+const MONTHS_TM=['Ýanwar','Fewral','Mart','Aprel','Maý','Iýun','Iýul','Awgust','Sentýabr','Oktýabr','Noýabr','Dekabr'];
+const MONTHS_SHORT=['Ýan','Few','Mar','Apr','Maý','Iýun','Iýul','Awg','Sen','Okt','Noý','Des'];
+
+function initDemoData(){
+  if(!localStorage.getItem('venue_initialized')){
+    DB.set('bookings',SAMPLE_BOOKINGS);
+    DB.set('halls',SAMPLE_HALLS);
+    DB.set('services',SAMPLE_SERVICES);
+    DB.set('gallery',SAMPLE_GALLERY);
+    DB.set('staff',SAMPLE_STAFF);
+    DB.set('settings',DEFAULT_SETTINGS);
+    DB.set('users',DEFAULT_USERS);
+    DB.set('notifications',SAMPLE_NOTIFICATIONS);
+    DB.set('packages',PACKAGES);
+    DB.set('notif_settings',NOTIF_SETTINGS);
+    localStorage.setItem('venue_initialized','true');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════════════════════
+let currentUser=null;
+function doLogin(){
+  const u=document.getElementById('login-username').value.trim();
+  const p=document.getElementById('login-password').value;
+  const users=DB.get('users');
+  const found=users.find(x=>x.login===u&&x.password===p&&x.active!==false);
+  if(!found){
+    const err=document.getElementById('login-error');
+    const card=document.getElementById('login-card');
+    err.style.display='block';
+    card.classList.remove('shake');
+    void card.offsetWidth;
+    card.classList.add('shake');
+    return;
+  }
+  DB.update('users',found.id,{lastLogin:new Date().toISOString()});
+  currentUser={...found};
+  if(document.getElementById('login-remember').checked){
+    localStorage.setItem('venue_session',JSON.stringify({id:found.id,login:found.login}));
+  }
+  startApp();
+}
+document.getElementById('login-password').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('login-username').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login-password').focus();});
+
+function restoreSession(){
+  const s=localStorage.getItem('venue_session');
+  if(s){
+    const sess=JSON.parse(s);
+    const users=DB.get('users');
+    const found=users.find(x=>x.id===sess.id&&x.login===sess.login&&x.active!==false);
+    if(found){currentUser={...found};return true;}
+  }
+  return false;
+}
+function doLogout(){
+  localStorage.removeItem('venue_session');
+  currentUser=null;
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('login-username').value='';
+  document.getElementById('login-password').value='';
+  document.getElementById('login-error').style.display='none';
+}
+function startApp(){
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('app').classList.add('visible');
+  // Update UI with user info
+  const av=document.getElementById('sb-avatar');
+  av.textContent=currentUser.avatar||currentUser.name.slice(0,2).toUpperCase();
+  av.style.background=currentUser.color||'#C9A843';
+  document.getElementById('sb-username').textContent=currentUser.name;
+  document.getElementById('sb-role').textContent=roleLabel(currentUser.role);
+  document.getElementById('top-avatar').textContent=currentUser.avatar||currentUser.name.slice(0,2).toUpperCase();
+  document.getElementById('top-avatar').style.background=currentUser.color||'#C9A843';
+  document.getElementById('top-username').textContent=currentUser.name.split(' ')[0];
+  // Settings venue name
+  const cfg=DB.getObj('settings',DEFAULT_SETTINGS);
+  document.getElementById('sb-venue-name').textContent=cfg.name||'Toý Mekany';
+  // Show/hide nav items based on role
+  const perms=PERMISSIONS[currentUser.role]||[];
+  document.querySelectorAll('.nav-item[data-section]').forEach(el=>{
+    const s=el.dataset.section;
+    el.style.display=perms.includes(s)?'':'none';
+  });
+  if(currentUser.role==='superadmin') document.getElementById('nav-users').style.display='';
+  lucide.createIcons();
+  navigate('dashboard',document.querySelector('[data-section=dashboard]'));
+}
+function roleLabel(r){return{superadmin:'Superadmin',manager:'Menejer',receptionist:'Kabul Işgäri'}[r]||r;}
+function togglePwd(id,btn){
+  const inp=document.getElementById(id);
+  if(inp.type==='password'){inp.type='text';btn.innerHTML='<i data-lucide="eye-off" style="width:16px;height:16px"></i>';}
+  else{inp.type='password';btn.innerHTML='<i data-lucide="eye" style="width:16px;height:16px"></i>';}
+  lucide.createIcons();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════════════════
+const SECTION_TITLES={
+  dashboard:'Dolandyryş Tagtasy',bookings:'Bron Dolandyrma',halls:'Zal Dolandyrma',
+  services:'Hyzmat Dolandyrma',gallery:'Galereýa',team:'Topar & Işgärler',
+  finance:'Maliýe',reports:'Hasabatlar',notifications:'Bildirişler',
+  users:'Ulanyjylar',settings:'Ulgam Sazlamalary'
+};
+function navigate(section,el){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const sec=document.getElementById('sec-'+section);
+  if(sec) sec.classList.add('active');
+  if(el) el.classList.add('active');
+  document.getElementById('topbar-title').textContent=SECTION_TITLES[section]||section;
+  renderSection(section);
+  if(window.innerWidth<=768) closeSidebar();
+}
+function renderSection(s){
+  switch(s){
+    case 'dashboard': renderDashboard(); break;
+    case 'bookings': renderBookings(); renderFullCalendar(); break;
+    case 'halls': renderHalls(); break;
+    case 'services': renderServices(); break;
+    case 'gallery': renderGallery(); break;
+    case 'team': renderStaff(); break;
+    case 'finance': renderFinance(); renderFinanceCharts(); break;
+    case 'reports': renderReports(); break;
+    case 'notifications': renderNotifications(); break;
+    case 'users': renderUsers(); break;
+    case 'settings': loadSettings(); break;
+  }
+}
+
+// Sidebar collapse
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  sb.classList.toggle('collapsed');
+  const icon=document.getElementById('collapse-icon');
+  if(sb.classList.contains('collapsed')){
+    icon.setAttribute('data-lucide','panel-left-open');
+  } else {
+    icon.setAttribute('data-lucide','panel-left-close');
+  }
+  lucide.createIcons();
+}
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('mobile-open');
+  document.getElementById('sidebar-overlay').classList.add('visible');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('sidebar-overlay').classList.remove('visible');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  TOAST & CONFIRM
+// ═══════════════════════════════════════════════════════════════════
+function showToast(msg,type='success'){
+  const colors={success:getComputedStyle(document.documentElement).getPropertyValue('--success').trim(),error:'#EF4444',warning:'#F59E0B',info:'#06B6D4'};
+  const icons={success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
+  const t=document.createElement('div');
+  t.className='toast';
+  t.style.borderLeft=`3px solid ${colors[type]}`;
+  t.innerHTML=`<span>${icons[type]}</span><span>${msg}</span>`;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(()=>{t.style.animation='slideOutRight 0.3s ease forwards';setTimeout(()=>t.remove(),300);},3500);
+}
+let _confirmCb=null;
+function confirmAction(msg,cb,danger=false,icon='⚠️'){
+  _confirmCb=cb;
+  document.getElementById('confirm-msg').textContent=msg;
+  document.getElementById('confirm-icon').textContent=icon;
+  const btn=document.getElementById('confirm-ok-btn');
+  btn.className='btn '+(danger?'btn-danger':'btn-primary');
+  btn.textContent='Hawa, Dowam Et';
+  document.getElementById('confirm-overlay').classList.add('open');
+}
+function confirmOk(){
+  document.getElementById('confirm-overlay').classList.remove('open');
+  if(_confirmCb) _confirmCb();
+}
+function confirmClose(){
+  document.getElementById('confirm-overlay').classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  MODALS
+// ═══════════════════════════════════════════════════════════════════
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+  setTimeout(()=>lucide.createIcons(),50);
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});
+});
+
+// ═══════════════════════════════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════════════════════════════
+let revChart=null,hallChart=null;
+let miniCalDate=new Date();
+
+function renderDashboard(){
+  renderKPIs();
+  renderDashboardBookings();
+  renderMiniCalendar();
+  renderRevenueChart();
+  renderHallChart();
+  updateNotifBadge();
+}
+function renderKPIs(){
+  const bookings=DB.get('bookings');
+  const now=new Date();
+  const thisMonth=now.getMonth(),thisYear=now.getFullYear();
+  const prev=new Date(now);prev.setMonth(prev.getMonth()-1);
+  const prevMonth=prev.getMonth(),prevYear=prev.getFullYear();
+
+  const monthBk=bookings.filter(b=>{const d=new Date(b.weddingDate);return d.getMonth()===thisMonth&&d.getFullYear()===thisYear&&b.status!=='cancelled';});
+  const prevBk=bookings.filter(b=>{const d=new Date(b.weddingDate);return d.getMonth()===prevMonth&&d.getFullYear()===prevYear&&b.status!=='cancelled';});
+  const monthRev=monthBk.reduce((a,b)=>a+b.totalPrice,0);
+  const prevRev=prevBk.reduce((a,b)=>a+b.totalPrice,0);
+  const pending=bookings.filter(b=>b.status==='pending'||b.status==='new');
+  const halls=DB.get('halls');
+  const activePct=halls.length?Math.round(halls.filter(h=>h.status==='open').length/halls.length*100):0;
+
+  const pct=(a,b)=>{if(!b)return 0;return Math.round((a-b)/b*100);};
+  const kpis=[
+    {icon:'📅',label:'Bu Aý Bron',val:monthBk.length,change:pct(monthBk.length,prevBk.length),bar:Math.min(100,monthBk.length*5),color:'#C9A843'},
+    {icon:'💰',label:'Bu Aý Girdeji',val:fmtMoney(monthRev)+' TMT',change:pct(monthRev,prevRev),bar:Math.min(100,Math.round(monthRev/2000)),color:'#10B981'},
+    {icon:'⏳',label:'Garaşýan Bronlar',val:pending.length,change:null,bar:Math.min(100,pending.length*15),color:'#F59E0B',warn:pending.length>5},
+    {icon:'🏛️',label:'Açyk Zallar',val:halls.filter(h=>h.status==='open').length+'/'+halls.length,change:null,bar:activePct,color:'#06B6D4'}
+  ];
+  document.getElementById('pending-count').textContent=pending.length;
+  document.getElementById('kpi-grid').innerHTML=kpis.map(k=>`
+    <div class="kpi-card">
+      <div class="kpi-icon" style="background:${k.color}20;font-size:22px">${k.icon}</div>
+      <div class="kpi-value" style="color:${k.warn?'var(--warning)':'var(--text)'}">${k.val}</div>
+      <div class="kpi-label">${k.label}</div>
+      ${k.change!==null?`<div class="kpi-change ${k.change>=0?'up':'down'}">${k.change>=0?'▲':'▼'} ${Math.abs(k.change)}% geçen aý</div>`:
+        k.warn?'<div class="kpi-change down">!! Üns gerek</div>':'<div class="kpi-change" style="color:var(--muted)">Bu hepde</div>'}
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${k.bar}%;background:${k.color}"></div></div>
+    </div>`).join('');
+}
+function renderDashboardBookings(){
+  const bookings=DB.get('bookings');
+  const recent=[...bookings].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,6);
+  document.getElementById('dashboard-bookings-tbody').innerHTML=recent.map(b=>`
+    <tr>
+      <td>${fmtDate(b.weddingDate)}</td>
+      <td><strong>${b.groom.name.split(' ')[0]}</strong> & <strong>${b.bride.name.split(' ')[0]}</strong></td>
+      <td>${hallName(b.hall)}</td>
+      <td>${b.guestCount}</td>
+      <td>${fmtMoney(b.totalPrice)}</td>
+      <td>${statusBadge(b.status)}</td>
+      <td>
+        <div class="actions-cell">
+          <button class="tbl-btn" onclick="viewBooking('${b.id}')" title="Gör"><i data-lucide="eye" style="width:13px;height:13px"></i></button>
+          <button class="tbl-btn" onclick="editBooking('${b.id}')" title="Düzet"><i data-lucide="edit-2" style="width:13px;height:13px"></i></button>
+        </div>
+      </td>
+    </tr>`).join('');
+  lucide.createIcons();
+}
+function renderMiniCalendar(){
+  const y=miniCalDate.getFullYear(),m=miniCalDate.getMonth();
+  const bookings=DB.get('bookings').filter(b=>b.status!=='cancelled');
+  const today=new Date();
+  const first=new Date(y,m,1);
+  const last=new Date(y,m+1,0);
+  let startDow=(first.getDay()+6)%7; // Mon=0
+  document.getElementById('mini-cal').innerHTML=`
+    <div class="mini-cal-header">
+      <span class="mini-cal-title">${MONTHS_TM[m]} ${y}</span>
+    </div>
+    <div class="mini-cal-grid">
+      ${DAYS_TM.map(d=>`<div class="mini-cal-dow">${d}</div>`).join('')}
+      ${Array(startDow).fill('<div></div>').join('')}
+      ${Array.from({length:last.getDate()},(_,i)=>{
+        const day=i+1;
+        const dateStr=`${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        const dayBk=bookings.filter(b=>b.weddingDate===dateStr);
+        const isToday=today.getDate()===day&&today.getMonth()===m&&today.getFullYear()===y;
+        let cls=isToday?'today':'';
+        if(dayBk.length>=2) cls+=' full';
+        else if(dayBk.length===1) cls+=' has-booking';
+        return `<div class="mini-cal-day ${cls}" onclick="showDayBookings('${dateStr}')">${day}${dayBk.length?'<span class="booking-dot"></span>':''}</div>`;
+      }).join('')}
+    </div>`;
+}
+function showDayBookings(dateStr){
+  const bookings=DB.get('bookings').filter(b=>b.weddingDate===dateStr&&b.status!=='cancelled');
+  const popup=document.getElementById('cal-day-popup');
+  if(!bookings.length){popup.style.display='none';return;}
+  popup.style.display='block';
+  popup.innerHTML=`<div style="font-size:0.8rem;color:var(--muted);margin-bottom:6px">${fmtDate(dateStr)} — Bronlar:</div>`+
+    bookings.map(b=>`<div style="background:var(--surface2);border-radius:8px;padding:8px 10px;margin-bottom:4px;font-size:0.82rem">
+      <strong>${b.groom.name.split(' ')[0]} & ${b.bride.name.split(' ')[0]}</strong> — ${hallName(b.hall)} ${statusBadge(b.status)}
+    </div>`).join('');
+}
+function calNav(dir){
+  miniCalDate.setMonth(miniCalDate.getMonth()+dir);
+  renderMiniCalendar();
+}
+function renderRevenueChart(){
+  const ctx=document.getElementById('revenue-chart');
+  if(!ctx) return;
+  if(revChart) revChart.destroy();
+  const now=new Date();
+  const labels=[],data=[];
+  const bookings=DB.get('bookings');
+  for(let i=5;i>=0;i--){
+    const d=new Date(now);d.setMonth(d.getMonth()-i);
+    labels.push(MONTHS_SHORT[d.getMonth()]);
+    const rev=bookings.filter(b=>{
+      const bd=new Date(b.weddingDate);
+      return bd.getMonth()===d.getMonth()&&bd.getFullYear()===d.getFullYear()&&b.status!=='cancelled';
+    }).reduce((a,b)=>a+b.totalPrice,0);
+    data.push(rev||Math.floor(Math.random()*80000+30000));
+  }
+  revChart=new Chart(ctx,{type:'line',data:{labels,datasets:[{data,borderColor:'#C9A843',backgroundColor:'rgba(201,168,67,0.08)',borderWidth:2,tension:0.4,fill:true,pointBackgroundColor:'#C9A843',pointRadius:4,pointHoverRadius:7}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#6B5F80'}},y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#6B5F80',callback:v=>fmtMoney(v)}}}}});
+}
+function renderHallChart(){
+  const ctx=document.getElementById('hall-chart');
+  if(!ctx) return;
+  if(hallChart) hallChart.destroy();
+  const halls=DB.get('halls');
+  const bookings=DB.get('bookings').filter(b=>b.status!=='cancelled');
+  const labels=halls.map(h=>h.name);
+  const data=halls.map(h=>{
+    const cnt=bookings.filter(b=>b.hall===h.id).length;
+    return cnt?Math.round(cnt/bookings.length*100)||Math.floor(Math.random()*60+30):Math.floor(Math.random()*60+30);
+  });
+  hallChart=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:['#C9A843','#4F46E5','#10B981','#06B6D4'],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#6B5F80',font:{size:11}}}}}});
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  BOOKINGS
+// ═══════════════════════════════════════════════════════════════════
+let bkPage=1;
+let editingBookingId=null;
+
+function renderBookings(){
+  const bookings=DB.get('bookings');
+  const search=(document.getElementById('bk-search').value||'').toLowerCase();
+  const status=document.getElementById('bk-status').value;
+  const hall=document.getElementById('bk-hall').value;
+  const dateFrom=document.getElementById('bk-date-from').value;
+  const dateTo=document.getElementById('bk-date-to').value;
+
+  let filtered=bookings.filter(b=>{
+    if(status&&b.status!==status) return false;
+    if(hall&&b.hall!==hall) return false;
+    if(dateFrom&&b.weddingDate<dateFrom) return false;
+    if(dateTo&&b.weddingDate>dateTo) return false;
+    if(search){
+      const s=search;
+      return b.id.toLowerCase().includes(s)||b.groom.name.toLowerCase().includes(s)||b.bride.name.toLowerCase().includes(s)||
+        (b.groom.phone||'').includes(s)||(b.bride.phone||'').includes(s);
+    }
+    return true;
+  }).sort((a,b)=>new Date(a.weddingDate)-new Date(b.weddingDate));
+
+  document.getElementById('bookings-count-label').textContent=`${filtered.length} bron tapyldy`;
+
+  const pageSize=parseInt(document.getElementById('bk-page-size').value)||10;
+  const totalPages=Math.ceil(filtered.length/pageSize)||1;
+  if(bkPage>totalPages) bkPage=1;
+  const page=filtered.slice((bkPage-1)*pageSize,bkPage*pageSize);
+
+  document.getElementById('bookings-tbody').innerHTML=page.map(b=>`
+    <tr>
+      <td><input type="checkbox" class="bk-row-check" value="${b.id}"/></td>
+      <td><a style="color:var(--gold);cursor:pointer;font-size:0.8rem;font-weight:600" onclick="viewBooking('${b.id}')">${b.id}</a></td>
+      <td>${fmtDate(b.weddingDate)}</td>
+      <td><strong>${b.groom.name.split(' ')[0]}</strong> & ${b.bride.name.split(' ')[0]}</td>
+      <td>${hallName(b.hall)}</td>
+      <td>${b.guestCount}</td>
+      <td>${fmtMoney(b.totalPrice)}</td>
+      <td style="color:${b.remainingPaid?'var(--success)':'var(--warning)'}">${b.remainingPaid?0:fmtMoney(b.remainingAmount)}</td>
+      <td>${statusBadge(b.status)}</td>
+      <td><span style="font-size:0.75rem;color:var(--muted)">${sourceLabel(b.source)}</span></td>
+      <td>
+        <div class="actions-cell">
+          <button class="tbl-btn" onclick="viewBooking('${b.id}')" title="Gör"><i data-lucide="eye" style="width:12px;height:12px"></i></button>
+          <button class="tbl-btn" onclick="editBooking('${b.id}')" title="Düzet"><i data-lucide="edit-2" style="width:12px;height:12px"></i></button>
+          <button class="tbl-btn" onclick="callBooking('${b.id}')" title="Habarlaş"><i data-lucide="phone" style="width:12px;height:12px"></i></button>
+          <button class="tbl-btn danger" onclick="deleteBooking('${b.id}')" title="Öçür"><i data-lucide="trash-2" style="width:12px;height:12px"></i></button>
+        </div>
+      </td>
+    </tr>`).join('');
+
+  document.getElementById('bk-pagination-info').textContent=`${(bkPage-1)*pageSize+1}–${Math.min(bkPage*pageSize,filtered.length)} / ${filtered.length}`;
+
+  let btns='';
+  for(let i=1;i<=totalPages;i++){
+    btns+=`<button class="page-btn${i===bkPage?' active':''}" onclick="bkPage=${i};renderBookings()">${i}</button>`;
+  }
+  document.getElementById('bk-pagination-btns').innerHTML=btns;
+  lucide.createIcons();
+}
+function filterBookingStatus(s){
+  document.getElementById('bk-status').value=s;
+  renderBookings();
+}
+function toggleSelectAll(cb){
+  document.querySelectorAll('.bk-row-check').forEach(c=>c.checked=cb.checked);
+}
+function setBookingView(v){
+  document.getElementById('bk-list-view').style.display=v==='list'?'block':'none';
+  document.getElementById('bk-cal-view').style.display=v==='calendar'?'block':'none';
+  document.getElementById('bk-view-list').className='tab'+(v==='list'?' active':'');
+  document.getElementById('bk-view-cal').className='tab'+(v==='calendar'?' active':'');
+  if(v==='calendar') renderFullCalendar();
+}
+
+// Full calendar
+let fullCalDate=new Date();
+function renderFullCalendar(){
+  const y=fullCalDate.getFullYear(),m=fullCalDate.getMonth();
+  document.getElementById('full-cal-title').textContent=`${MONTHS_TM[m]} ${y}`;
+  const bookings=DB.get('bookings').filter(b=>b.status!=='cancelled');
+  const first=new Date(y,m,1);
+  const last=new Date(y,m+1,0);
+  let startDow=(first.getDay()+6)%7;
+  const today=new Date();
+  let cells='';
+  for(let i=0;i<startDow;i++) cells+=`<div class="cal-cell other-month"></div>`;
+  for(let d=1;d<=last.getDate();d++){
+    const dateStr=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayBk=bookings.filter(b=>b.weddingDate===dateStr);
+    const isToday=today.getDate()===d&&today.getMonth()===m&&today.getFullYear()===y;
+    const conflicts=checkConflicts(dayBk);
+    cells+=`<div class="cal-cell${isToday?' today':''}">
+      <div class="cal-cell-day">${d}</div>
+      ${dayBk.map(b=>`<div class="cal-event ${conflicts.some(c=>c.id===b.id)?'conflict':b.status}" onclick="viewBooking('${b.id}')" title="${b.groom.name} & ${b.bride.name}">
+        ${b.groom.name.split(' ')[0]} & ${b.bride.name.split(' ')[0]}
+      </div>`).join('')}
+    </div>`;
+  }
+  document.getElementById('full-cal-grid').innerHTML=cells;
+}
+function fullCalNav(dir){
+  fullCalDate.setMonth(fullCalDate.getMonth()+dir);
+  renderFullCalendar();
+}
+function checkConflicts(bookings){
+  return bookings.filter((b1,i)=>bookings.some((b2,j)=>i!==j&&b1.hall===b2.hall));
+}
+
+// View booking
+function viewBooking(id){
+  const b=DB.get('bookings').find(x=>x.id===id);
+  if(!b) return;
+  document.getElementById('bk-detail-id').textContent=b.id;
+  document.getElementById('bk-detail-badge').innerHTML=statusBadge(b.status);
+  document.getElementById('bk-detail-edit-btn').onclick=()=>{closeModal('modal-booking-detail');editBooking(id);};
+
+  const svcNames=DB.get('services');
+  const svcList=(b.services||[]).map(s=>{const svc=svcNames.find(x=>x.id===s);return svc?`<span style="background:rgba(201,168,67,0.1);border-radius:6px;padding:2px 8px;font-size:0.75rem;margin:2px;display:inline-block">✅ ${svc.name}</span>`:'';}).join('');
+
+  const payPct=b.totalPrice?Math.round((b.totalPrice-b.remainingAmount)/b.totalPrice*100):0;
+
+  document.getElementById('bk-detail-body').innerHTML=`
+    <div class="form-grid" style="margin-bottom:20px">
+      <div>
+        <div class="form-section-title">Jübüt Maglumatlary</div>
+        <div style="margin-bottom:10px">
+          <div style="font-weight:600;margin-bottom:2px">Ýigit: ${b.groom.name}</div>
+          <div style="color:var(--muted);font-size:0.85rem">${b.groom.phone||'—'}</div>
+          <div style="display:flex;gap:6px;margin-top:4px">
+            ${b.groom.phone?`<a href="tel:${b.groom.phone}" class="btn btn-outline btn-sm"><i data-lucide="phone" style="width:13px;height:13px"></i></a>
+            <a href="https://wa.me/${b.groom.phone.replace(/\D/g,'')}" target="_blank" class="btn btn-outline btn-sm">WA</a>`:'' }
+          </div>
+        </div>
+        <div>
+          <div style="font-weight:600;margin-bottom:2px">Gelin: ${b.bride.name}</div>
+          <div style="color:var(--muted);font-size:0.85rem">${b.bride.phone||'—'}</div>
+          ${b.bride.phone?`<div style="display:flex;gap:6px;margin-top:4px">
+            <a href="tel:${b.bride.phone}" class="btn btn-outline btn-sm"><i data-lucide="phone" style="width:13px;height:13px"></i></a>
+          </div>`:''}
+        </div>
+      </div>
+      <div>
+        <div class="form-section-title">Toý Maglumatlary</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:0.875rem">
+          <div>📅 <strong>Toý güni:</strong> ${fmtDate(b.weddingDate)}</div>
+          <div>⏰ <strong>Wagt:</strong> ${b.weddingTime} — ${b.endTime||'?'}</div>
+          <div>🏛️ <strong>Zal:</strong> ${hallName(b.hall)}</div>
+          <div>👥 <strong>Myhmanlar:</strong> ${b.guestCount} adam</div>
+          <div>📦 <strong>Paket:</strong> ${packageLabel(b.package)}</div>
+          <div>📡 <strong>Çeşme:</strong> ${sourceLabel(b.source)}</div>
+        </div>
+        ${svcList?`<div style="margin-top:8px">${svcList}</div>`:''}
+      </div>
+    </div>
+    <div class="form-section-title">Maliýe Ýagdaýy</div>
+    <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:4px">
+      <span>Umumy baha: <strong>${fmtMoney(b.totalPrice)} TMT</strong></span>
+      <span>${payPct}% tölenildi</span>
+    </div>
+    <div class="progress-bar-wrap" style="height:10px">
+      <div class="progress-bar-fill" style="width:${payPct}%;background:var(--success)"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-top:6px;color:var(--muted)">
+      <span>Tölenilen: <strong style="color:var(--success)">${fmtMoney(b.totalPrice-b.remainingAmount)} TMT</strong></span>
+      <span>Galany: <strong style="color:${b.remainingPaid?'var(--success)':'var(--warning)'}">${fmtMoney(b.remainingAmount)} TMT</strong></span>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+      ${b.depositPaid?`<span class="badge badge-confirmed">✅ Öňpul tölenildi — ${b.depositDate?fmtDate(b.depositDate):''}</span>`:`<span class="badge badge-pending">⏳ Öňpul garaşylýar — ${fmtMoney(b.deposit)} TMT</span>`}
+      ${b.remainingPaid?`<span class="badge badge-confirmed">✅ Doly tölenildi</span>`:`<span class="badge badge-warning" style="background:rgba(245,158,11,0.15);color:var(--warning)">⏳ Galany: ${fmtMoney(b.remainingAmount)} TMT</span>`}
+    </div>
+    ${b.specialNotes?`<div style="margin-top:12px;background:var(--surface2);border-radius:8px;padding:10px;font-size:0.83rem"><strong>Bellik:</strong> ${b.specialNotes}</div>`:''}
+    ${b.internalNote?`<div style="margin-top:8px;background:rgba(201,168,67,0.08);border:1px solid rgba(201,168,67,0.2);border-radius:8px;padding:10px;font-size:0.83rem"><strong>Içerki bellik:</strong> ${b.internalNote}</div>`:''}
+    <div class="form-section-title" style="margin-top:16px">Habarlaşma Taryhy</div>
+    <div class="comm-timeline" id="comm-timeline-${b.id}">
+      ${renderCommTimeline(b.communications||[])}
+    </div>
+    <button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="openCommModal('${b.id}')"><i data-lucide="plus"></i> Bellik goş</button>
+  `;
+  document.getElementById('bk-detail-footer').innerHTML=`
+    <button class="btn btn-success" onclick="updateBookingStatus('${b.id}','confirmed');closeModal('modal-booking-detail')"><i data-lucide="check"></i> Tassykla</button>
+    <button class="btn btn-danger" onclick="updateBookingStatus('${b.id}','cancelled');closeModal('modal-booking-detail')"><i data-lucide="x"></i> Ýatyrt</button>
+    <button class="btn btn-outline" onclick="openPaymentModal('${b.id}')"><i data-lucide="banknote"></i> Töleg Giriş</button>
+    <button class="btn btn-outline btn-sm" onclick="printBooking('${b.id}')"><i data-lucide="printer"></i></button>
+  `;
+  openModal('modal-booking-detail');
+}
+function renderCommTimeline(comms){
+  if(!comms.length) return '<div style="color:var(--muted);font-size:0.8rem;padding:8px 0">Habarlaşma taryhy ýok</div>';
+  const icons={call:'📞',whatsapp:'💬',telegram:'✈️',visit:'🏠',email:'📧'};
+  const colors={call:'rgba(6,182,212,0.15)',whatsapp:'rgba(16,185,129,0.15)',telegram:'rgba(79,70,229,0.15)',visit:'rgba(245,158,11,0.15)',email:'rgba(201,168,67,0.15)'};
+  return comms.map(c=>`
+    <div class="comm-item">
+      <div class="comm-dot" style="background:${colors[c.type]||'rgba(201,168,67,0.1)'}">${icons[c.type]||'📌'}</div>
+      <div class="comm-body">
+        <div class="comm-date">${fmtDate(c.date)}</div>
+        <div class="comm-note">${c.note}</div>
+      </div>
+    </div>`).join('');
+}
+function openCommModal(bookingId){
+  document.getElementById('comm-booking-id').value=bookingId;
+  document.getElementById('comm-note').value='';
+  openModal('modal-comm');
+}
+function saveComm(){
+  const id=document.getElementById('comm-booking-id').value;
+  const note=document.getElementById('comm-note').value.trim();
+  if(!note){showToast('Bellik ýaz!','warning');return;}
+  const type=document.getElementById('comm-type').value;
+  const b=DB.get('bookings').find(x=>x.id===id);
+  if(!b) return;
+  const comms=[...(b.communications||[]),{date:new Date().toISOString().split('T')[0],type,note}];
+  DB.update('bookings',id,{communications:comms});
+  closeModal('modal-comm');
+  viewBooking(id);
+  showToast('Bellik goşuldy!');
+}
+function updateBookingStatus(id,status){
+  DB.update('bookings',id,{status});
+  renderBookings();
+  renderDashboard();
+  showToast(`Ýagdaý üýtgedildi: ${statusLabel(status)}`);
+}
+function deleteBooking(id){
+  confirmAction('Bu brony öçürjekmi? Bu ädim yzyna alynmaz.',()=>{
+    DB.remove('bookings',id);
+    renderBookings();
+    renderDashboard();
+    showToast('Bron öçürildi','warning');
+  },true,'🗑️');
+}
+function callBooking(id){
+  const b=DB.get('bookings').find(x=>x.id===id);
+  if(!b) return;
+  const ph=b.groom.phone||b.bride.phone;
+  if(ph) window.open('tel:'+ph);
+}
+function printBooking(id){
+  window.print();
+}
+function openNewBookingModal(){
+  editingBookingId=null;
+  document.getElementById('bk-form-title').textContent='Täze Bron';
+  document.getElementById('bk-groom-name').value='';
+  document.getElementById('bk-groom-phone').value='';
+  document.getElementById('bk-bride-name').value='';
+  document.getElementById('bk-bride-phone').value='';
+  document.getElementById('bk-date').value='';
+  document.getElementById('bk-time').value='18:00';
+  document.getElementById('bk-end-time').value='02:00';
+  document.getElementById('bk-hall').value='sha';
+  document.getElementById('bk-guests').value='';
+  document.getElementById('bk-package').value='premium';
+  document.getElementById('bk-price-pp').value='250';
+  document.getElementById('bk-total').value='';
+  document.getElementById('bk-deposit').value='';
+  document.getElementById('bk-deposit-paid').value='false';
+  document.getElementById('bk-source').value='phone';
+  document.getElementById('bk-status-input').value='new';
+  document.getElementById('bk-notes').value='';
+  document.getElementById('bk-internal-note').value='';
+  renderServiceCheckboxes([]);
+  openModal('modal-booking-form');
+}
+function editBooking(id){
+  const b=DB.get('bookings').find(x=>x.id===id);
+  if(!b) return;
+  editingBookingId=id;
+  document.getElementById('bk-form-title').textContent='Bron Düzetme: '+id;
+  document.getElementById('bk-groom-name').value=b.groom.name;
+  document.getElementById('bk-groom-phone').value=b.groom.phone||'';
+  document.getElementById('bk-bride-name').value=b.bride.name;
+  document.getElementById('bk-bride-phone').value=b.bride.phone||'';
+  document.getElementById('bk-date').value=b.weddingDate;
+  document.getElementById('bk-time').value=b.weddingTime||'18:00';
+  document.getElementById('bk-end-time').value=b.endTime||'02:00';
+  document.getElementById('bk-hall').value=b.hall;
+  document.getElementById('bk-guests').value=b.guestCount;
+  document.getElementById('bk-package').value=b.package;
+  document.getElementById('bk-price-pp').value=b.pricePerPerson;
+  document.getElementById('bk-total').value=b.totalPrice;
+  document.getElementById('bk-deposit').value=b.deposit;
+  document.getElementById('bk-deposit-paid').value=String(b.depositPaid);
+  document.getElementById('bk-source').value=b.source||'phone';
+  document.getElementById('bk-status-input').value=b.status;
+  document.getElementById('bk-notes').value=b.specialNotes||'';
+  document.getElementById('bk-internal-note').value=b.internalNote||'';
+  renderServiceCheckboxes(b.services||[]);
+  openModal('modal-booking-form');
+}
+function renderServiceCheckboxes(selected){
+  const services=DB.get('services').filter(s=>s.active);
+  document.getElementById('bk-services-checks').innerHTML=services.map(s=>`
+    <label class="check-item">
+      <input type="checkbox" class="svc-check" value="${s.id}" ${selected.includes(s.id)?'checked':''}/>
+      ${s.name} ${s.price?`(${s.priceType==='per_person'?s.price+' TMT/adam':fmtMoney(s.price)+' TMT'})` :''}
+    </label>`).join('');
+}
+function calcTotal(){
+  const guests=parseInt(document.getElementById('bk-guests').value)||0;
+  const pp=parseInt(document.getElementById('bk-price-pp').value)||0;
+  const total=guests*pp;
+  document.getElementById('bk-total').value=total;
+  const cfg=DB.getObj('settings',DEFAULT_SETTINGS);
+  const pct=cfg.depositPct||30;
+  document.getElementById('bk-deposit').value=Math.round(total*pct/100);
+}
+document.getElementById('bk-guests').addEventListener('input',calcTotal);
+function saveBooking(){
+  const groomName=document.getElementById('bk-groom-name').value.trim();
+  const brideName=document.getElementById('bk-bride-name').value.trim();
+  const date=document.getElementById('bk-date').value;
+  const guests=parseInt(document.getElementById('bk-guests').value)||0;
+  if(!groomName||!brideName||!date||!guests){showToast('Hökmany meýdanlary dolduryň!','error');return;}
+  const svcs=[...document.querySelectorAll('.svc-check:checked')].map(c=>c.value);
+  const total=parseInt(document.getElementById('bk-total').value)||guests*(parseInt(document.getElementById('bk-price-pp').value)||0);
+  const dep=parseInt(document.getElementById('bk-deposit').value)||0;
+  const depPaid=document.getElementById('bk-deposit-paid').value==='true';
+  const data={
+    groom:{name:groomName,phone:document.getElementById('bk-groom-phone').value},
+    bride:{name:brideName,phone:document.getElementById('bk-bride-phone').value},
+    weddingDate:date,weddingTime:document.getElementById('bk-time').value,
+    endTime:document.getElementById('bk-end-time').value,
+    hall:document.getElementById('bk-hall').value,
+    guestCount:guests,package:document.getElementById('bk-package').value,
+    services:svcs,
+    pricePerPerson:parseInt(document.getElementById('bk-price-pp').value)||0,
+    totalPrice:total,deposit:dep,depositPaid:depPaid,
+    depositDate:depPaid?new Date().toISOString().split('T')[0]:'',
+    remainingAmount:depPaid?total-dep:total,remainingPaid:total===0||depPaid&&dep>=total,
+    source:document.getElementById('bk-source').value,
+    status:document.getElementById('bk-status-input').value,
+    specialNotes:document.getElementById('bk-notes').value,
+    internalNote:document.getElementById('bk-internal-note').value,
+    assignedTo:currentUser.id,communications:[]
+  };
+  if(editingBookingId){
+    DB.update('bookings',editingBookingId,data);
+    showToast('Bron täzelendi!');
+  } else {
+    // Generate ID
+    const bks=DB.get('bookings');
+    const num=String(bks.length+1).padStart(3,'0');
+    const year=new Date().getFullYear();
+    data.id=`BRN-${year}-${num}`;
+    data.communications=[];
+    DB.add('bookings',data);
+    addNotification({type:'new_booking',icon:'📅',msg:`Täze bron — ${groomName} & ${brideName}`,sub:`${data.id} · Häzir`});
+    showToast('Täze bron goşuldy!');
+  }
+  closeModal('modal-booking-form');
+  renderBookings();
+  renderDashboard();
+}
+function showThisWeekWeddings(){
+  const now=new Date();
+  const start=new Date(now);start.setDate(start.getDate()-start.getDay()+1);
+  const end=new Date(start);end.setDate(end.getDate()+6);
+  const from=start.toISOString().split('T')[0],to=end.toISOString().split('T')[0];
+  document.getElementById('bk-date-from').value=from;
+  document.getElementById('bk-date-to').value=to;
+  navigate('bookings',document.querySelector('[data-section=bookings]'));
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  HALLS
+// ═══════════════════════════════════════════════════════════════════
+function renderHalls(){
+  const halls=DB.get('halls');
+  const bookings=DB.get('bookings').filter(b=>b.status!=='cancelled');
+  const now=new Date();
+  const y=now.getFullYear(),m=now.getMonth();
+  const daysInMonth=new Date(y,m+1,0).getDate();
+
+  document.getElementById('halls-grid').innerHTML=halls.map(h=>{
+    const monthBk=bookings.filter(b=>{const d=new Date(b.weddingDate);return d.getMonth()===m&&d.getFullYear()===y&&b.hall===h.id;});
+    const occ=Math.round(monthBk.length/daysInMonth*100);
+    const next30=bookings.filter(b=>{const d=new Date(b.weddingDate);const diff=(d-now)/86400000;return diff>=0&&diff<=30&&b.hall===h.id;});
+    const statusCls={open:'badge-open',maintenance:'badge-maintenance',closed:'badge-closed'}[h.status]||'badge-open';
+    const features=(h.features||[]).map(f=>({stage:'🎭',crystal:'💎',led:'🌈',entrance:'🚪',vip:'👑',parking:'🅿️'}[f]||f)).join(' ');
+    return `<div class="hall-card">
+      <div class="hall-card-header">
+        <div class="hall-card-name">${h.emoji||'🏛️'} ${h.name}</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span class="badge ${statusCls}">${{open:'Açyk',maintenance:'Abatlaýyş',closed:'Ýapyk'}[h.status]||'Açyk'}</span>
+          <button class="tbl-btn" onclick="openHallModal('${h.id}')"><i data-lucide="edit-2" style="width:12px;height:12px"></i></button>
+        </div>
+      </div>
+      <div class="hall-card-meta">
+        <div class="hall-meta-item">📐 <strong>${h.area||'—'}</strong> m²</div>
+        <div class="hall-meta-item">👥 <strong>${h.capacity}</strong> adam</div>
+        <div class="hall-meta-item">💰 <strong>${h.price}</strong> TMT/adam</div>
+      </div>
+      ${h.desc?`<div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px">${h.desc}</div>`:''}
+      <div class="hall-bar-label"><span>Bu aý dolulyk</span><span>${occ}%</span></div>
+      <div class="hall-bar"><div class="hall-bar-fill" style="width:${occ}%"></div></div>
+      <div class="hall-bar-label"><span>Geljek 30 gün bron</span><span>${next30.length} gün</span></div>
+      <div class="hall-bar"><div class="hall-bar-fill" style="width:${Math.min(100,Math.round(next30.length/30*100))}%;background:var(--info)"></div></div>
+      ${features?`<div style="font-size:0.85rem;margin-top:6px">${features}</div>`:''}
+      <div class="hall-card-actions">
+        <button class="btn btn-outline btn-sm" onclick="navigate('bookings',document.querySelector('[data-section=bookings]'));document.getElementById('bk-hall').value='${h.id}';renderBookings()">Bronlary Gör</button>
+        <button class="btn btn-primary btn-sm" onclick="openNewBookingModal();document.getElementById('bk-hall').value='${h.id}'">Täze Bron</button>
+      </div>
+    </div>`;
+  }).join('');
+  lucide.createIcons();
+}
+let editingHallId=null;
+function openHallModal(id){
+  editingHallId=id||null;
+  const h=id?DB.get('halls').find(x=>x.id===id):null;
+  document.getElementById('hall-modal-title').textContent=h?'Zal Düzetme: '+h.name:'Täze Zal';
+  document.getElementById('hall-edit-id').value=id||'';
+  document.getElementById('hall-name').value=h?h.name:'';
+  document.getElementById('hall-emoji').value=h?h.emoji||'':'🏛️';
+  document.getElementById('hall-capacity').value=h?h.capacity:'';
+  document.getElementById('hall-area').value=h?h.area||'':'';
+  document.getElementById('hall-price').value=h?h.price:'';
+  document.getElementById('hall-status').value=h?h.status:'open';
+  document.getElementById('hall-desc').value=h?h.desc||'':'';
+  document.querySelectorAll('.hall-feature').forEach(cb=>{
+    cb.checked=h&&h.features&&h.features.includes(cb.value);
+  });
+  openModal('modal-hall');
+}
+function saveHall(){
+  const name=document.getElementById('hall-name').value.trim();
+  if(!name){showToast('Zal adyny giriziň!','error');return;}
+  const features=[...document.querySelectorAll('.hall-feature:checked')].map(c=>c.value);
+  const data={
+    name,emoji:document.getElementById('hall-emoji').value,
+    capacity:parseInt(document.getElementById('hall-capacity').value)||0,
+    area:parseInt(document.getElementById('hall-area').value)||0,
+    price:parseInt(document.getElementById('hall-price').value)||0,
+    status:document.getElementById('hall-status').value,
+    desc:document.getElementById('hall-desc').value,
+    features
+  };
+  if(editingHallId){
+    DB.update('halls',editingHallId,data);
+    showToast('Zal maglumatlary täzelendi!');
+  } else {
+    data.id='hall_'+Date.now();
+    DB.add('halls',data);
+    showToast('Täze zal goşuldy!');
+  }
+  closeModal('modal-hall');
+  renderHalls();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SERVICES
+// ═══════════════════════════════════════════════════════════════════
+let activeServiceCat='';
+const catLabels={food:'🍽️ Tagam',decor:'💐 Bezeg',music:'🎵 Saz',photo:'📸 Foto',hotel:'🏨 Myhmanhana',transport:'🚗 Ulag'};
+
+function renderServices(){
+  const cats=['','food','decor','music','photo','hotel','transport'];
+  document.getElementById('service-tabs').innerHTML=cats.map(c=>`
+    <button class="tab${c===activeServiceCat?' active':''}" onclick="setServiceCat('${c}')">${c?catLabels[c]:'Hemmesi'}</button>`).join('');
+  const services=DB.get('services').filter(s=>!activeServiceCat||s.category===activeServiceCat);
+  document.getElementById('services-grid').innerHTML=services.map(s=>`
+    <div class="card" style="padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div style="font-weight:600;font-size:0.9rem">${s.name}</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <label style="cursor:pointer">
+            <input type="checkbox" ${s.active?'checked':''} onchange="toggleService('${s.id}',this.checked)" style="accent-color:var(--gold)"/> Aktiw
+          </label>
+          <button class="tbl-btn" onclick="openServiceModal('${s.id}')"><i data-lucide="edit-2" style="width:12px;height:12px"></i></button>
+          <button class="tbl-btn danger" onclick="deleteService('${s.id}')"><i data-lucide="trash-2" style="width:12px;height:12px"></i></button>
+        </div>
+      </div>
+      <div style="font-size:0.78rem;color:var(--muted);margin-bottom:8px">${catLabels[s.category]||s.category}</div>
+      <div style="font-size:0.85rem;color:var(--gold);font-weight:600">
+        ${s.priceType==='per_person'?s.price+' TMT/adam':s.priceType==='fixed'?fmtMoney(s.price)+' TMT':'Gepleşik'}
+      </div>
+      ${s.desc?`<div style="font-size:0.78rem;color:var(--muted);margin-top:4px">${s.desc}</div>`:''}
+      <div style="font-size:0.72rem;color:var(--muted);margin-top:6px">📊 ${s.bookingsCount||0} gezek saýlandy</div>
+    </div>`).join('');
+
+  const packages=DB.get('packages');
+  const allSvcs=DB.get('services');
+  document.getElementById('packages-grid').innerHTML=packages.map(p=>`
+    <div class="card" style="padding:16px;border-color:${p.id==='premium'?'rgba(201,168,67,0.4)':'var(--border)'}">
+      ${p.id==='premium'?'<div style="font-size:0.7rem;color:var(--gold);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">⭐ Meşhur</div>':''}
+      <div style="font-family:\'Space Grotesk\',sans-serif;font-weight:700;font-size:1rem;margin-bottom:4px">${p.name}</div>
+      <div style="font-size:1.3rem;font-weight:700;color:var(--gold);margin-bottom:8px">${p.price} TMT/adam</div>
+      <div style="font-size:0.78rem;color:var(--muted);margin-bottom:8px">${p.desc}</div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        ${(p.services||[]).map(sid=>{const sv=allSvcs.find(x=>x.id===sid);return sv?`<span style="font-size:0.75rem">✅ ${sv.name}</span>`:''}).join('')}
+      </div>
+    </div>`).join('');
+  lucide.createIcons();
+}
+function setServiceCat(c){activeServiceCat=c;renderServices();}
+let editingServiceId=null;
+function openServiceModal(id){
+  editingServiceId=id||null;
+  const s=id?DB.get('services').find(x=>x.id===id):null;
+  document.getElementById('svc-modal-title').textContent=s?'Hyzmat Düzetme':'Täze Hyzmat';
+  document.getElementById('svc-edit-id').value=id||'';
+  document.getElementById('svc-name').value=s?s.name:'';
+  document.getElementById('svc-category').value=s?s.category:'food';
+  document.getElementById('svc-price-type').value=s?s.priceType:'fixed';
+  document.getElementById('svc-price').value=s?s.price:'';
+  document.getElementById('svc-desc').value=s?s.desc||'':'';
+  document.getElementById('svc-active').checked=s?s.active!==false:true;
+  openModal('modal-service');
+}
+function saveService(){
+  const name=document.getElementById('svc-name').value.trim();
+  if(!name){showToast('Hyzmat adyny giriziň!','error');return;}
+  const data={
+    name,category:document.getElementById('svc-category').value,
+    priceType:document.getElementById('svc-price-type').value,
+    price:parseInt(document.getElementById('svc-price').value)||0,
+    desc:document.getElementById('svc-desc').value,
+    active:document.getElementById('svc-active').checked
+  };
+  if(editingServiceId){
+    DB.update('services',editingServiceId,data);
+    showToast('Hyzmat täzelendi!');
+  } else {
+    data.id='svc_'+Date.now();data.bookingsCount=0;
+    DB.add('services',data);
+    showToast('Täze hyzmat goşuldy!');
+  }
+  closeModal('modal-service');
+  renderServices();
+}
+function toggleService(id,active){
+  DB.update('services',id,{active});
+  showToast(active?'Hyzmat işjeňleşdirildi':'Hyzmat öçürildi',active?'success':'warning');
+}
+function deleteService(id){
+  confirmAction('Bu hyzmaty öçürjekmi?',()=>{
+    DB.remove('services',id);renderServices();showToast('Hyzmat öçürildi','warning');
+  },true,'🗑️');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  GALLERY
+// ═══════════════════════════════════════════════════════════════════
+function renderGallery(){
+  const items=DB.get('gallery').sort((a,b)=>a.order-b.order);
+  document.getElementById('gallery-grid').innerHTML=
+    items.map(item=>`
+      <div class="gallery-item" draggable="true">
+        ${item.type==='url'||item.type==='base64'
+          ?`<img src="${item.src}" alt="${item.label||''}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+             <div class="gallery-gradient" style="display:none;background:var(--surface2);font-size:2rem">🖼️</div>`
+          :`<div class="gallery-gradient" style="background:${item.src};display:flex;align-items:center;justify-content:center;font-size:3rem">${item.emoji||'🖼️'}</div>`}
+        <div class="gallery-label">${item.label||''}</div>
+        <div class="gallery-item-overlay">
+          <button class="btn btn-outline btn-sm" onclick="deleteGalleryItem(${item.id})"><i data-lucide="trash-2" style="width:13px;height:13px"></i></button>
+        </div>
+      </div>`).join('')+
+    `<div class="gallery-add" onclick="openGalleryModal()">
+      <i data-lucide="plus" style="width:28px;height:28px"></i>
+      <span>Surat goş</span>
+    </div>`;
+  lucide.createIcons();
+}
+function openGalleryModal(){
+  document.getElementById('gallery-url').value='';
+  document.getElementById('gallery-label').value='';
+  document.getElementById('gallery-cat').value='hall';
+  document.getElementById('gallery-preview').style.display='none';
+  openModal('modal-gallery');
+}
+function loadImageFile(input){
+  const file=input.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    document.getElementById('gallery-url').value=e.target.result;
+    document.getElementById('gallery-preview-img').src=e.target.result;
+    document.getElementById('gallery-preview').style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+document.getElementById('gallery-url').addEventListener('input',function(){
+  if(this.value.startsWith('http')){
+    document.getElementById('gallery-preview-img').src=this.value;
+    document.getElementById('gallery-preview').style.display='block';
+  }
+});
+function saveGalleryItem(){
+  const src=document.getElementById('gallery-url').value.trim();
+  const label=document.getElementById('gallery-label').value.trim();
+  const category=document.getElementById('gallery-cat').value;
+  if(!src){showToast('URL ýa-da faýl saýlaň!','error');return;}
+  const items=DB.get('gallery');
+  const type=src.startsWith('data:')?'base64':src.startsWith('http')?'url':'gradient';
+  DB.add('gallery',{type,src,label,category,order:items.length+1,active:true});
+  closeModal('modal-gallery');
+  renderGallery();
+  showToast('Surat goşuldy!');
+}
+function deleteGalleryItem(id){
+  confirmAction('Suraty öçürjekmi?',()=>{
+    DB.remove('gallery',id);renderGallery();showToast('Öçürildi','warning');
+  },true,'🗑️');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  STAFF
+// ═══════════════════════════════════════════════════════════════════
+const deptLabels={decor:'Bezeg',kitchen:'Aşhana',event:'Çäre',tech:'Tehniki',admin:'Admin'};
+function renderStaff(){
+  const search=(document.getElementById('staff-search').value||'').toLowerCase();
+  const dept=document.getElementById('staff-dept').value;
+  let staff=DB.get('staff').filter(s=>{
+    if(dept&&s.department!==dept) return false;
+    if(search&&!s.name.toLowerCase().includes(search)&&!s.position.toLowerCase().includes(search)) return false;
+    return true;
+  });
+  document.getElementById('staff-grid').innerHTML=staff.map(s=>`
+    <div class="staff-card">
+      <div class="staff-card-header">
+        <div class="avatar" style="background:${strColor(s.name)};width:42px;height:42px;font-size:0.85rem;flex-shrink:0">${s.name.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
+        <div class="staff-info">
+          <div class="staff-name">${s.name}</div>
+          <div class="staff-pos">${s.position}</div>
+        </div>
+        <div style="display:flex;gap:4px">
+          <button class="tbl-btn" onclick="openStaffModal(${s.id})"><i data-lucide="edit-2" style="width:12px;height:12px"></i></button>
+          <button class="tbl-btn danger" onclick="deleteStaff(${s.id})"><i data-lucide="trash-2" style="width:12px;height:12px"></i></button>
+        </div>
+      </div>
+      <div class="staff-card-meta">
+        <div class="staff-meta-row"><i data-lucide="briefcase" style="width:13px;height:13px"></i> ${deptLabels[s.department]||s.department}</div>
+        ${s.phone?`<div class="staff-meta-row"><i data-lucide="phone" style="width:13px;height:13px"></i> ${s.phone}</div>`:''}
+        ${s.email?`<div class="staff-meta-row"><i data-lucide="mail" style="width:13px;height:13px"></i> ${s.email}</div>`:''}
+        <div class="staff-meta-row"><i data-lucide="calendar" style="width:13px;height:13px"></i> ${s.hireDate?fmtDate(s.hireDate):'—'}</div>
+        <div class="staff-meta-row" style="margin-top:4px">
+          <span class="badge ${s.active!==false?'badge-confirmed':'badge-cancelled'}">${s.active!==false?'✅ Işleýär':'Işlemeýär'}</span>
+          ${s.assignedEvents?`<span style="font-size:0.72rem;color:var(--muted);margin-left:4px">${s.assignedEvents} çäre</span>`:''}
+        </div>
+      </div>
+    </div>`).join('');
+  lucide.createIcons();
+}
+let editingStaffId=null;
+function openStaffModal(id){
+  editingStaffId=id||null;
+  const s=id?DB.get('staff').find(x=>x.id===id):null;
+  document.getElementById('staff-modal-title').textContent=s?'Işgär Düzetme':'Täze Işgär';
+  document.getElementById('staff-edit-id').value=id||'';
+  document.getElementById('staff-name').value=s?s.name:'';
+  document.getElementById('staff-position').value=s?s.position:'';
+  document.getElementById('staff-dept-input').value=s?s.department:'decor';
+  document.getElementById('staff-phone').value=s?s.phone||'':'';
+  document.getElementById('staff-email').value=s?s.email||'':'';
+  document.getElementById('staff-hire-date').value=s?s.hireDate||'':'';
+  document.getElementById('staff-salary').value=s?s.salary||'':'';
+  document.getElementById('staff-active').checked=s?s.active!==false:true;
+  document.getElementById('staff-notes').value=s?s.notes||'':'';
+  openModal('modal-staff');
+}
+function saveStaff(){
+  const name=document.getElementById('staff-name').value.trim();
+  if(!name){showToast('Işgär adyny giriziň!','error');return;}
+  const data={
+    name,position:document.getElementById('staff-position').value,
+    department:document.getElementById('staff-dept-input').value,
+    phone:document.getElementById('staff-phone').value,
+    email:document.getElementById('staff-email').value,
+    hireDate:document.getElementById('staff-hire-date').value,
+    salary:parseInt(document.getElementById('staff-salary').value)||0,
+    active:document.getElementById('staff-active').checked,
+    notes:document.getElementById('staff-notes').value,
+    assignedEvents:0
+  };
+  if(editingStaffId){
+    DB.update('staff',editingStaffId,data);showToast('Işgär maglumatlary täzelendi!');
+  } else {
+    DB.add('staff',{...data,id:Date.now()});showToast('Täze işgär goşuldy!');
+  }
+  closeModal('modal-staff');renderStaff();
+}
+function deleteStaff(id){
+  confirmAction('Bu işgäri öçürjekmi?',()=>{
+    DB.remove('staff',id);renderStaff();showToast('Işgär öçürildi','warning');
+  },true,'🗑️');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  FINANCE
+// ═══════════════════════════════════════════════════════════════════
+let monthlyChart=null,payStatusChart=null;
+function renderFinance(){
+  const bookings=DB.get('bookings').filter(b=>b.status!=='cancelled');
+  const statusFilter=document.getElementById('fin-status').value;
+  const total=bookings.reduce((a,b)=>a+b.totalPrice,0);
+  const paid=bookings.reduce((a,b)=>a+(b.totalPrice-b.remainingAmount),0);
+  const remaining=bookings.reduce((a,b)=>a+b.remainingAmount,0);
+  const avg=bookings.length?Math.round(total/bookings.length):0;
+
+  document.getElementById('fin-summary').innerHTML=[
+    {label:'Bu Ýyl Jemi',val:fmtMoney(total)+' TMT',color:'var(--gold)'},
+    {label:'Tölenilen',val:fmtMoney(paid)+' TMT',color:'var(--success)'},
+    {label:'Alynmaly',val:fmtMoney(remaining)+' TMT',color:'var(--warning)'},
+    {label:'Ortaça Bron',val:fmtMoney(avg)+' TMT',color:'var(--info)'}
+  ].map(c=>`<div class="fin-card"><div class="fin-card-label">${c.label}</div><div class="fin-card-val" style="color:${c.color}">${c.val}</div></div>`).join('');
+
+  let filtered=bookings;
+  if(statusFilter==='paid') filtered=bookings.filter(b=>b.remainingPaid);
+  else if(statusFilter==='unpaid') filtered=bookings.filter(b=>!b.depositPaid&&!b.remainingPaid);
+  else if(statusFilter==='partial') filtered=bookings.filter(b=>b.depositPaid&&!b.remainingPaid);
+
+  document.getElementById('finance-tbody').innerHTML=filtered.map(b=>{
+    const paidAmt=b.totalPrice-b.remainingAmount;
+    let payStatus='';
+    if(b.remainingPaid) payStatus='<span class="badge badge-confirmed">✅ Tölendi</span>';
+    else if(b.depositPaid) payStatus='<span class="badge badge-pending">Bölekli</span>';
+    else payStatus='<span class="badge badge-cancelled">Tölenilmedik</span>';
+    return `<tr>
+      <td><a style="color:var(--gold);cursor:pointer;font-size:0.8rem;font-weight:600" onclick="viewBooking('${b.id}')">${b.id}</a></td>
+      <td>${b.groom.name.split(' ')[0]} H.</td>
+      <td>${hallName(b.hall)}</td>
+      <td>${fmtDate(b.weddingDate)}</td>
+      <td style="font-weight:600">${fmtMoney(b.totalPrice)}</td>
+      <td style="color:var(--success)">${fmtMoney(paidAmt)}</td>
+      <td style="color:${b.remainingPaid?'var(--success)':'var(--warning)'}">${fmtMoney(b.remainingAmount)}</td>
+      <td>${payStatus}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="openPaymentModal('${b.id}')"><i data-lucide="plus" style="width:12px;height:12px"></i> Töleg</button></td>
+    </tr>`;
+  }).join('');
+  lucide.createIcons();
+}
+function renderFinanceCharts(){
+  const now=new Date();
+  const bookings=DB.get('bookings').filter(b=>b.status!=='cancelled');
+  // Monthly bar
+  const ctx1=document.getElementById('monthly-chart');
+  if(ctx1){
+    if(monthlyChart) monthlyChart.destroy();
+    const labels=[],tot=[],paidArr=[],remArr=[];
+    for(let i=5;i>=0;i--){
+      const d=new Date(now);d.setMonth(d.getMonth()-i);
+      labels.push(MONTHS_SHORT[d.getMonth()]);
+      const mb=bookings.filter(b=>{const bd=new Date(b.weddingDate);return bd.getMonth()===d.getMonth()&&bd.getFullYear()===d.getFullYear();});
+      const t=mb.reduce((a,b)=>a+b.totalPrice,0);
+      const p=mb.reduce((a,b)=>a+(b.totalPrice-b.remainingAmount),0);
+      tot.push(t||Math.floor(Math.random()*100000+40000));
+      paidArr.push(p||Math.floor(Math.random()*60000+20000));
+      remArr.push(Math.max(0,tot[tot.length-1]-paidArr[paidArr.length-1]));
+    }
+    monthlyChart=new Chart(ctx1,{type:'bar',data:{labels,datasets:[
+      {label:'Jemi',data:tot,backgroundColor:'rgba(201,168,67,0.6)'},
+      {label:'Tölenilen',data:paidArr,backgroundColor:'rgba(16,185,129,0.6)'},
+      {label:'Galany',data:remArr,backgroundColor:'rgba(239,68,68,0.4)'}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#6B5F80'}}},scales:{x:{stacked:false,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#6B5F80'}},y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#6B5F80'}}}}});
+  }
+  // Doughnut
+  const ctx2=document.getElementById('payment-status-chart');
+  if(ctx2){
+    if(payStatusChart) payStatusChart.destroy();
+    const fullyPaid=bookings.filter(b=>b.remainingPaid).length;
+    const partial=bookings.filter(b=>b.depositPaid&&!b.remainingPaid).length;
+    const unpaid=bookings.filter(b=>!b.depositPaid&&!b.remainingPaid).length;
+    payStatusChart=new Chart(ctx2,{type:'doughnut',data:{labels:['Doly tölenildi','Bölekli','Tölenilmedik'],datasets:[{data:[fullyPaid,partial,unpaid],backgroundColor:['#10B981','#F59E0B','#EF4444'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#6B5F80'}}}}});
+  }
+}
+function openPaymentModal(bookingId){
+  const select=document.getElementById('pay-booking-id');
+  const bookings=DB.get('bookings').filter(b=>b.status!=='cancelled');
+  select.innerHTML=bookings.map(b=>`<option value="${b.id}" ${b.id===bookingId?'selected':''}>${b.id} — ${b.groom.name.split(' ')[0]} & ${b.bride.name.split(' ')[0]}</option>`).join('');
+  document.getElementById('pay-amount').value='';
+  document.getElementById('pay-type').value='cash';
+  document.getElementById('pay-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('pay-ref').value='';
+  document.getElementById('pay-note').value='';
+  openModal('modal-payment');
+}
+function savePayment(){
+  const id=document.getElementById('pay-booking-id').value;
+  const amount=parseInt(document.getElementById('pay-amount').value)||0;
+  if(!amount){showToast('Töleg möçberini giriziň!','error');return;}
+  const b=DB.get('bookings').find(x=>x.id===id);
+  if(!b) return;
+  const newRemaining=Math.max(0,b.remainingAmount-amount);
+  const updates={remainingAmount:newRemaining,remainingPaid:newRemaining===0};
+  if(!b.depositPaid&&amount>=b.deposit){updates.depositPaid=true;updates.depositDate=document.getElementById('pay-date').value;}
+  DB.update('bookings',id,updates);
+  addNotification({type:'payment',icon:'💰',msg:`Töleg alyndy — ${id}`,sub:`${fmtMoney(amount)} TMT`});
+  closeModal('modal-payment');
+  renderFinance();
+  showToast(`Töleg ${fmtMoney(amount)} TMT hasaba alyndy!`);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  REPORTS
+// ═══════════════════════════════════════════════════════════════════
+let srcChart=null,hallPopChart=null,monthBkChart=null;
+let reportPeriod='month';
+function renderReports(){
+  setTimeout(()=>{
+    renderSourceChart();
+    renderHallPopChart();
+    renderMonthlyBkChart();
+  },100);
+}
+function setPeriod(btn,period){
+  reportPeriod=period;
+  document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function generateReport(){
+  const type=document.querySelector('[name=rtype]:checked').value;
+  showToast(`${type} hasabaty döredildi!`,'info');
+}
+function renderSourceChart(){
+  const ctx=document.getElementById('source-chart');if(!ctx) return;
+  if(srcChart) srcChart.destroy();
+  const bookings=DB.get('bookings');
+  const counts={website:0,phone:0,instagram:0,referral:0,walk_in:0};
+  bookings.forEach(b=>{if(counts[b.source]!==undefined) counts[b.source]++;});
+  srcChart=new Chart(ctx,{type:'doughnut',data:{labels:['Saýt','Telefon','Instagram','Maslahat','Şahsy'],datasets:[{data:Object.values(counts),backgroundColor:['#C9A843','#4F46E5','#10B981','#06B6D4','#F59E0B'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#6B5F80',font:{size:11}}}}}});
+}
+function renderHallPopChart(){
+  const ctx=document.getElementById('hall-pop-chart');if(!ctx) return;
+  if(hallPopChart) hallPopChart.destroy();
+  const halls=DB.get('halls');
+  const bookings=DB.get('bookings').filter(b=>b.status!=='cancelled');
+  const labels=halls.map(h=>h.name);
+  const data=halls.map(h=>bookings.filter(b=>b.hall===h.id).length||Math.floor(Math.random()*30+5));
+  hallPopChart=new Chart(ctx,{type:'bar',options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#6B5F80'}},y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#6B5F80'}}}},data:{labels,datasets:[{data,backgroundColor:['#C9A843','#4F46E5','#10B981','#06B6D4']}]}});
+}
+function renderMonthlyBkChart(){
+  const ctx=document.getElementById('monthly-bk-chart');if(!ctx) return;
+  if(monthBkChart) monthBkChart.destroy();
+  const bookings=DB.get('bookings');
+  const now=new Date();
+  const labels=[],thisYear=[],lastYear=[];
+  for(let i=0;i<12;i++){
+    labels.push(MONTHS_SHORT[i]);
+    const ty=bookings.filter(b=>{const d=new Date(b.weddingDate);return d.getMonth()===i&&d.getFullYear()===now.getFullYear();}).length;
+    const ly=bookings.filter(b=>{const d=new Date(b.weddingDate);return d.getMonth()===i&&d.getFullYear()===now.getFullYear()-1;}).length;
+    thisYear.push(ty||Math.floor(Math.random()*8));
+    lastYear.push(ly||Math.floor(Math.random()*6));
+  }
+  monthBkChart=new Chart(ctx,{type:'line',data:{labels,datasets:[
+    {label:'Bu ýyl',data:thisYear,borderColor:'#C9A843',backgroundColor:'rgba(201,168,67,0.08)',borderWidth:2,tension:0.4,fill:true,pointRadius:3},
+    {label:'Geçen ýyl',data:lastYear,borderColor:'#4F46E5',backgroundColor:'rgba(79,70,229,0.05)',borderWidth:2,tension:0.4,fill:true,pointRadius:3,borderDash:[4,4]}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#6B5F80'}}},scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#6B5F80'}},y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#6B5F80',stepSize:1}}}}});
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  NOTIFICATIONS
+// ═══════════════════════════════════════════════════════════════════
+function addNotification(data){
+  const notifs=DB.get('notifications');
+  notifs.unshift({...data,id:Date.now(),read:false,time:'Häzir'});
+  DB.set('notifications',notifs);
+  updateNotifBadge();
+}
+function updateNotifBadge(){
+  const unread=DB.get('notifications').filter(n=>!n.read).length;
+  document.getElementById('notif-count').textContent=unread;
+  document.getElementById('notif-count').style.display=unread?'flex':'none';
+}
+function renderNotifications(){
+  const notifs=DB.get('notifications');
+  document.getElementById('notif-list').innerHTML=notifs.slice(0,20).map(n=>`
+    <div class="notif-item${n.read?'':' unread'}" onclick="markNotifRead(${n.id})">
+      <div class="notif-dot ${n.read?'read':'new'}"></div>
+      <div class="notif-icon" style="background:rgba(201,168,67,0.1);font-size:18px">${n.icon}</div>
+      <div class="notif-content">
+        <div class="notif-msg">${n.msg}</div>
+        <div class="notif-meta">${n.sub||n.time||''}</div>
+      </div>
+      ${n.link?`<button class="btn btn-outline btn-sm" onclick="navigate('${n.link}',document.querySelector('[data-section=${n.link}]'))">Gör</button>`:''}
+    </div>`).join('');
+
+  const settings=DB.get('notif_settings');
+  document.getElementById('notif-settings-list').innerHTML=settings.map(s=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:0.875rem">${s.label}</span>
+      <label style="cursor:pointer;display:flex;align-items:center;gap:6px;font-size:0.8rem;color:var(--muted)">
+        <input type="checkbox" ${s.enabled?'checked':''} onchange="toggleNotifSetting('${s.id}',this.checked)" style="accent-color:var(--gold)"/>
+        ${s.enabled?'Açyk':'Ýapyk'}
+      </label>
+    </div>`).join('');
+  updateNotifBadge();
+}
+function markNotifRead(id){
+  DB.update('notifications',id,{read:true});
+  renderNotifications();
+}
+function markAllRead(){
+  const notifs=DB.get('notifications').map(n=>({...n,read:true}));
+  DB.set('notifications',notifs);
+  renderNotifications();
+  showToast('Ähli bildirişler okaldy');
+}
+function toggleNotifSetting(id,enabled){
+  const settings=DB.get('notif_settings').map(s=>s.id===id?{...s,enabled}:s);
+  DB.set('notif_settings',settings);
+  showToast(enabled?'Bildiriş açyldy':'Bildiriş ýapyldy',enabled?'success':'warning');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  USERS
+// ═══════════════════════════════════════════════════════════════════
+let editingUserId=null;
+function renderUsers(){
+  const users=DB.get('users');
+  document.getElementById('users-tbody').innerHTML=users.map(u=>`
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="avatar" style="background:${u.color||'#C9A843'};width:30px;height:30px;font-size:0.7rem">${u.avatar||u.name.slice(0,2)}</div>
+          ${u.name}
+        </div>
+      </td>
+      <td style="color:var(--muted)">${u.login}</td>
+      <td><span class="badge ${u.role==='superadmin'?'badge-confirmed':u.role==='manager'?'badge-new':'badge-pending'}">${roleLabel(u.role)}</span></td>
+      <td style="color:var(--muted);font-size:0.8rem">${u.lastLogin?timeSince(new Date(u.lastLogin)):'Hiç girmedik'}</td>
+      <td><span class="badge ${u.active!==false?'badge-confirmed':'badge-cancelled'}">${u.active!==false?'Aktiw':'Ýapyk'}</span></td>
+      <td>
+        <div class="actions-cell">
+          <button class="tbl-btn" onclick="openUserModal(${u.id})"><i data-lucide="edit-2" style="width:12px;height:12px"></i></button>
+          ${u.id!==currentUser.id?`<button class="tbl-btn danger" onclick="deleteUser(${u.id})"><i data-lucide="trash-2" style="width:12px;height:12px"></i></button>`:''}
+        </div>
+      </td>
+    </tr>`).join('');
+  lucide.createIcons();
+}
+function openUserModal(id){
+  editingUserId=id||null;
+  const u=id?DB.get('users').find(x=>x.id===id):null;
+  document.getElementById('user-modal-title').textContent=u?'Ulanyjy Düzetme':'Täze Ulanyjy';
+  document.getElementById('user-edit-id').value=id||'';
+  document.getElementById('user-name').value=u?u.name:'';
+  document.getElementById('user-login').value=u?u.login:'';
+  document.getElementById('user-password').value=u?u.password:'';
+  document.getElementById('user-role').value=u?u.role:'manager';
+  document.getElementById('user-active').checked=u?u.active!==false:true;
+  openModal('modal-user');
+}
+function saveUser(){
+  const name=document.getElementById('user-name').value.trim();
+  const login=document.getElementById('user-login').value.trim();
+  const pwd=document.getElementById('user-password').value;
+  if(!name||!login||!pwd){showToast('Ähli meýdanlary dolduryň!','error');return;}
+  const data={
+    name,login,password:pwd,
+    role:document.getElementById('user-role').value,
+    active:document.getElementById('user-active').checked,
+    avatar:name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),
+    color:['#C9A843','#4F46E5','#10B981','#06B6D4','#F59E0B','#EF4444'][Math.floor(Math.random()*6)]
+  };
+  if(editingUserId){
+    DB.update('users',editingUserId,data);showToast('Ulanyjy täzelendi!');
+  } else {
+    const users=DB.get('users');
+    if(users.find(u=>u.login===login)){showToast('Bu login eýýäm bar!','error');return;}
+    DB.add('users',{...data,id:Date.now()});
+    showToast('Täze ulanyjy goşuldy!');
+  }
+  closeModal('modal-user');renderUsers();
+}
+function deleteUser(id){
+  if(id===currentUser.id){showToast('Özüňizi öçürip bilmersiňiz!','error');return;}
+  confirmAction('Bu ulanyjyny öçürjekmi?',()=>{
+    DB.remove('users',id);renderUsers();showToast('Ulanyjy öçürildi','warning');
+  },true,'👤');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SETTINGS
+// ═══════════════════════════════════════════════════════════════════
+function loadSettings(){
+  const cfg=DB.getObj('settings',DEFAULT_SETTINGS);
+  document.getElementById('cfg-name').value=cfg.name||'';
+  document.getElementById('cfg-tagline').value=cfg.tagline||'';
+  document.getElementById('cfg-phone').value=cfg.phone||'';
+  document.getElementById('cfg-phone2').value=cfg.phone2||'';
+  document.getElementById('cfg-address').value=cfg.address||'';
+  document.getElementById('cfg-city').value=cfg.city||'';
+  document.getElementById('cfg-email').value=cfg.email||'';
+  document.getElementById('cfg-telegram').value=cfg.telegram||'';
+  document.getElementById('cfg-instagram').value=cfg.instagram||'';
+  document.getElementById('cfg-deposit-pct').value=cfg.depositPct||30;
+  document.getElementById('cfg-payment-days').value=cfg.paymentDays||7;
+  document.getElementById('cfg-cash').checked=cfg.cash!==false;
+  document.getElementById('cfg-transfer').checked=cfg.transfer!==false;
+  document.getElementById('cfg-card').checked=cfg.card!==false;
+  renderHoursForm(cfg.hours||DEFAULT_SETTINGS.hours);
+}
+function renderHoursForm(hours){
+  const days=[{k:'mon',l:'Duşenbe'},{k:'tue',l:'Sişenbe'},{k:'wed',l:'Çarşenbe'},{k:'thu',l:'Penşenbe'},{k:'fri',l:'Anna'},{k:'sat',l:'Şenbe'},{k:'sun',l:'Ýekşenbe'}];
+  document.getElementById('hours-form').innerHTML=days.map(d=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <label class="checkbox-wrap" style="width:130px;flex-shrink:0">
+        <input type="checkbox" id="h-active-${d.k}" ${hours[d.k]?.active?'checked':''}/> ${d.l}
+      </label>
+      <input type="time" class="filter-input" id="h-open-${d.k}" value="${hours[d.k]?.open||'09:00'}" style="width:110px"/>
+      <span style="color:var(--muted)">—</span>
+      <input type="time" class="filter-input" id="h-close-${d.k}" value="${hours[d.k]?.close||'20:00'}" style="width:110px"/>
+    </div>`).join('');
+}
+function saveSettings(){
+  const cfg=DB.getObj('settings',DEFAULT_SETTINGS);
+  cfg.name=document.getElementById('cfg-name').value;
+  cfg.tagline=document.getElementById('cfg-tagline').value;
+  cfg.phone=document.getElementById('cfg-phone').value;
+  cfg.phone2=document.getElementById('cfg-phone2').value;
+  cfg.address=document.getElementById('cfg-address').value;
+  cfg.city=document.getElementById('cfg-city').value;
+  cfg.email=document.getElementById('cfg-email').value;
+  cfg.telegram=document.getElementById('cfg-telegram').value;
+  cfg.instagram=document.getElementById('cfg-instagram').value;
+  DB.set('settings',cfg);
+  document.getElementById('sb-venue-name').textContent=cfg.name||'Toý Mekany';
+  showToast('Sazlamalar saklandi!');
+}
+function saveHours(){
+  const cfg=DB.getObj('settings',DEFAULT_SETTINGS);
+  const days=['mon','tue','wed','thu','fri','sat','sun'];
+  if(!cfg.hours) cfg.hours={};
+  days.forEach(d=>{
+    cfg.hours[d]={
+      active:document.getElementById('h-active-'+d)?.checked||false,
+      open:document.getElementById('h-open-'+d)?.value||'',
+      close:document.getElementById('h-close-'+d)?.value||''
+    };
+  });
+  DB.set('settings',cfg);
+  showToast('Iş wagty saklandi!');
+}
+function savePaymentSettings(){
+  const cfg=DB.getObj('settings',DEFAULT_SETTINGS);
+  cfg.depositPct=parseInt(document.getElementById('cfg-deposit-pct').value)||30;
+  cfg.paymentDays=parseInt(document.getElementById('cfg-payment-days').value)||7;
+  cfg.cash=document.getElementById('cfg-cash').checked;
+  cfg.transfer=document.getElementById('cfg-transfer').checked;
+  cfg.card=document.getElementById('cfg-card').checked;
+  DB.set('settings',cfg);
+  showToast('Töleg sazlamalary saklandi!');
+}
+function showStab(btn,id){
+  document.querySelectorAll('.stab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.stab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+function exportAllData(){
+  const data={bookings:DB.get('bookings'),halls:DB.get('halls'),services:DB.get('services'),gallery:DB.get('gallery'),staff:DB.get('staff'),settings:DB.getObj('settings')};
+  downloadJSON(data,'venue_backup_'+new Date().toISOString().split('T')[0]+'.json');
+  showToast('Maglumatlar eksport edildi!');
+}
+function importData(input){
+  const file=input.files[0];if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(data.bookings) DB.set('bookings',data.bookings);
+      if(data.halls) DB.set('halls',data.halls);
+      if(data.services) DB.set('services',data.services);
+      if(data.gallery) DB.set('gallery',data.gallery);
+      if(data.staff) DB.set('staff',data.staff);
+      if(data.settings) DB.set('settings',data.settings);
+      showToast('Maglumatlar import edildi!');
+    }catch{showToast('Ýalňyş faýl formaty!','error');}
+  };
+  reader.readAsText(file);
+}
+function loadDemoData(){
+  confirmAction('Demo maglumatlaryny ýüklemek mevcut maglumatlary bozup biler. Dowam etjekmi?',()=>{
+    DB.set('bookings',SAMPLE_BOOKINGS);DB.set('halls',SAMPLE_HALLS);
+    DB.set('services',SAMPLE_SERVICES);DB.set('gallery',SAMPLE_GALLERY);
+    DB.set('staff',SAMPLE_STAFF);
+    showToast('Demo maglumatlar ýüklendi!');
+    renderSection('dashboard');
+  });
+}
+function confirmClearCompleted(){
+  confirmAction('Tamamlanan we ýatyryldy statusly bronlary öçürjekmi?',()=>{
+    const bks=DB.get('bookings').filter(b=>b.status!=='completed'&&b.status!=='cancelled');
+    DB.set('bookings',bks);showToast('Arassalandy!');
+  },true,'🗑️');
+}
+function confirmNuke(){
+  confirmAction('ÄHLI MAGLUMATLARY POZMAK! Bu ädim yzyna alynmaz!',()=>{
+    ['bookings','halls','services','gallery','staff','notifications'].forEach(k=>DB.set(k,[]));
+    localStorage.removeItem('venue_initialized');
+    showToast('Ähli maglumatlar pozuldy!','warning');
+  },true,'⚠️');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  EXPORT
+// ═══════════════════════════════════════════════════════════════════
+function exportCSV(collection){
+  const data=collection==='finance'?DB.get('bookings').filter(b=>b.status!=='cancelled'):DB.get(collection);
+  if(!data.length){showToast('Maglumat ýok!','warning');return;}
+  const keys=Object.keys(data[0]).filter(k=>typeof data[0][k]!=='object'||Array.isArray(data[0][k]));
+  let csv=keys.join(',')+'\n';
+  data.forEach(row=>{
+    csv+=keys.map(k=>{const v=row[k];return Array.isArray(v)?'"'+v.join(',')+'"':typeof v==='string'&&v.includes(',')?'"'+v+'"':v??'';}).join(',')+'\n';
+  });
+  downloadText(csv,collection+'_'+new Date().toISOString().split('T')[0]+'.csv','text/csv');
+  showToast('CSV eksport edildi!');
+}
+function exportJSON(collection){
+  downloadJSON(DB.get(collection),collection+'_'+new Date().toISOString().split('T')[0]+'.json');
+  showToast('JSON eksport edildi!');
+}
+function downloadText(content,filename,type){
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=filename;a.click();
+}
+function downloadJSON(data,filename){
+  downloadText(JSON.stringify(data,null,2),filename,'application/json');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  GLOBAL SEARCH
+// ═══════════════════════════════════════════════════════════════════
+function globalSearch(q){
+  if(q.length<2) return;
+  const bookings=DB.get('bookings').filter(b=>
+    b.id.toLowerCase().includes(q)||
+    b.groom.name.toLowerCase().includes(q)||
+    b.bride.name.toLowerCase().includes(q)||
+    (b.groom.phone||'').includes(q)||
+    (b.bride.phone||'').includes(q)
+  );
+  if(bookings.length>0){
+    navigate('bookings',document.querySelector('[data-section=bookings]'));
+    document.getElementById('bk-search').value=q;
+    renderBookings();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════════════
+function fmtMoney(n){return n?n.toLocaleString('ru-RU'):0;}
+function fmtDate(s){
+  if(!s) return '—';
+  const d=new Date(s+'T00:00:00');
+  return `${d.getDate()} ${MONTHS_TM[d.getMonth()]} ${d.getFullYear()}`;
+}
+function hallName(id){return{sha:'Şa Zaly',bahar:'Bahar Zaly',altyn:'Altyn Zal',howly:'Açyk Howly'}[id]||id;}
+function statusBadge(s){
+  const labels={new:'Täze',pending:'Garaşyl',confirmed:'Tassykly',completed:'Tamamlanan',cancelled:'Ýatyryldy'};
+  const icons={new:'📝',pending:'⏳',confirmed:'✅',completed:'🏆',cancelled:'❌'};
+  return `<span class="badge badge-${s}">${icons[s]||''} ${labels[s]||s}</span>`;
+}
+function statusLabel(s){return{new:'Täze',pending:'Garaşyl',confirmed:'Tassykly',completed:'Tamamlanan',cancelled:'Ýatyryldy'}[s]||s;}
+function packageLabel(p){return{basic:'Başlangyç',premium:'Premium',luxury:'Lýuks'}[p]||p;}
+function sourceLabel(s){return{website:'Saýt',phone:'Telefon',instagram:'Instagram',referral:'Maslahat',walk_in:'Şahsy'}[s]||s;}
+function timeSince(date){
+  const sec=Math.floor((new Date()-date)/1000);
+  if(sec<60) return 'Biraz öň';
+  const min=Math.floor(sec/60);if(min<60) return min+' min öň';
+  const hr=Math.floor(min/60);if(hr<24) return hr+' sag öň';
+  const day=Math.floor(hr/24);if(day===1) return 'Düýn';
+  return day+' gün öň';
+}
+function strColor(str){
+  let h=0;for(let c of str) h=((h<<5)-h)+c.charCodeAt(0);
+  const colors=['#C9A843','#4F46E5','#10B981','#06B6D4','#F59E0B','#EF4444','#8B5CF6','#EC4899'];
+  return colors[Math.abs(h)%colors.length];
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════════
+initDemoData();
+if(!restoreSession()){
+  // show login
+} else {
+  startApp();
+}
+window.addEventListener('load',()=>{lucide.createIcons();});
+</script>
+</body>
+</html>
