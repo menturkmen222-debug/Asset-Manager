@@ -1197,6 +1197,17 @@ export default function App() {
         </svg>
       </section>
 
+      {/* ── STATS BAR ── */}
+      <div className="stats-bar" data-testid="stats-bar">
+        <div className="pattern-lines" />
+        <div className="stats-bar-inner">
+          <AnimStat value={venue.guests+'+'} label="Iň köp myhman kabul edip bilýäris" Icon={IcPeople} suffix="+" />
+          <AnimStat value={venue.halls}       label="Premium Zal, dürli stilde"          Icon={IcCrown} />
+          <AnimStat value={venue.events}      label="Gurulan Toý Çäresi"                 Icon={IcMedal} suffix="+" />
+          <AnimStat value={venue.parking+'+'} label="Awtoulag Ýeri, mugt"                Icon={IcAuto} suffix="+" />
+        </div>
+      </div>
+
       {/* ── HALLS ── */}
       <section className="section" id="halls" data-testid="section-halls" style={{ background:'var(--bg)' }}>
         <ArabesqueSVG size={380} style={{ top:'5%', right:'-3%' }} />
