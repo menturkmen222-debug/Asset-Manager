@@ -50,6 +50,21 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 
 ## Packages
 
+### `artifacts/toy-makon` (`@workspace/toy-makon`)
+
+Premium Turkmen wedding venue website. React + Vite SPA, dark gold theme.
+
+- **`src/App.tsx`** — full public-facing site (Hero, Halls, Services, Gallery, Steps, Testimonials, Pricing, FAQ, Contact). No emoji — every icon is a hand-crafted inline SVG component (IcCrown, IcGem, IcFlower, IcSpark, IcCamera, IcPhone, IcFork, IcNote, IcHeadset, IcPillar, IcAuto, IcLeaf, IcShield, IcPeople, IcClock, IcMedal, IcRuler, IcEarth, IcSend, IcInsta, IcHeart, IcCalendar, IcWrench, etc.). 12 unique SVG gallery scenes (GalCouple, GalBouquet, GalCandles, GalToast, GalDance, GalCake, GalFloral, GalLights, GalFamily, GalSceneCamera, GalCrownScene, GalMoment).
+- **`src/index.css`** — dark theme: `--bg: #04030A`, `--gold: #C9A843`. Fonts: Cormorant Garamond + Playfair Display + DM Sans + Cinzel.
+- **`public/admin.html`** — standalone vanilla-JS admin panel (3142 lines). 11 management sections, 3 roles. Demo creds: `admin/admin123`, `menejer/menejer123`, `kabul/kabul123`. localStorage only.
+- **`vercel.json`** — SPA routing config. All routes → `index.html`, `/admin.html` served as-is.
+- URL query-param configurable: `?name=`, `?city=`, `?phone=`, `?color=`, `?halls=`, `?guests=`, etc.
+- Dev port: 19903
+
+#### Nav design
+- Desktop: diamond ◆ separators between links; per-link custom icon slides in above label on hover
+- Mobile menu: numbered items (01–05) with staggered slide-in, ornate arabesque background, ArrowRight reveal
+
 ### `artifacts/api-server` (`@workspace/api-server`)
 
 Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` for request and response validation and `@workspace/db` for persistence.
