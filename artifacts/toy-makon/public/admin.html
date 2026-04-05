@@ -604,6 +604,17 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
 /* ─── SEARCH RESULT HIGHLIGHT ──────────────────────────  */
 .hl{background:rgba(201,168,67,0.25);border-radius:2px;padding:0 2px;}
 
+/* ─── LANG SWITCHER ──────────────────────────────────── */
+.lang-switcher{display:flex;align-items:center;gap:3px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:3px;}
+.lang-btn{
+  display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;
+  border:none;background:none;cursor:pointer;font-size:0.76rem;font-weight:700;
+  color:var(--muted);transition:all 0.2s;letter-spacing:0.5px;
+}
+.lang-btn.active{background:var(--surface);color:var(--gold);box-shadow:0 1px 6px rgba(0,0,0,0.4);}
+.lang-btn:hover:not(.active){color:var(--text);}
+.flag{font-size:1rem;line-height:1;}
+
 /* ═══ PREMIUM SIDEBAR REDESIGN ════════════════════════════ */
 .sidebar{
   background:linear-gradient(170deg,#0E0B1E 0%,#0B0918 60%,#09071A 100%);
@@ -809,11 +820,11 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
 <div id="confirm-overlay">
   <div class="confirm-box">
     <div class="confirm-icon" id="confirm-icon"></div>
-    <div class="confirm-title" id="confirm-title">Tassyklama</div>
+    <div class="confirm-title" id="confirm-title" data-i18n="confirm_title">Tassyklama</div>
     <div class="confirm-msg" id="confirm-msg"></div>
     <div class="confirm-actions">
-      <button class="btn btn-outline" onclick="confirmClose()">Ýok</button>
-      <button class="btn btn-danger" id="confirm-ok-btn" onclick="confirmOk()">Hawa, Dowam Et</button>
+      <button class="btn btn-outline" onclick="confirmClose()" data-i18n="no">Ýok</button>
+      <button class="btn btn-danger" id="confirm-ok-btn" onclick="confirmOk()" data-i18n="yes_continue">Hawa, Dowam Et</button>
     </div>
   </div>
 </div>
@@ -821,20 +832,24 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="login-wrap" id="login-card">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px;gap:4px">
+      <button class="lang-btn active" id="login-lang-tk" onclick="setLang('tk')" style="background:var(--surface2);border-radius:6px;border:1px solid var(--border)"><span class="flag">🇹🇲</span> TK</button>
+      <button class="lang-btn" id="login-lang-ru" onclick="setLang('ru')" style="border-radius:6px;border:1px solid var(--border)"><span class="flag">🇷🇺</span> RU</button>
+    </div>
     <div class="login-logo">
       <div class="login-logo-icon">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(26,20,0,0.85)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="position:relative;z-index:1"><path d="M2 20h20M3 20l2-10 4.5 4.5L12 5l2.5 9.5L19 10l2 10H3z"/><circle cx="12" cy="5" r="1.5" fill="rgba(26,20,0,0.85)" stroke="none"/></svg>
       </div>
       <div class="login-title">Toý Mekany</div>
-      <div class="login-sub">Admin Paneli</div>
+      <div class="login-sub" data-i18n="admin_panel">Admin Paneli</div>
     </div>
-    <div class="login-error" id="login-error">Ulanyjy ady ýa-da parol ýalňyş!</div>
+    <div class="login-error" id="login-error" data-i18n="login_error">Ulanyjy ady ýa-da parol ýalňyş!</div>
     <div class="form-group">
-      <label class="form-label">Ulanyjy Ady</label>
+      <label class="form-label" data-i18n="username">Ulanyjy Ady</label>
       <input class="form-input" type="text" id="login-username" placeholder="admin" autocomplete="username"/>
     </div>
     <div class="form-group">
-      <label class="form-label">Parol</label>
+      <label class="form-label" data-i18n="password">Parol</label>
       <div class="input-wrap">
         <input class="form-input" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"/>
         <button class="input-eye" onclick="togglePwd('login-password',this)"><i data-lucide="eye" style="width:16px;height:16px"></i></button>
@@ -843,10 +858,10 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
     <div class="form-group">
       <label class="checkbox-wrap">
         <input type="checkbox" id="login-remember"/>
-        Meni ýatla
+        <span data-i18n="remember_me">Meni ýatla</span>
       </label>
     </div>
-    <button class="btn-gold" onclick="doLogin()">Giriş</button>
+    <button class="btn-gold" onclick="doLogin()" data-i18n="login_btn">Giriş</button>
     <div style="margin-top:16px;font-size:0.78rem;color:var(--muted);text-align:center">
       Demo: admin / admin123 &nbsp;|&nbsp; menejer / menejer123
     </div>
@@ -875,45 +890,45 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
       </div>
     </div>
     <nav class="sidebar-nav" id="sidebar-nav">
-      <div class="nav-section-label">ESASY MENÝU</div>
+      <div class="nav-section-label" data-i18n="nav_main">ESASY MENÝU</div>
       <button class="nav-item active" data-section="dashboard" onclick="navigate('dashboard',this)">
-        <i data-lucide="layout-dashboard"></i><span>Dolandyryş Tagtasy</span>
+        <i data-lucide="layout-dashboard"></i><span data-i18n="nav_dashboard">Dolandyryş Tagtasy</span>
       </button>
       <button class="nav-item" data-section="bookings" onclick="navigate('bookings',this)">
-        <i data-lucide="calendar-check"></i><span>Bron Dolandyrma</span>
+        <i data-lucide="calendar-check"></i><span data-i18n="nav_bookings">Bron Dolandyrma</span>
       </button>
       <button class="nav-item" data-section="halls" onclick="navigate('halls',this)">
-        <i data-lucide="building-2"></i><span>Zal Dolandyrma</span>
+        <i data-lucide="building-2"></i><span data-i18n="nav_halls">Zal Dolandyrma</span>
       </button>
       <button class="nav-item" data-section="services" onclick="navigate('services',this)">
-        <i data-lucide="settings-2"></i><span>Hyzmat Dolandyrma</span>
+        <i data-lucide="settings-2"></i><span data-i18n="nav_services">Hyzmat Dolandyrma</span>
       </button>
       <button class="nav-item" data-section="gallery" onclick="navigate('gallery',this)">
-        <i data-lucide="image"></i><span>Galereýa</span>
+        <i data-lucide="image"></i><span data-i18n="nav_gallery">Galereýa</span>
       </button>
       <button class="nav-item" data-section="team" onclick="navigate('team',this)">
-        <i data-lucide="users"></i><span>Topar & Işgärler</span>
+        <i data-lucide="users"></i><span data-i18n="nav_team">Topar & Işgärler</span>
       </button>
       <button class="nav-item" data-section="finance" onclick="navigate('finance',this)">
-        <i data-lucide="banknote"></i><span>Maliýe</span>
+        <i data-lucide="banknote"></i><span data-i18n="nav_finance">Maliýe</span>
       </button>
       <button class="nav-item" data-section="reports" onclick="navigate('reports',this)">
-        <i data-lucide="bar-chart-3"></i><span>Hasabatlar</span>
+        <i data-lucide="bar-chart-3"></i><span data-i18n="nav_reports">Hasabatlar</span>
       </button>
-      <div class="nav-section-label" style="margin-top:8px">SAZLAMALAR</div>
+      <div class="nav-section-label" style="margin-top:8px" data-i18n="nav_settings_section">SAZLAMALAR</div>
       <button class="nav-item" data-section="notifications" onclick="navigate('notifications',this)">
-        <i data-lucide="bell"></i><span>Bildirişler</span>
+        <i data-lucide="bell"></i><span data-i18n="nav_notifications">Bildirişler</span>
       </button>
       <button class="nav-item" data-section="users" onclick="navigate('users',this)" id="nav-users" style="display:none">
-        <i data-lucide="user-cog"></i><span>Ulanyjylar</span>
+        <i data-lucide="user-cog"></i><span data-i18n="nav_users">Ulanyjylar</span>
       </button>
       <button class="nav-item" data-section="settings" onclick="navigate('settings',this)">
-        <i data-lucide="sliders-horizontal"></i><span>Ulgam Sazlamalary</span>
+        <i data-lucide="sliders-horizontal"></i><span data-i18n="nav_system_settings">Ulgam Sazlamalary</span>
       </button>
     </nav>
     <div class="sidebar-footer">
       <button class="nav-item" onclick="doLogout()" style="color:var(--danger)">
-        <i data-lucide="log-out"></i><span>Çykmak</span>
+        <i data-lucide="log-out"></i><span data-i18n="logout">Çykmak</span>
       </button>
       <button class="sidebar-collapse-btn" onclick="toggleSidebar()">
         <i data-lucide="panel-left-close" id="collapse-icon"></i>
@@ -930,6 +945,10 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
       <div class="topbar-search">
         <i data-lucide="search" class="topbar-search-icon" style="width:15px;height:15px"></i>
         <input type="text" placeholder="Gözleg..." id="global-search" oninput="globalSearch(this.value)"/>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn active" id="lang-btn-tk" onclick="setLang('tk')"><span class="flag">🇹🇲</span> TK</button>
+        <button class="lang-btn" id="lang-btn-ru" onclick="setLang('ru')"><span class="flag">🇷🇺</span> RU</button>
       </div>
       <div class="topbar-actions">
         <div class="icon-btn" onclick="navigate('notifications',document.querySelector('[data-section=notifications]'))">
@@ -952,9 +971,9 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
         <div class="kpi-grid" id="kpi-grid"></div>
         <!-- Quick Actions -->
         <div class="quick-actions">
-          <button class="btn btn-primary" onclick="openNewBookingModal()"><i data-lucide="plus"></i> Täze Bron Gir</button>
-          <button class="btn btn-outline" onclick="navigate('bookings',document.querySelector('[data-section=bookings]'));filterBookingStatus('pending')"><i data-lucide="clock"></i> Garaşýan Bronlar (<span id="pending-count">0</span>)</button>
-          <button class="btn btn-outline" onclick="showThisWeekWeddings()"><i data-lucide="calendar"></i> Bu Hepde Toýlar</button>
+          <button class="btn btn-primary" onclick="openNewBookingModal()"><i data-lucide="plus"></i> <span data-i18n="new_booking_btn">Täze Bron Gir</span></button>
+          <button class="btn btn-outline" onclick="navigate('bookings',document.querySelector('[data-section=bookings]'));filterBookingStatus('pending')"><i data-lucide="clock"></i> <span data-i18n="pending_bookings_btn">Garaşýan Bronlar</span> (<span id="pending-count">0</span>)</button>
+          <button class="btn btn-outline" onclick="showThisWeekWeddings()"><i data-lucide="calendar"></i> <span data-i18n="this_week_weddings">Bu Hepde Toýlar</span></button>
           <button class="btn btn-outline" onclick="exportCSV('bookings')"><i data-lucide="download"></i> CSV Eksport</button>
         </div>
         <!-- Charts Row -->
@@ -986,11 +1005,11 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
             <div id="cal-day-popup" style="margin-top:12px;display:none"></div>
           </div>
           <div class="card">
-            <div class="section-title" style="font-size:1rem;margin-bottom:12px">Soňky Bronlar</div>
+            <div class="section-title" style="font-size:1rem;margin-bottom:12px" data-i18n="dash_recent_bookings">Soňky Bronlar</div>
             <div class="recent-scroll">
               <table>
                 <thead><tr>
-                  <th>Toý Güni</th><th>Jübüt</th><th>Zal</th><th>Myhmany</th><th>Jemi</th><th>Ýagdaý</th><th>Işler</th>
+                  <th data-i18n="dash_wedding_day">Toý Güni</th><th data-i18n="dash_couple">Jübüt</th><th data-i18n="dash_hall">Zal</th><th data-i18n="dash_guests">Myhmany</th><th data-i18n="dash_total">Jemi</th><th data-i18n="dash_status">Ýagdaý</th><th data-i18n="dash_actions">Işler</th>
                 </tr></thead>
                 <tbody id="dashboard-bookings-tbody"></tbody>
               </table>
@@ -1003,44 +1022,44 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
       <div class="section" id="sec-bookings">
         <div class="section-header">
           <div>
-            <div class="section-title">Bron Dolandyrma</div>
-            <div class="section-sub" id="bookings-count-label">Ähli bronlar</div>
+            <div class="section-title" data-i18n="nav_bookings">Bron Dolandyrma</div>
+            <div class="section-sub" id="bookings-count-label" data-i18n="all_bookings">Ähli bronlar</div>
           </div>
-          <button class="btn btn-primary" onclick="openNewBookingModal()"><i data-lucide="plus"></i> Täze Bron</button>
+          <button class="btn btn-primary" onclick="openNewBookingModal()"><i data-lucide="plus"></i> <span data-i18n="new_booking">Täze Bron</span></button>
         </div>
         <!-- Filter -->
         <div class="filter-bar">
           <div class="filter-group">
-            <div class="filter-label">Gözleg</div>
+            <div class="filter-label" data-i18n="search">Gözleg</div>
             <input class="filter-input" type="text" id="bk-search" placeholder="at, telefon, ID..." oninput="renderBookings()"/>
           </div>
           <div class="filter-group">
-            <div class="filter-label">Ýagdaý</div>
+            <div class="filter-label" data-i18n="status">Ýagdaý</div>
             <select class="filter-input" id="bk-status" onchange="renderBookings()">
-              <option value="">Hemmesi</option>
-              <option value="new">Täze</option>
-              <option value="pending">Garaşyl</option>
-              <option value="confirmed">Tassykly</option>
-              <option value="completed">Tamamlanan</option>
-              <option value="cancelled">Ýatyryldy</option>
+              <option value="" data-i18n="all">Hemmesi</option>
+              <option value="new" data-i18n="status_new">Täze</option>
+              <option value="pending" data-i18n="status_pending">Garaşyl</option>
+              <option value="confirmed" data-i18n="status_confirmed">Tassykly</option>
+              <option value="completed" data-i18n="status_completed">Tamamlanan</option>
+              <option value="cancelled" data-i18n="status_cancelled">Ýatyryldy</option>
             </select>
           </div>
           <div class="filter-group">
-            <div class="filter-label">Zal</div>
+            <div class="filter-label" data-i18n="hall">Zal</div>
             <select class="filter-input" id="bk-hall" onchange="renderBookings()">
-              <option value="">Hemmesi</option>
-              <option value="sha">Şa Zaly</option>
-              <option value="bahar">Bahar Zaly</option>
-              <option value="altyn">Altyn Zal</option>
-              <option value="howly">Açyk Howly</option>
+              <option value="" data-i18n="all">Hemmesi</option>
+              <option value="sha" data-i18n="hall_sha">Şa Zaly</option>
+              <option value="bahar" data-i18n="hall_bahar">Bahar Zaly</option>
+              <option value="altyn" data-i18n="hall_altyn">Altyn Zal</option>
+              <option value="howly" data-i18n="hall_howly">Açyk Howly</option>
             </select>
           </div>
           <div class="filter-group">
-            <div class="filter-label">Başl. Sene</div>
+            <div class="filter-label" data-i18n="date_from">Başl. Sene</div>
             <input class="filter-input" type="date" id="bk-date-from" onchange="renderBookings()"/>
           </div>
           <div class="filter-group">
-            <div class="filter-label">Soňky Sene</div>
+            <div class="filter-label" data-i18n="date_to">Soňky Sene</div>
             <input class="filter-input" type="date" id="bk-date-to" onchange="renderBookings()"/>
           </div>
           <div class="filter-actions">
@@ -1050,8 +1069,8 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
         </div>
         <!-- View toggle -->
         <div style="display:flex;gap:8px;margin-bottom:12px">
-          <button class="tab active" id="bk-view-list" onclick="setBookingView('list')">Sanaw</button>
-          <button class="tab" id="bk-view-cal" onclick="setBookingView('calendar')">Senenama</button>
+          <button class="tab active" id="bk-view-list" onclick="setBookingView('list')" data-i18n="list_view">Sanaw</button>
+          <button class="tab" id="bk-view-cal" onclick="setBookingView('calendar')" data-i18n="calendar_view">Senenama</button>
         </div>
         <!-- List View -->
         <div id="bk-list-view">
@@ -1059,8 +1078,8 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
             <table>
               <thead><tr>
                 <th><input type="checkbox" id="bk-select-all" onchange="toggleSelectAll(this)"/></th>
-                <th>ID</th><th>Toý Güni</th><th>Jübüt</th><th>Zal</th>
-                <th>Myhmany</th><th>Jemi (TMT)</th><th>Galany</th><th>Ýagdaý</th><th>Çeşme</th><th>Işler</th>
+                <th>ID</th><th data-i18n="wedding_date">Toý Güni</th><th data-i18n="couple">Jübüt</th><th data-i18n="hall">Zal</th>
+                <th data-i18n="guests">Myhmany</th><th data-i18n="total_tmt">Jemi (TMT)</th><th data-i18n="remaining">Galany</th><th data-i18n="status">Ýagdaý</th><th data-i18n="source">Çeşme</th><th data-i18n="actions">Işler</th>
               </tr></thead>
               <tbody id="bookings-tbody"></tbody>
             </table>
@@ -1093,8 +1112,8 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
       <!-- ═══════════════ HALLS ══════════════════ -->
       <div class="section" id="sec-halls">
         <div class="section-header">
-          <div><div class="section-title">Zal Dolandyrma</div><div class="section-sub">Zallary sazla we bron statistikasyny gör</div></div>
-          <button class="btn btn-primary" onclick="openHallModal()"><i data-lucide="plus"></i> Täze Zal</button>
+          <div><div class="section-title" data-i18n="nav_halls">Zal Dolandyrma</div><div class="section-sub" data-i18n="halls_sub">Zallary sazla we bron statistikasyny gör</div></div>
+          <button class="btn btn-primary" onclick="openHallModal()"><i data-lucide="plus"></i> <span data-i18n="new_hall">Täze Zal</span></button>
         </div>
         <div class="grid-auto" id="halls-grid"></div>
       </div>
@@ -1102,13 +1121,13 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
       <!-- ═══════════════ SERVICES ═══════════════ -->
       <div class="section" id="sec-services">
         <div class="section-header">
-          <div><div class="section-title">Hyzmat Dolandyrma</div><div class="section-sub">Hyzmatlar we paketler</div></div>
-          <button class="btn btn-primary" onclick="openServiceModal()"><i data-lucide="plus"></i> Täze Hyzmat</button>
+          <div><div class="section-title" data-i18n="nav_services">Hyzmat Dolandyrma</div><div class="section-sub" data-i18n="services_sub">Hyzmatlar we paketler</div></div>
+          <button class="btn btn-primary" onclick="openServiceModal()"><i data-lucide="plus"></i> <span data-i18n="new_service">Täze Hyzmat</span></button>
         </div>
         <div class="tabs" id="service-tabs"></div>
         <div class="grid-auto" id="services-grid"></div>
         <div style="margin-top:24px">
-          <div class="section-title" style="font-size:1rem;margin-bottom:12px">Paket Dolandyrma</div>
+          <div class="section-title" style="font-size:1rem;margin-bottom:12px" data-i18n="package_management">Paket Dolandyrma</div>
           <div class="grid-3" id="packages-grid"></div>
         </div>
       </div>
@@ -1116,8 +1135,8 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
       <!-- ═══════════════ GALLERY ════════════════ -->
       <div class="section" id="sec-gallery">
         <div class="section-header">
-          <div><div class="section-title">Galereýa Dolandyrma</div><div class="section-sub">Suratlary we wideolary dolandyr</div></div>
-          <button class="btn btn-primary" onclick="openGalleryModal()"><i data-lucide="plus"></i> Surat Goş</button>
+          <div><div class="section-title" data-i18n="gallery_management">Galereýa Dolandyrma</div><div class="section-sub" data-i18n="gallery_sub">Suratlary we wideolary dolandyr</div></div>
+          <button class="btn btn-primary" onclick="openGalleryModal()"><i data-lucide="plus"></i> <span data-i18n="add_photo">Surat Goş</span></button>
         </div>
         <div class="gallery-grid" id="gallery-grid"></div>
       </div>
@@ -1125,22 +1144,22 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
       <!-- ═══════════════ TEAM ═══════════════════ -->
       <div class="section" id="sec-team">
         <div class="section-header">
-          <div><div class="section-title">Topar & Işgärler</div><div class="section-sub">Işgärleri dolandyr</div></div>
-          <button class="btn btn-primary" onclick="openStaffModal()"><i data-lucide="user-plus"></i> Işgär Goş</button>
+          <div><div class="section-title" data-i18n="nav_team">Topar & Işgärler</div><div class="section-sub" data-i18n="team_sub">Işgärleri dolandyr</div></div>
+          <button class="btn btn-primary" onclick="openStaffModal()"><i data-lucide="user-plus"></i> <span data-i18n="add_staff">Işgär Goş</span></button>
         </div>
         <div class="filter-bar" style="margin-bottom:12px">
           <div class="filter-group">
-            <div class="filter-label">Gözleg</div>
+            <div class="filter-label" data-i18n="search">Gözleg</div>
             <input class="filter-input" type="text" id="staff-search" placeholder="at, wezipe..." oninput="renderStaff()"/>
           </div>
           <div class="filter-group">
-            <div class="filter-label">Bölüm</div>
+            <div class="filter-label" data-i18n="department">Bölüm</div>
             <select class="filter-input" id="staff-dept" onchange="renderStaff()">
-              <option value="">Hemmesi</option>
-              <option value="decor">Bezeg</option>
-              <option value="kitchen">Aşhana</option>
-              <option value="event">Çäre</option>
-              <option value="tech">Tehniki</option>
+              <option value="" data-i18n="all">Hemmesi</option>
+              <option value="decor" data-i18n="dept_decor">Bezeg</option>
+              <option value="kitchen" data-i18n="dept_kitchen">Aşhana</option>
+              <option value="event" data-i18n="dept_event">Çäre</option>
+              <option value="tech" data-i18n="dept_tech">Tehniki</option>
               <option value="admin">Admin</option>
             </select>
           </div>
@@ -1151,28 +1170,28 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
       <!-- ═══════════════ FINANCE ════════════════ -->
       <div class="section" id="sec-finance">
         <div class="section-header">
-          <div><div class="section-title">Maliýe</div><div class="section-sub">Girdeji we tölegleri dolandyr</div></div>
-          <button class="btn btn-primary" onclick="openPaymentModal()"><i data-lucide="plus"></i> Töleg Giriş</button>
+          <div><div class="section-title" data-i18n="nav_finance">Maliýe</div><div class="section-sub" data-i18n="finance_sub">Girdeji we tölegleri dolandyr</div></div>
+          <button class="btn btn-primary" onclick="openPaymentModal()"><i data-lucide="plus"></i> <span data-i18n="payment_entry">Töleg Giriş</span></button>
         </div>
         <div class="fin-summary" id="fin-summary"></div>
         <div class="grid-2" style="margin-bottom:20px">
           <div class="card">
-            <div class="section-title" style="font-size:1rem;margin-bottom:12px">Aýlyk Girdeji (Bar)</div>
+            <div class="section-title" style="font-size:1rem;margin-bottom:12px" data-i18n="monthly_revenue_chart">Aýlyk Girdeji (Bar)</div>
             <div class="chart-wrap tall"><canvas id="monthly-chart"></canvas></div>
           </div>
           <div class="card">
-            <div class="section-title" style="font-size:1rem;margin-bottom:12px">Töleg Ýagdaýy</div>
+            <div class="section-title" style="font-size:1rem;margin-bottom:12px" data-i18n="payment_status_chart">Töleg Ýagdaýy</div>
             <div class="chart-wrap tall"><canvas id="payment-status-chart"></canvas></div>
           </div>
         </div>
         <div class="filter-bar">
           <div class="filter-group">
-            <div class="filter-label">Ýagdaý</div>
+            <div class="filter-label" data-i18n="status">Ýagdaý</div>
             <select class="filter-input" id="fin-status" onchange="renderFinance()">
-              <option value="">Hemmesi</option>
-              <option value="paid">Tölendi</option>
-              <option value="partial">Bölekli</option>
-              <option value="unpaid">Tölenilmedik</option>
+              <option value="" data-i18n="all">Hemmesi</option>
+              <option value="paid" data-i18n="fin_paid">Tölendi</option>
+              <option value="partial" data-i18n="fin_partial">Bölekli</option>
+              <option value="unpaid" data-i18n="fin_unpaid">Tölenilmedik</option>
             </select>
           </div>
           <div class="filter-actions">
@@ -1182,8 +1201,8 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
         <div class="table-wrap">
           <table>
             <thead><tr>
-              <th>Bron ID</th><th>Müşderi</th><th>Zal</th><th>Toý Güni</th>
-              <th>Jemi (TMT)</th><th>Tölenilen</th><th>Galany</th><th>Ýagdaý</th><th>Işler</th>
+              <th data-i18n="booking_id">Bron ID</th><th data-i18n="client">Müşderi</th><th data-i18n="hall">Zal</th><th data-i18n="wedding_date">Toý Güni</th>
+              <th data-i18n="total_tmt">Jemi (TMT)</th><th data-i18n="paid">Tölenilen</th><th data-i18n="remaining">Galany</th><th data-i18n="status">Ýagdaý</th><th data-i18n="actions">Işler</th>
             </tr></thead>
             <tbody id="finance-tbody"></tbody>
           </table>
@@ -1193,48 +1212,48 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
       <!-- ═══════════════ REPORTS ════════════════ -->
       <div class="section" id="sec-reports">
         <div class="section-header">
-          <div><div class="section-title">Hasabatlar & Analitik</div></div>
+          <div><div class="section-title" data-i18n="nav_reports">Hasabatlar & Analitik</div></div>
         </div>
         <div class="grid-2" style="margin-bottom:20px">
           <div class="card">
-            <div class="section-title" style="font-size:1rem;margin-bottom:16px">Hasabat Dörediji</div>
+            <div class="section-title" style="font-size:1rem;margin-bottom:16px" data-i18n="report_builder">Hasabat Dörediji</div>
             <div class="form-group">
-              <label class="form-label">Hasabat Görnüşi</label>
+              <label class="form-label" data-i18n="report_type">Hasabat Görnüşi</label>
               <div class="report-type-list">
-                <label class="report-type-item"><input type="radio" name="rtype" value="bookings" checked/> Bron Hasabaty</label>
-                <label class="report-type-item"><input type="radio" name="rtype" value="finance"/> Maliýe Hasabaty</label>
-                <label class="report-type-item"><input type="radio" name="rtype" value="halls"/> Zal Dolulyk Hasabaty</label>
-                <label class="report-type-item"><input type="radio" name="rtype" value="services"/> Hyzmat Meşhurlyk</label>
-                <label class="report-type-item"><input type="radio" name="rtype" value="sources"/> Müşderi Çeşme Analizi</label>
+                <label class="report-type-item"><input type="radio" name="rtype" value="bookings" checked/> <span data-i18n="report_bookings">Bron Hasabaty</span></label>
+                <label class="report-type-item"><input type="radio" name="rtype" value="finance"/> <span data-i18n="report_finance">Maliýe Hasabaty</span></label>
+                <label class="report-type-item"><input type="radio" name="rtype" value="halls"/> <span data-i18n="report_halls">Zal Dolulyk Hasabaty</span></label>
+                <label class="report-type-item"><input type="radio" name="rtype" value="services"/> <span data-i18n="report_services">Hyzmat Meşhurlyk</span></label>
+                <label class="report-type-item"><input type="radio" name="rtype" value="sources"/> <span data-i18n="report_sources">Müşderi Çeşme Analizi</span></label>
               </div>
             </div>
             <div class="form-group">
-              <label class="form-label">Döwür</label>
+              <label class="form-label" data-i18n="period">Döwür</label>
               <div class="period-btns">
-                <button class="period-btn active" onclick="setPeriod(this,'month')">Bu aý</button>
-                <button class="period-btn" onclick="setPeriod(this,'last_month')">Geçen aý</button>
-                <button class="period-btn" onclick="setPeriod(this,'quarter')">Bu çaryýyl</button>
-                <button class="period-btn" onclick="setPeriod(this,'year')">Bu ýyl</button>
+                <button class="period-btn active" onclick="setPeriod(this,'month')" data-i18n="this_month">Bu aý</button>
+                <button class="period-btn" onclick="setPeriod(this,'last_month')" data-i18n="last_month">Geçen aý</button>
+                <button class="period-btn" onclick="setPeriod(this,'quarter')" data-i18n="this_quarter">Bu çaryýyl</button>
+                <button class="period-btn" onclick="setPeriod(this,'year')" data-i18n="this_year">Bu ýyl</button>
               </div>
             </div>
             <div style="display:flex;gap:8px;margin-top:16px">
-              <button class="btn btn-primary" onclick="generateReport()"><i data-lucide="file-text"></i> Hasabat Döreder</button>
-              <button class="btn btn-outline" onclick="exportCSV('bookings')"><i data-lucide="download"></i> CSV Ýükle</button>
+              <button class="btn btn-primary" onclick="generateReport()"><i data-lucide="file-text"></i> <span data-i18n="generate_report">Hasabat Döreder</span></button>
+              <button class="btn btn-outline" onclick="exportCSV('bookings')"><i data-lucide="download"></i> <span data-i18n="csv_download">CSV Ýükle</span></button>
               <button class="btn btn-outline" onclick="exportJSON('bookings')"><i data-lucide="file-json"></i> JSON</button>
             </div>
           </div>
           <div class="card">
-            <div class="section-title" style="font-size:1rem;margin-bottom:12px">Müşderi Çeşmesi</div>
+            <div class="section-title" style="font-size:1rem;margin-bottom:12px" data-i18n="client_source_chart">Müşderi Çeşmesi</div>
             <div class="chart-wrap"><canvas id="source-chart"></canvas></div>
           </div>
         </div>
         <div class="grid-2">
           <div class="card">
-            <div class="section-title" style="font-size:1rem;margin-bottom:12px">Zal Meşhurlyk</div>
+            <div class="section-title" style="font-size:1rem;margin-bottom:12px" data-i18n="hall_popularity_chart">Zal Meşhurlyk</div>
             <div class="chart-wrap"><canvas id="hall-pop-chart"></canvas></div>
           </div>
           <div class="card">
-            <div class="section-title" style="font-size:1rem;margin-bottom:12px">Aý Boýunça Bron Sany</div>
+            <div class="section-title" style="font-size:1rem;margin-bottom:12px" data-i18n="monthly_bookings_chart">Aý Boýunça Bron Sany</div>
             <div class="chart-wrap"><canvas id="monthly-bk-chart"></canvas></div>
           </div>
         </div>
@@ -1243,15 +1262,15 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
       <!-- ═══════════════ NOTIFICATIONS ══════════ -->
       <div class="section" id="sec-notifications">
         <div class="section-header">
-          <div><div class="section-title">Bildirişler</div></div>
-          <button class="btn btn-outline btn-sm" onclick="markAllRead()"><i data-lucide="check-check"></i> Hemmesini Oka</button>
+          <div><div class="section-title" data-i18n="nav_notifications">Bildirişler</div></div>
+          <button class="btn btn-outline btn-sm" onclick="markAllRead()"><i data-lucide="check-check"></i> <span data-i18n="mark_all_read">Hemmesini Oka</span></button>
         </div>
         <div class="grid-2">
           <div class="card" style="padding:0;overflow:hidden">
             <div class="notif-list" id="notif-list"></div>
           </div>
           <div class="card">
-            <div class="section-title" style="font-size:1rem;margin-bottom:16px">Bildiriş Sazlamalary</div>
+            <div class="section-title" style="font-size:1rem;margin-bottom:16px" data-i18n="notif_settings">Bildiriş Sazlamalary</div>
             <div id="notif-settings-list"></div>
           </div>
         </div>
@@ -1260,13 +1279,13 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
       <!-- ═══════════════ USERS ══════════════════ -->
       <div class="section" id="sec-users">
         <div class="section-header">
-          <div><div class="section-title">Ulanyjylar</div><div class="section-sub">Diňe Superadmin üçin</div></div>
-          <button class="btn btn-primary" onclick="openUserModal()"><i data-lucide="user-plus"></i> Ulanyjy Goş</button>
+          <div><div class="section-title" data-i18n="nav_users">Ulanyjylar</div><div class="section-sub" data-i18n="users_sub">Diňe Superadmin üçin</div></div>
+          <button class="btn btn-primary" onclick="openUserModal()"><i data-lucide="user-plus"></i> <span data-i18n="add_user">Ulanyjy Goş</span></button>
         </div>
         <div class="table-wrap">
           <table>
             <thead><tr>
-              <th>At</th><th>Login</th><th>Rol</th><th>Soňky Giriş</th><th>Ýagdaýy</th><th>Işler</th>
+              <th data-i18n="name">At</th><th>Login</th><th data-i18n="role">Rol</th><th data-i18n="last_login">Soňky Giriş</th><th data-i18n="status">Ýagdaýy</th><th data-i18n="actions">Işler</th>
             </tr></thead>
             <tbody id="users-tbody"></tbody>
           </table>
@@ -1275,55 +1294,55 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
 
       <!-- ═══════════════ SETTINGS ════════════════ -->
       <div class="section" id="sec-settings">
-        <div class="section-header"><div class="section-title">Ulgam Sazlamalary</div></div>
+        <div class="section-header"><div class="section-title" data-i18n="nav_system_settings">Ulgam Sazlamalary</div></div>
         <div class="settings-tabs">
-          <button class="stab active" onclick="showStab(this,'stab-venue')">Mekan Maglumaty</button>
-          <button class="stab" onclick="showStab(this,'stab-hours')">Işleýiş Wagty</button>
-          <button class="stab" onclick="showStab(this,'stab-payment')">Töleg Sazl.</button>
-          <button class="stab" onclick="showStab(this,'stab-data')">Maglumat</button>
+          <button class="stab active" onclick="showStab(this,'stab-venue')" data-i18n="stab_venue">Mekan Maglumaty</button>
+          <button class="stab" onclick="showStab(this,'stab-hours')" data-i18n="stab_hours">Işleýiş Wagty</button>
+          <button class="stab" onclick="showStab(this,'stab-payment')" data-i18n="stab_payment">Töleg Sazl.</button>
+          <button class="stab" onclick="showStab(this,'stab-data')" data-i18n="stab_data">Maglumat</button>
         </div>
         <!-- Venue -->
         <div class="stab-panel active card" id="stab-venue">
           <div class="form-grid">
-            <div class="form-group"><label class="form-label">Mekan Ady *</label><input class="form-input" id="cfg-name"/></div>
+            <div class="form-group"><label class="form-label" data-i18n="venue_name_lbl">Mekan Ady *</label><input class="form-input" id="cfg-name"/></div>
             <div class="form-group"><label class="form-label">Tagline</label><input class="form-input" id="cfg-tagline"/></div>
-            <div class="form-group"><label class="form-label">Telefon 1 *</label><input class="form-input" id="cfg-phone"/></div>
-            <div class="form-group"><label class="form-label">Telefon 2</label><input class="form-input" id="cfg-phone2"/></div>
-            <div class="form-group col-span-2"><label class="form-label">Adres *</label><input class="form-input" id="cfg-address"/></div>
-            <div class="form-group"><label class="form-label">Şäher</label><input class="form-input" id="cfg-city"/></div>
-            <div class="form-group"><label class="form-label">E-poçta</label><input class="form-input" id="cfg-email"/></div>
+            <div class="form-group"><label class="form-label" data-i18n="phone1">Telefon 1 *</label><input class="form-input" id="cfg-phone"/></div>
+            <div class="form-group"><label class="form-label" data-i18n="phone2">Telefon 2</label><input class="form-input" id="cfg-phone2"/></div>
+            <div class="form-group col-span-2"><label class="form-label" data-i18n="address">Adres *</label><input class="form-input" id="cfg-address"/></div>
+            <div class="form-group"><label class="form-label" data-i18n="city">Şäher</label><input class="form-input" id="cfg-city"/></div>
+            <div class="form-group"><label class="form-label" data-i18n="email">E-poçta</label><input class="form-input" id="cfg-email"/></div>
             <div class="form-group"><label class="form-label">Telegram @</label><input class="form-input" id="cfg-telegram"/></div>
             <div class="form-group"><label class="form-label">Instagram @</label><input class="form-input" id="cfg-instagram"/></div>
           </div>
-          <button class="btn btn-primary" onclick="saveSettings()" style="margin-top:8px"><i data-lucide="save"></i> Sakla</button>
+          <button class="btn btn-primary" onclick="saveSettings()" style="margin-top:8px"><i data-lucide="save"></i> <span data-i18n="save">Sakla</span></button>
         </div>
         <!-- Hours -->
         <div class="stab-panel card" id="stab-hours">
           <div id="hours-form"></div>
-          <button class="btn btn-primary" onclick="saveHours()" style="margin-top:16px"><i data-lucide="save"></i> Sakla</button>
+          <button class="btn btn-primary" onclick="saveHours()" style="margin-top:16px"><i data-lucide="save"></i> <span data-i18n="save">Sakla</span></button>
         </div>
         <!-- Payment -->
         <div class="stab-panel card" id="stab-payment">
           <div class="form-grid">
-            <div class="form-group"><label class="form-label">Öňpul göterimi (%)</label><input class="form-input" type="number" id="cfg-deposit-pct" value="30"/></div>
-            <div class="form-group"><label class="form-label">Töleg möhleti (gün)</label><input class="form-input" type="number" id="cfg-payment-days" value="7"/></div>
+            <div class="form-group"><label class="form-label" data-i18n="deposit_pct">Öňpul göterimi (%)</label><input class="form-input" type="number" id="cfg-deposit-pct" value="30"/></div>
+            <div class="form-group"><label class="form-label" data-i18n="payment_days">Töleg möhleti (gün)</label><input class="form-input" type="number" id="cfg-payment-days" value="7"/></div>
           </div>
-          <div class="form-section-title">Töleg görnüşleri</div>
+          <div class="form-section-title" data-i18n="payment_types">Töleg görnüşleri</div>
           <div class="checkbox-list">
-            <label class="check-item"><input type="checkbox" id="cfg-cash" checked/> Nagt</label>
-            <label class="check-item"><input type="checkbox" id="cfg-transfer" checked/> Bank geçiriş</label>
-            <label class="check-item"><input type="checkbox" id="cfg-card" checked/> Kart</label>
+            <label class="check-item"><input type="checkbox" id="cfg-cash" checked/> <span data-i18n="cash">Nagt</span></label>
+            <label class="check-item"><input type="checkbox" id="cfg-transfer" checked/> <span data-i18n="bank_transfer">Bank geçiriş</span></label>
+            <label class="check-item"><input type="checkbox" id="cfg-card" checked/> <span data-i18n="card">Kart</span></label>
           </div>
-          <button class="btn btn-primary" onclick="savePaymentSettings()" style="margin-top:16px"><i data-lucide="save"></i> Sakla</button>
+          <button class="btn btn-primary" onclick="savePaymentSettings()" style="margin-top:16px"><i data-lucide="save"></i> <span data-i18n="save">Sakla</span></button>
         </div>
         <!-- Data -->
         <div class="stab-panel card" id="stab-data">
           <div style="display:flex;flex-direction:column;gap:10px;max-width:400px">
-            <button class="btn btn-outline" onclick="exportAllData()"><i data-lucide="upload"></i> Maglumatlary Eksport Et (JSON)</button>
-            <label class="btn btn-outline" style="cursor:pointer"><i data-lucide="download"></i> Maglumatlary Import Et (JSON)<input type="file" accept=".json" style="display:none" onchange="importData(this)"/></label>
-            <button class="btn btn-outline" onclick="loadDemoData()"><i data-lucide="refresh-cw"></i> Demo Maglumatlary Ýükle</button>
-            <button class="btn btn-danger" onclick="confirmClearCompleted()"><i data-lucide="trash-2"></i> Tamamlanan Bronlary Arassala</button>
-            <button class="btn btn-danger" style="background:rgba(239,68,68,0.2)" onclick="confirmNuke()"><i data-lucide="alert-triangle"></i> Ähli Maglumatlary Pozmak</button>
+            <button class="btn btn-outline" onclick="exportAllData()"><i data-lucide="upload"></i> <span data-i18n="export_data">Maglumatlary Eksport Et (JSON)</span></button>
+            <label class="btn btn-outline" style="cursor:pointer"><i data-lucide="download"></i> <span data-i18n="import_data">Maglumatlary Import Et (JSON)</span><input type="file" accept=".json" style="display:none" onchange="importData(this)"/></label>
+            <button class="btn btn-outline" onclick="loadDemoData()"><i data-lucide="refresh-cw"></i> <span data-i18n="load_demo">Demo Maglumatlary Ýükle</span></button>
+            <button class="btn btn-danger" onclick="confirmClearCompleted()"><i data-lucide="trash-2"></i> <span data-i18n="clear_completed">Tamamlanan Bronlary Arassala</span></button>
+            <button class="btn btn-danger" style="background:rgba(239,68,68,0.2)" onclick="confirmNuke()"><i data-lucide="alert-triangle"></i> <span data-i18n="delete_all">Ähli Maglumatlary Pozmak</span></button>
           </div>
         </div>
       </div>
@@ -1444,11 +1463,11 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
         <div class="form-group"><label class="form-label">Max Myhman Sany *</label><input class="form-input" type="number" id="hall-capacity"/></div>
         <div class="form-group"><label class="form-label">Meýdany (m²)</label><input class="form-input" type="number" id="hall-area"/></div>
         <div class="form-group"><label class="form-label">Başl. Baha (TMT/adam) *</label><input class="form-input" type="number" id="hall-price"/></div>
-        <div class="form-group"><label class="form-label">Ýagdaýy</label>
+        <div class="form-group"><label class="form-label" data-i18n="hall_field_status">Ýagdaýy</label>
           <select class="form-select" id="hall-status">
-            <option value="open">Açyk</option>
-            <option value="maintenance">Abatlaýyş</option>
-            <option value="closed">Ýapyk</option>
+            <option value="open" data-i18n="hall_status_open">Açyk</option>
+            <option value="maintenance" data-i18n="hall_status_maintenance">Abatlaýyş</option>
+            <option value="closed" data-i18n="hall_status_closed">Ýapyk</option>
           </select>
         </div>
         <div class="form-group col-span-2"><label class="form-label">Beýany</label><textarea class="form-textarea" id="hall-desc"></textarea></div>
@@ -1680,6 +1699,468 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
 
 <script>
 // ═══════════════════════════════════════════════════════════════════
+//  LANGUAGE SYSTEM
+// ═══════════════════════════════════════════════════════════════════
+let LANG = localStorage.getItem('admin_lang') || 'tk';
+
+const TRANSLATIONS = {
+  tk: {
+    // Misc
+    admin_panel:'Admin Paneli', login_error:'Ulanyjy ady ýa-da parol ýalňyş!',
+    username:'Ulanyjy Ady', password:'Parol', remember_me:'Meni ýatla', login_btn:'Giriş',
+    confirm_title:'Tassyklama', no:'Ýok', yes_continue:'Hawa, Dowam Et',
+    save:'Sakla', close:'Ýap', add:'Goş', edit:'Düzet', delete:'Öçür',
+    // Nav
+    nav_main:'ESASY MENÝU', nav_dashboard:'Dolandyryş Tagtasy', nav_bookings:'Bron Dolandyrma',
+    nav_halls:'Zal Dolandyrma', nav_services:'Hyzmat Dolandyrma', nav_gallery:'Galereýa',
+    nav_team:'Topar & Işgärler', nav_finance:'Maliýe', nav_reports:'Hasabatlar',
+    nav_settings_section:'SAZLAMALAR', nav_notifications:'Bildirişler', nav_users:'Ulanyjylar',
+    nav_system_settings:'Ulgam Sazlamalary', logout:'Çykmak',
+    // Dashboard
+    new_booking_btn:'Täze Bron Gir', pending_bookings_btn:'Garaşýan Bronlar',
+    this_week_weddings:'Bu Hepde Toýlar',
+    kpi_month_bookings:'Bu Aý Bron', kpi_month_revenue:'Bu Aý Girdeji',
+    kpi_pending:'Garaşýan Bronlar', kpi_open_halls:'Açyk Zallar',
+    kpi_prev_month:'geçen aý', kpi_attention:'!! Üns gerek', kpi_this_week:'Bu hepde',
+    dash_recent_bookings:'Soňky Bronlar', dash_booking_stats:'Bron Statistikasy',
+    dash_mini_cal:'Senenama',
+    // Bookings
+    all_bookings:'Ähli bronlar', new_booking:'Täze Bron', search:'Gözleg',
+    status:'Ýagdaý', hall:'Zal', date_from:'Başl. Sene', date_to:'Soňky Sene',
+    all:'Hemmesi', list_view:'Sanaw', calendar_view:'Senenama',
+    status_new:'Täze', status_pending:'Garaşyl', status_confirmed:'Tassykly',
+    status_completed:'Tamamlanan', status_cancelled:'Ýatyryldy',
+    hall_sha:'Şa Zaly', hall_bahar:'Bahar Zaly', hall_altyn:'Altyn Zal', hall_howly:'Açyk Howly',
+    wedding_date:'Toý Güni', couple:'Jübüt', guests:'Myhmany',
+    total_tmt:'Jemi (TMT)', remaining:'Galany', source:'Çeşme', actions:'Işler',
+    booking_id:'Bron ID', client:'Müşderi',
+    // Bookings found
+    bookings_found:'bron tapyldy',
+    // Booking detail
+    couple_info:'Jübüt Maglumatlary', wedding_info:'Toý Maglumatlary',
+    groom:'Ýigit', bride:'Gelin', wedding_day:'Toý güni',
+    time_lbl:'Wagt', hall_lbl:'Zal', guests_lbl:'Myhmanlar', package_lbl:'Paket',
+    source_lbl:'Çeşme', finance_status:'Maliýe Ýagdaýy',
+    total_price:'Umumy baha', percent_paid:'% tölenildi',
+    paid_lbl:'Tölenilen', remaining_lbl:'Galany',
+    deposit_paid_badge:'Öňpul tölenildi', deposit_pending_badge:'Öňpul garaşylýar',
+    fully_paid_badge:'Doly tölenildi', remaining_badge:'Galany',
+    note_lbl:'Bellik', internal_note_lbl:'Içerki bellik',
+    comm_history:'Habarlaşma Taryhy', no_comm:'Habarlaşma taryhy ýok',
+    add_note:'Bellik goş',
+    confirm_booking:'Tassykla', cancel_booking:'Ýatyrt', payment_entry_btn:'Töleg Giriş',
+    // Booking form
+    new_booking_form:'Täze Bron', edit_booking_form:'Brony Düzet',
+    groom_name:'Ýigitiň Ady *', groom_phone:'Ýigitiň Telefony',
+    bride_name:'Gelniň Ady *', bride_phone:'Gelniň Telefony',
+    wedding_date_lbl:'Toý Güni *', start_time:'Başlangyç Wagt', end_time:'Gutaryş Wagty',
+    hall_lbl2:'Zal *', guests_lbl2:'Myhman Sany *', package_lbl2:'Paket',
+    price_per_person:'Adam Başy Baha (TMT)', total_price_lbl:'Jemi Baha (TMT)',
+    extra_services:'Goşmaça Hyzmatlar', finance_lbl:'Maliýe',
+    deposit_lbl:'Öňpul (TMT)', deposit_status:'Öňpul Ýagdaýy',
+    deposit_not_paid:'Tölenilmedi', deposit_paid:'Tölenildi',
+    source_lbl2:'Çeşme', status_lbl:'Ýagdaý',
+    special_notes:'Goşmaça Bellik', internal_note:'Içerki Bellik',
+    // Halls
+    halls_sub:'Zallary sazla we bron statistikasyny gör', new_hall:'Täze Zal',
+    hall_capacity:'sany myhman', hall_occupancy:'Dolulyk derejesi',
+    hall_field_status:'Ýagdaýy', hall_status_open:'Açyk', hall_status_maintenance:'Abatlaýyş', hall_status_closed:'Ýapyk',
+    // Services
+    services_sub:'Hyzmatlar we paketler', new_service:'Täze Hyzmat',
+    package_management:'Paket Dolandyrma', svc_active:'Aktiw', svc_per_person:'adam başy',
+    svc_fixed:'umumy baha', svc_custom:'gepleşik',
+    // Gallery
+    gallery_management:'Galereýa Dolandyrma', gallery_sub:'Suratlary we wideolary dolandyr',
+    add_photo:'Surat Goş',
+    // Team
+    team_sub:'Işgärleri dolandyr', add_staff:'Işgär Goş',
+    department:'Bölüm', dept_decor:'Bezeg', dept_kitchen:'Aşhana',
+    dept_event:'Çäre', dept_tech:'Tehniki', staff_active:'Işleýär',
+    // Finance
+    finance_sub:'Girdeji we tölegleri dolandyr', payment_entry:'Töleg Giriş',
+    monthly_revenue_chart:'Aýlyk Girdeji (Bar)', payment_status_chart:'Töleg Ýagdaýy',
+    fin_paid:'Tölendi', fin_partial:'Bölekli', fin_unpaid:'Tölenilmedik',
+    paid:'Tölenilen', total_income:'Jemi Girdeji', outstanding:'Tölenilmeli',
+    fully_paid_count:'Doly Tölenilen',
+    // Reports
+    nav_reports:'Hasabatlar & Analitik', report_builder:'Hasabat Dörediji',
+    report_type:'Hasabat Görnüşi', report_bookings:'Bron Hasabaty',
+    report_finance:'Maliýe Hasabaty', report_halls:'Zal Dolulyk Hasabaty',
+    report_services:'Hyzmat Meşhurlyk', report_sources:'Müşderi Çeşme Analizi',
+    period:'Döwür', this_month:'Bu aý', last_month:'Geçen aý',
+    this_quarter:'Bu çaryýyl', this_year:'Bu ýyl',
+    generate_report:'Hasabat Döreder', csv_download:'CSV Ýükle',
+    client_source_chart:'Müşderi Çeşmesi', hall_popularity_chart:'Zal Meşhurlyk',
+    monthly_bookings_chart:'Aý Boýunça Bron Sany',
+    // Notifications
+    mark_all_read:'Hemmesini Oka', notif_settings:'Bildiriş Sazlamalary',
+    notif_view:'Gör', notif_on:'Açyk', notif_off:'Ýapyk',
+    // Users
+    users_sub:'Diňe Superadmin üçin', add_user:'Ulanyjy Goş',
+    name:'At', role:'Rol', last_login:'Soňky Giriş', never_logged:'Hiç girmedik',
+    user_active:'Aktiw', user_inactive:'Ýapyk',
+    role_superadmin:'Superadmin', role_manager:'Menejer', role_receptionist:'Kabul Işgäri',
+    // Settings
+    stab_venue:'Mekan Maglumaty', stab_hours:'Işleýiş Wagty',
+    stab_payment:'Töleg Sazl.', stab_data:'Maglumat',
+    venue_name_lbl:'Mekan Ady *', phone1:'Telefon 1 *', phone2:'Telefon 2',
+    address:'Adres *', city:'Şäher', email:'E-poçta',
+    deposit_pct:'Öňpul göterimi (%)', payment_days:'Töleg möhleti (gün)',
+    payment_types:'Töleg görnüşleri', cash:'Nagt', bank_transfer:'Bank geçiriş', card:'Kart',
+    export_data:'Maglumatlary Eksport Et (JSON)', import_data:'Maglumatlary Import Et (JSON)',
+    load_demo:'Demo Maglumatlary Ýükle', clear_completed:'Tamamlanan Bronlary Arassala',
+    delete_all:'Ähli Maglumatlary Pozmak',
+    // Modals
+    booking_detail_edit:'Düzet', payment_modal_title:'Töleg Giriş',
+    comm_modal_title:'Habarlaşma Bellik Goş', comm_type:'Görnüş',
+    comm_note_lbl:'Bellik *', comm_placeholder:'Habarlaşmanyň mazmuny...',
+    hall_modal_edit:'Zal Maglumatlaryny Düzet', new_hall_modal:'Täze Zal',
+    hall_name_lbl:'Zal Ady *', hall_emoji_lbl:'Emoji', hall_capacity_lbl:'Max Myhman Sany *',
+    hall_area_lbl:'Meýdany (m²)', hall_price_lbl:'Başl. Baha (TMT/adam) *',
+    hall_status_lbl:'Ýagdaýy', hall_desc_lbl:'Beýany', hall_features:'Aýratynlyklary',
+    feat_stage:'Sahna', feat_crystal:'Kristal çyralar', feat_led:'LED diwar',
+    feat_entrance:'Öz giriş', feat_vip:'VIP otaglar', feat_parking:'Duralgaly',
+    svc_modal_new:'Täze Hyzmat', svc_name_lbl:'Hyzmat Ady *',
+    svc_category_lbl:'Kategoriýa', svc_price_type_lbl:'Baha Görnüşi',
+    svc_price_lbl:'Baha (TMT)', svc_desc_lbl:'Beýany',
+    cat_food:'Tagam', cat_decor:'Bezeg', cat_music:'Saz',
+    cat_photo:'Foto & Wideo', cat_hotel:'Myhmanhana', cat_transport:'Ulag',
+    price_per_person_type:'Adam başy', price_fixed:'Umumy baha', price_custom:'Gepleşik',
+    gallery_add_title:'Surat Goş', gallery_url_lbl:'Surat URL (ýa-da saýla)',
+    gallery_or:'ýa-da', gallery_upload:'Faýldan Ýükle',
+    gallery_label_lbl:'Bellik', gallery_cat_lbl:'Kategoriýa',
+    gcat_hall:'Zal', gcat_wedding:'Toý', gcat_food:'Tagam',
+    gcat_decor:'Bezeg', gcat_team:'Topar',
+    staff_modal_new:'Täze Işgär', staff_modal_edit:'Işgär Düzetme',
+    staff_name_lbl:'Ady Familiýasy *', staff_pos_lbl:'Wezipesi *',
+    staff_dept_lbl:'Bölüm', staff_phone_lbl:'Telefon', staff_email_lbl:'E-poçta',
+    staff_hire_lbl:'Işe Başlan Güni', staff_salary_lbl:'Aýlygy (TMT)',
+    staff_notes_lbl:'Bellik', staff_active_lbl:'Işleýär',
+    pay_booking_lbl:'Bron ID *', pay_amount_lbl:'Töleg Möçberi (TMT) *',
+    pay_type_lbl:'Töleg Görnüşi', pay_date_lbl:'Töleg Senesi *',
+    pay_ref_lbl:'Amalat №', pay_note_lbl:'Bellik',
+    pay_cash:'Nagt', pay_transfer:'Bank Geçiriş', pay_card:'Kart',
+    user_modal_new:'Täze Ulanyjy', user_modal_edit:'Ulanyjy Düzetme',
+    user_name_lbl:'Ady *', user_login_lbl:'Login *', user_pwd_lbl:'Parol *',
+    user_role_lbl:'Rol *', user_active_lbl:'Aktiw',
+    role_manager_opt:'Menejer', role_receptionist_opt:'Kabul Işgäri',
+    // Source labels
+    src_website:'Saýt', src_phone:'Telefon', src_instagram:'Instagram',
+    src_referral:'Maslahat', src_walk_in:'Şahsy',
+    // Package labels
+    pkg_basic:'Başlangyç', pkg_premium:'Premium', pkg_luxury:'Lýuks',
+    // Toast messages
+    toast_booking_saved:'Bron saklandi!', toast_booking_updated:'Bron täzelendi!',
+    toast_booking_deleted:'Bron öçürildi', toast_status_changed:'Ýagdaý üýtgedildi',
+    toast_hall_saved:'Zal saklandi!', toast_hall_deleted:'Zal öçürildi',
+    toast_svc_saved:'Hyzmat saklandi!', toast_svc_deleted:'Hyzmat öçürildi',
+    toast_staff_saved:'Işgär saklandi!', toast_staff_deleted:'Işgär öçürildi',
+    toast_payment_saved:'Töleg hasaba alindi!', toast_note_added:'Bellik goşuldy!',
+    toast_settings_saved:'Sazlamalar saklandi!', toast_hours_saved:'Iş wagty saklandi!',
+    toast_payment_settings_saved:'Töleg sazlamalary saklandi!',
+    toast_export_done:'Maglumatlar eksport edildi!', toast_import_done:'Maglumatlar import edildi!',
+    toast_demo_loaded:'Demo maglumatlar ýüklendi!', toast_cleared:'Arassalandy!',
+    toast_nuked:'Ähli maglumatlar pozuldy!', toast_csv_done:'CSV eksport edildi!',
+    toast_json_done:'JSON eksport edildi!', toast_user_saved:'Ulanyjy täzelendi!',
+    toast_user_added:'Täze ulanyjy goşuldy!', toast_user_deleted:'Ulanyjy öçürildi',
+    toast_notif_on:'Bildiriş açyldy', toast_notif_off:'Bildiriş ýapyldy',
+    toast_all_read:'Ähli bildirişler okaldy',
+    toast_gallery_saved:'Surat goşuldy!', toast_gallery_deleted:'Surat öçürildi',
+    toast_fill_required:'Ähli meýdanlary dolduryň!',
+    toast_note_required:'Bellik ýaz!', toast_no_data:'Maglumat ýok!',
+    toast_file_error:'Ýalňyş faýl formaty!', toast_comm_saved:'Bellik goşuldy!',
+    toast_cant_delete_self:'Özüňizi öçürip bilmersiňiz!',
+    toast_login_exists:'Bu login eýýäm bar!',
+    // Confirm messages
+    confirm_delete_booking:'Bu brony öçürjekmi? Bu ädim yzyna alynmaz.',
+    confirm_delete_hall:'Bu zaly öçürjekmi?',
+    confirm_delete_svc:'Bu hyzmaty öçürjekmi?',
+    confirm_delete_staff:'Bu işgäri öçürjekmi?',
+    confirm_delete_user:'Bu ulanyjyny öçürjekmi?',
+    confirm_delete_gallery:'Bu suraty öçürjekmi?',
+    confirm_load_demo:'Demo maglumatlaryny ýüklemek mevcut maglumatlary bozup biler. Dowam etjekmi?',
+    confirm_clear:'Tamamlanan we ýatyryldy statusly bronlary öçürjekmi?',
+    confirm_nuke:'ÄHLI MAGLUMATLARY POZMAK! Bu ädim yzyna alynmaz!',
+    // Time
+    time_just_now:'Biraz öň', time_min_ago:'min öň', time_hr_ago:'sag öň',
+    time_yesterday:'Düýn', time_days_ago:'gün öň',
+    // Months
+    months:['Ýanwar','Fewral','Mart','Aprel','Maý','Iýun','Iýul','Awgust','Sentýabr','Oktýabr','Noýabr','Dekabr'],
+    months_short:['Ýan','Few','Mar','Apr','Maý','Iýun','Iýul','Awg','Sen','Okt','Noý','Dek'],
+    days_short:['Du','Si','Çar','Pe','An','Şen','Ýek'],
+    days_full:['Duşenbe','Sişenbe','Çarşenbe','Penşenbe','Anna','Şenbe','Ýekşenbe'],
+    // Calendar nav
+    cal_prev:'‹ Öňki', cal_next:'Soňky ›',
+    // topbar search placeholder
+    search_placeholder:'Gözleg...',
+    // Dashboard table
+    dash_wedding_day:'Toý Güni', dash_couple:'Jübüt', dash_hall:'Zal',
+    dash_guests:'Myhm.', dash_total:'Jemi', dash_status:'Ýagdaý', dash_actions:'Işler',
+    // Revenue chart section title
+    rev_chart_title:'Aýlyk Girdeji', hall_chart_title:'Zal Paýlanmasy',
+    // notif read more
+    notif_view_btn:'Gör',
+    // Hours days  
+    day_mon:'Duşenbe',day_tue:'Sişenbe',day_wed:'Çarşenbe',
+    day_thu:'Penşenbe',day_fri:'Anna',day_sat:'Şenbe',day_sun:'Ýekşenbe',
+    // source chart labels
+    src_chart:['Saýt','Telefon','Instagram','Maslahat','Şahsy'],
+    // chart year labels
+    chart_this_year:'Bu ýyl', chart_last_year:'Geçen ýyl',
+  },
+  ru: {
+    // Misc
+    admin_panel:'Панель администратора', login_error:'Неверное имя пользователя или пароль!',
+    username:'Имя пользователя', password:'Пароль', remember_me:'Запомнить меня', login_btn:'Войти',
+    confirm_title:'Подтверждение', no:'Нет', yes_continue:'Да, продолжить',
+    save:'Сохранить', close:'Закрыть', add:'Добавить', edit:'Редактировать', delete:'Удалить',
+    // Nav
+    nav_main:'ГЛАВНОЕ МЕНЮ', nav_dashboard:'Панель управления', nav_bookings:'Управление бронями',
+    nav_halls:'Управление залами', nav_services:'Управление услугами', nav_gallery:'Галерея',
+    nav_team:'Команда и сотрудники', nav_finance:'Финансы', nav_reports:'Отчёты',
+    nav_settings_section:'НАСТРОЙКИ', nav_notifications:'Уведомления', nav_users:'Пользователи',
+    nav_system_settings:'Настройки системы', logout:'Выйти',
+    // Dashboard
+    new_booking_btn:'Новое бронирование', pending_bookings_btn:'Ожидающие брони',
+    this_week_weddings:'Свадьбы на этой неделе',
+    kpi_month_bookings:'Бронь в этом месяце', kpi_month_revenue:'Доход в этом месяце',
+    kpi_pending:'Ожидающие брони', kpi_open_halls:'Открытые залы',
+    kpi_prev_month:'прошлый месяц', kpi_attention:'!! Требует внимания', kpi_this_week:'На этой неделе',
+    dash_recent_bookings:'Последние брони', dash_booking_stats:'Статистика броней',
+    dash_mini_cal:'Календарь',
+    // Bookings
+    all_bookings:'Все брони', new_booking:'Новая бронь', search:'Поиск',
+    status:'Статус', hall:'Зал', date_from:'Дата от', date_to:'Дата до',
+    all:'Все', list_view:'Список', calendar_view:'Календарь',
+    status_new:'Новый', status_pending:'Ожидает', status_confirmed:'Подтверждён',
+    status_completed:'Завершён', status_cancelled:'Отменён',
+    hall_sha:'Зал Шах', hall_bahar:'Зал Бахар', hall_altyn:'Золотой зал', hall_howly:'Открытый двор',
+    wedding_date:'День свадьбы', couple:'Пара', guests:'Гостей',
+    total_tmt:'Итого (TMT)', remaining:'Остаток', source:'Источник', actions:'Действия',
+    booking_id:'ID брони', client:'Клиент',
+    // Bookings found
+    bookings_found:'броней найдено',
+    // Booking detail
+    couple_info:'Информация о паре', wedding_info:'Данные свадьбы',
+    groom:'Жених', bride:'Невеста', wedding_day:'День свадьбы',
+    time_lbl:'Время', hall_lbl:'Зал', guests_lbl:'Гости', package_lbl:'Пакет',
+    source_lbl:'Источник', finance_status:'Финансовый статус',
+    total_price:'Общая сумма', percent_paid:'% оплачено',
+    paid_lbl:'Оплачено', remaining_lbl:'Остаток',
+    deposit_paid_badge:'Задаток оплачен', deposit_pending_badge:'Задаток ожидается',
+    fully_paid_badge:'Полностью оплачено', remaining_badge:'Остаток',
+    note_lbl:'Примечание', internal_note_lbl:'Внутренняя заметка',
+    comm_history:'История связи', no_comm:'История связи отсутствует',
+    add_note:'Добавить заметку',
+    confirm_booking:'Подтвердить', cancel_booking:'Отменить', payment_entry_btn:'Приём оплаты',
+    // Booking form
+    new_booking_form:'Новая бронь', edit_booking_form:'Редактировать бронь',
+    groom_name:'Имя жениха *', groom_phone:'Телефон жениха',
+    bride_name:'Имя невесты *', bride_phone:'Телефон невесты',
+    wedding_date_lbl:'День свадьбы *', start_time:'Время начала', end_time:'Время окончания',
+    hall_lbl2:'Зал *', guests_lbl2:'Количество гостей *', package_lbl2:'Пакет',
+    price_per_person:'Цена за человека (TMT)', total_price_lbl:'Итоговая цена (TMT)',
+    extra_services:'Дополнительные услуги', finance_lbl:'Финансы',
+    deposit_lbl:'Задаток (TMT)', deposit_status:'Статус задатка',
+    deposit_not_paid:'Не оплачен', deposit_paid:'Оплачен',
+    source_lbl2:'Источник', status_lbl:'Статус',
+    special_notes:'Дополнительные заметки', internal_note:'Внутренняя заметка',
+    // Halls
+    halls_sub:'Управляйте залами и просматривайте статистику', new_hall:'Новый зал',
+    hall_capacity:'гостей', hall_occupancy:'Загруженность',
+    hall_status_open:'Открыт', hall_status_maintenance:'На ремонте', hall_status_closed:'Закрыт',
+    // Services
+    services_sub:'Услуги и пакеты', new_service:'Новая услуга',
+    package_management:'Управление пакетами', svc_active:'Активен', svc_per_person:'за человека',
+    svc_fixed:'общая цена', svc_custom:'по договорённости',
+    // Gallery
+    gallery_management:'Управление галереей', gallery_sub:'Управляйте фотографиями и видео',
+    add_photo:'Добавить фото',
+    // Team
+    team_sub:'Управление персоналом', add_staff:'Добавить сотрудника',
+    department:'Отдел', dept_decor:'Декор', dept_kitchen:'Кухня',
+    dept_event:'Мероприятия', dept_tech:'Технический', staff_active:'Работает',
+    // Finance
+    finance_sub:'Управление доходами и платежами', payment_entry:'Приём оплаты',
+    monthly_revenue_chart:'Ежемесячный доход (Гр.)', payment_status_chart:'Статус оплаты',
+    fin_paid:'Оплачено', fin_partial:'Частично', fin_unpaid:'Не оплачено',
+    paid:'Оплачено', total_income:'Общий доход', outstanding:'К оплате',
+    fully_paid_count:'Полностью оплачено',
+    // Reports
+    nav_reports:'Отчёты и аналитика', report_builder:'Генератор отчётов',
+    report_type:'Тип отчёта', report_bookings:'Отчёт по бронированию',
+    report_finance:'Финансовый отчёт', report_halls:'Загруженность залов',
+    report_services:'Популярность услуг', report_sources:'Анализ источников клиентов',
+    period:'Период', this_month:'Этот месяц', last_month:'Прошлый месяц',
+    this_quarter:'Этот квартал', this_year:'Этот год',
+    generate_report:'Сформировать отчёт', csv_download:'Скачать CSV',
+    client_source_chart:'Источники клиентов', hall_popularity_chart:'Популярность залов',
+    monthly_bookings_chart:'Брони по месяцам',
+    // Notifications
+    mark_all_read:'Отметить всё как прочитанное', notif_settings:'Настройки уведомлений',
+    notif_view:'Просмотр', notif_on:'Включено', notif_off:'Отключено',
+    // Users
+    users_sub:'Только для суперадминистратора', add_user:'Добавить пользователя',
+    name:'Имя', role:'Роль', last_login:'Последний вход', never_logged:'Не входил',
+    user_active:'Активен', user_inactive:'Неактивен',
+    role_superadmin:'Суперадмин', role_manager:'Менеджер', role_receptionist:'Регистратор',
+    // Settings
+    stab_venue:'Данные заведения', stab_hours:'Часы работы',
+    stab_payment:'Настройки оплаты', stab_data:'Данные',
+    venue_name_lbl:'Название заведения *', phone1:'Телефон 1 *', phone2:'Телефон 2',
+    address:'Адрес *', city:'Город', email:'Эл. почта',
+    deposit_pct:'Процент задатка (%)', payment_days:'Срок оплаты (дней)',
+    payment_types:'Способы оплаты', cash:'Наличные', bank_transfer:'Банковский перевод', card:'Карта',
+    export_data:'Экспортировать данные (JSON)', import_data:'Импортировать данные (JSON)',
+    load_demo:'Загрузить демо данные', clear_completed:'Очистить завершённые брони',
+    delete_all:'Удалить все данные',
+    // Modals
+    booking_detail_edit:'Редактировать', payment_modal_title:'Приём оплаты',
+    comm_modal_title:'Добавить заметку о связи', comm_type:'Тип',
+    comm_note_lbl:'Заметка *', comm_placeholder:'Содержание переговоров...',
+    hall_modal_edit:'Редактировать зал', new_hall_modal:'Новый зал',
+    hall_name_lbl:'Название зала *', hall_emoji_lbl:'Эмодзи', hall_capacity_lbl:'Макс. гостей *',
+    hall_area_lbl:'Площадь (м²)', hall_price_lbl:'Базовая цена (TMT/чел.) *',
+    hall_status_lbl:'Статус', hall_desc_lbl:'Описание', hall_features:'Особенности',
+    feat_stage:'Сцена', feat_crystal:'Хрустальные люстры', feat_led:'LED стена',
+    feat_entrance:'Отдельный вход', feat_vip:'VIP комнаты', feat_parking:'Парковка',
+    svc_modal_new:'Новая услуга', svc_name_lbl:'Название услуги *',
+    svc_category_lbl:'Категория', svc_price_type_lbl:'Тип цены',
+    svc_price_lbl:'Цена (TMT)', svc_desc_lbl:'Описание',
+    cat_food:'Питание', cat_decor:'Декор', cat_music:'Музыка',
+    cat_photo:'Фото & Видео', cat_hotel:'Гостиница', cat_transport:'Транспорт',
+    price_per_person_type:'За человека', price_fixed:'Фиксированная', price_custom:'По договорённости',
+    gallery_add_title:'Добавить фото', gallery_url_lbl:'URL фото (или выберите)',
+    gallery_or:'или', gallery_upload:'Загрузить из файла',
+    gallery_label_lbl:'Подпись', gallery_cat_lbl:'Категория',
+    gcat_hall:'Зал', gcat_wedding:'Свадьба', gcat_food:'Питание',
+    gcat_decor:'Декор', gcat_team:'Команда',
+    staff_modal_new:'Новый сотрудник', staff_modal_edit:'Редактировать сотрудника',
+    staff_name_lbl:'Имя и фамилия *', staff_pos_lbl:'Должность *',
+    staff_dept_lbl:'Отдел', staff_phone_lbl:'Телефон', staff_email_lbl:'Эл. почта',
+    staff_hire_lbl:'Дата найма', staff_salary_lbl:'Зарплата (TMT)',
+    staff_notes_lbl:'Примечание', staff_active_lbl:'Работает',
+    pay_booking_lbl:'ID брони *', pay_amount_lbl:'Сумма оплаты (TMT) *',
+    pay_type_lbl:'Способ оплаты', pay_date_lbl:'Дата оплаты *',
+    pay_ref_lbl:'Номер транзакции', pay_note_lbl:'Примечание',
+    pay_cash:'Наличные', pay_transfer:'Банковский перевод', pay_card:'Карта',
+    user_modal_new:'Новый пользователь', user_modal_edit:'Редактировать пользователя',
+    user_name_lbl:'Имя *', user_login_lbl:'Логин *', user_pwd_lbl:'Пароль *',
+    user_role_lbl:'Роль *', user_active_lbl:'Активен',
+    role_manager_opt:'Менеджер', role_receptionist_opt:'Регистратор',
+    // Source labels
+    src_website:'Сайт', src_phone:'Телефон', src_instagram:'Instagram',
+    src_referral:'Рекомендация', src_walk_in:'Личное обращение',
+    // Package labels
+    pkg_basic:'Базовый', pkg_premium:'Премиум', pkg_luxury:'Люкс',
+    // Toast messages
+    toast_booking_saved:'Бронь сохранена!', toast_booking_updated:'Бронь обновлена!',
+    toast_booking_deleted:'Бронь удалена', toast_status_changed:'Статус изменён',
+    toast_hall_saved:'Зал сохранён!', toast_hall_deleted:'Зал удалён',
+    toast_svc_saved:'Услуга сохранена!', toast_svc_deleted:'Услуга удалена',
+    toast_staff_saved:'Сотрудник сохранён!', toast_staff_deleted:'Сотрудник удалён',
+    toast_payment_saved:'Оплата зафиксирована!', toast_note_added:'Заметка добавлена!',
+    toast_settings_saved:'Настройки сохранены!', toast_hours_saved:'Часы работы сохранены!',
+    toast_payment_settings_saved:'Настройки оплаты сохранены!',
+    toast_export_done:'Данные экспортированы!', toast_import_done:'Данные импортированы!',
+    toast_demo_loaded:'Демо данные загружены!', toast_cleared:'Очищено!',
+    toast_nuked:'Все данные удалены!', toast_csv_done:'CSV экспортирован!',
+    toast_json_done:'JSON экспортирован!', toast_user_saved:'Пользователь обновлён!',
+    toast_user_added:'Новый пользователь добавлен!', toast_user_deleted:'Пользователь удалён',
+    toast_notif_on:'Уведомление включено', toast_notif_off:'Уведомление отключено',
+    toast_all_read:'Все уведомления прочитаны',
+    toast_gallery_saved:'Фото добавлено!', toast_gallery_deleted:'Фото удалено',
+    toast_fill_required:'Заполните все обязательные поля!',
+    toast_note_required:'Введите заметку!', toast_no_data:'Данные отсутствуют!',
+    toast_file_error:'Неверный формат файла!', toast_comm_saved:'Заметка добавлена!',
+    toast_cant_delete_self:'Вы не можете удалить свою учётную запись!',
+    toast_login_exists:'Этот логин уже существует!',
+    // Confirm messages
+    confirm_delete_booking:'Удалить эту бронь? Это действие необратимо.',
+    confirm_delete_hall:'Удалить этот зал?',
+    confirm_delete_svc:'Удалить эту услугу?',
+    confirm_delete_staff:'Удалить этого сотрудника?',
+    confirm_delete_user:'Удалить этого пользователя?',
+    confirm_delete_gallery:'Удалить это фото?',
+    confirm_load_demo:'Загрузка демо данных может перезаписать текущие данные. Продолжить?',
+    confirm_clear:'Удалить брони со статусом "Завершён" и "Отменён"?',
+    confirm_nuke:'УДАЛИТЬ ВСЕ ДАННЫЕ! Это действие необратимо!',
+    // Time
+    time_just_now:'Только что', time_min_ago:'мин назад', time_hr_ago:'ч назад',
+    time_yesterday:'Вчера', time_days_ago:'дн назад',
+    // Months
+    months:['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
+    months_short:['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'],
+    days_short:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],
+    days_full:['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'],
+    // Calendar nav
+    cal_prev:'‹ Назад', cal_next:'Вперёд ›',
+    // topbar search placeholder
+    search_placeholder:'Поиск...',
+    // Dashboard table
+    dash_wedding_day:'День свадьбы', dash_couple:'Пара', dash_hall:'Зал',
+    dash_guests:'Гостей', dash_total:'Итого', dash_status:'Статус', dash_actions:'Действия',
+    // Revenue chart section title
+    rev_chart_title:'Ежемесячный доход', hall_chart_title:'Распределение по залам',
+    // notif read more
+    notif_view_btn:'Просмотр',
+    // Hours days  
+    day_mon:'Понедельник',day_tue:'Вторник',day_wed:'Среда',
+    day_thu:'Четверг',day_fri:'Пятница',day_sat:'Суббота',day_sun:'Воскресенье',
+    // source chart labels
+    src_chart:['Сайт','Телефон','Instagram','Рекомендация','Личное'],
+    // chart year labels
+    chart_this_year:'Этот год', chart_last_year:'Прошлый год',
+  }
+};
+
+function T(key){ return (TRANSLATIONS[LANG]||TRANSLATIONS.tk)[key] || TRANSLATIONS.tk[key] || key; }
+
+function setLang(lang){
+  LANG = lang;
+  localStorage.setItem('admin_lang', lang);
+  // Update lang buttons in topbar and login
+  ['lang-btn-tk','lang-btn-ru','login-lang-tk','login-lang-ru'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.toggle('active', id.endsWith(lang));
+  });
+  // Update html lang attr
+  document.documentElement.lang = lang;
+  // Apply translations to data-i18n elements
+  applyLang();
+  // Update search placeholder
+  const gs = document.getElementById('global-search');
+  if(gs) gs.placeholder = T('search_placeholder');
+  // Update topbar title based on current section
+  const activeNav = document.querySelector('.nav-item.active');
+  if(activeNav){
+    const sid = activeNav.getAttribute('data-section');
+    if(sid) document.getElementById('topbar-title').textContent = getSectionTitle(sid);
+  }
+  // Re-render dynamic sections
+  const active = document.querySelector('.section.active');
+  if(active){
+    const sid = active.id.replace('sec-','');
+    renderSection(sid);
+  }
+  renderDashboard();
+}
+
+function applyLang(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    const txt = T(key);
+    if(txt && txt !== key){
+      // For options inside select, set textContent; for others too
+      el.textContent = txt;
+    }
+  });
+  // Update topbar title
+  const ttEl = document.getElementById('topbar-title');
+  if(ttEl && ttEl._i18n) ttEl.textContent = T(ttEl._i18n);
+}
+
+// ═══════════════════════════════════════════════════════════════════
 //  CUSTOM SVG ICON SYSTEM
 // ═══════════════════════════════════════════════════════════════════
 const IC={
@@ -1828,9 +2309,10 @@ const NOTIF_SETTINGS=[
   {id:'overdue',label:'Galanja töleg möhleti geçende',enabled:true},
   {id:'daily',label:'Her gün hasabat al (09:00-da)',enabled:false}
 ];
-const DAYS_TM=['Du','Si','Çar','Pe','An','Şen','Ýek'];
-const MONTHS_TM=['Ýanwar','Fewral','Mart','Aprel','Maý','Iýun','Iýul','Awgust','Sentýabr','Oktýabr','Noýabr','Dekabr'];
-const MONTHS_SHORT=['Ýan','Few','Mar','Apr','Maý','Iýun','Iýul','Awg','Sen','Okt','Noý','Des'];
+// Language-aware arrays (use these everywhere instead of old constants)
+function DAYS_TM(){ return T('days_short'); }
+function MONTHS_TM(){ return T('months'); }
+function MONTHS_SHORT(){ return T('months_short'); }
 
 function initDemoData(){
   if(!localStorage.getItem('venue_initialized')){
@@ -1920,7 +2402,7 @@ function startApp(){
   lucide.createIcons();
   navigate('dashboard',document.querySelector('[data-section=dashboard]'));
 }
-function roleLabel(r){return{superadmin:'Superadmin',manager:'Menejer',receptionist:'Kabul Işgäri'}[r]||r;}
+function roleLabel(r){return{superadmin:T('role_superadmin'),manager:T('role_manager'),receptionist:T('role_receptionist')}[r]||r;}
 function togglePwd(id,btn){
   const inp=document.getElementById(id);
   if(inp.type==='password'){inp.type='text';btn.innerHTML='<i data-lucide="eye-off" style="width:16px;height:16px"></i>';}
@@ -1931,19 +2413,22 @@ function togglePwd(id,btn){
 // ═══════════════════════════════════════════════════════════════════
 //  NAVIGATION
 // ═══════════════════════════════════════════════════════════════════
-const SECTION_TITLES={
-  dashboard:'Dolandyryş Tagtasy',bookings:'Bron Dolandyrma',halls:'Zal Dolandyrma',
-  services:'Hyzmat Dolandyrma',gallery:'Galereýa',team:'Topar & Işgärler',
-  finance:'Maliýe',reports:'Hasabatlar',notifications:'Bildirişler',
-  users:'Ulanyjylar',settings:'Ulgam Sazlamalary'
-};
+function getSectionTitle(s){
+  const map={
+    dashboard:'nav_dashboard',bookings:'nav_bookings',halls:'nav_halls',
+    services:'nav_services',gallery:'nav_gallery',team:'nav_team',
+    finance:'nav_finance',reports:'nav_reports',notifications:'nav_notifications',
+    users:'nav_users',settings:'nav_system_settings'
+  };
+  return T(map[s]||s);
+}
 function navigate(section,el){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const sec=document.getElementById('sec-'+section);
   if(sec) sec.classList.add('active');
   if(el) el.classList.add('active');
-  document.getElementById('topbar-title').textContent=SECTION_TITLES[section]||section;
+  document.getElementById('topbar-title').textContent=getSectionTitle(section);
   renderSection(section);
   if(window.innerWidth<=768) closeSidebar();
 }
@@ -2060,10 +2545,10 @@ function renderKPIs(){
 
   const pct=(a,b)=>{if(!b)return 0;return Math.round((a-b)/b*100);};
   const kpis=[
-    {icon:'calendar',label:'Bu Aý Bron',val:monthBk.length,change:pct(monthBk.length,prevBk.length),bar:Math.min(100,monthBk.length*5),color:'#C9A843'},
-    {icon:'revenue',label:'Bu Aý Girdeji',val:fmtMoney(monthRev)+' TMT',change:pct(monthRev,prevRev),bar:Math.min(100,Math.round(monthRev/2000)),color:'#10B981'},
-    {icon:'hourglass',label:'Garaşýan Bronlar',val:pending.length,change:null,bar:Math.min(100,pending.length*15),color:'#F59E0B',warn:pending.length>5},
-    {icon:'building',label:'Açyk Zallar',val:halls.filter(h=>h.status==='open').length+'/'+halls.length,change:null,bar:activePct,color:'#06B6D4'}
+    {icon:'calendar',label:T('kpi_month_bookings'),val:monthBk.length,change:pct(monthBk.length,prevBk.length),bar:Math.min(100,monthBk.length*5),color:'#C9A843'},
+    {icon:'revenue',label:T('kpi_month_revenue'),val:fmtMoney(monthRev)+' TMT',change:pct(monthRev,prevRev),bar:Math.min(100,Math.round(monthRev/2000)),color:'#10B981'},
+    {icon:'hourglass',label:T('kpi_pending'),val:pending.length,change:null,bar:Math.min(100,pending.length*15),color:'#F59E0B',warn:pending.length>5},
+    {icon:'building',label:T('kpi_open_halls'),val:halls.filter(h=>h.status==='open').length+'/'+halls.length,change:null,bar:activePct,color:'#06B6D4'}
   ];
   document.getElementById('pending-count').textContent=pending.length;
   document.getElementById('kpi-grid').innerHTML=kpis.map(k=>`
@@ -2071,8 +2556,8 @@ function renderKPIs(){
       <div class="kpi-icon" style="background:${k.color}20;width:42px;height:42px;border-radius:11px">${svgI(k.icon,22,k.color)}</div>
       <div class="kpi-value" style="color:${k.warn?'var(--warning)':'var(--text)'}">${k.val}</div>
       <div class="kpi-label">${k.label}</div>
-      ${k.change!==null?`<div class="kpi-change ${k.change>=0?'up':'down'}">${k.change>=0?'▲':'▼'} ${Math.abs(k.change)}% geçen aý</div>`:
-        k.warn?'<div class="kpi-change down">!! Üns gerek</div>':'<div class="kpi-change" style="color:var(--muted)">Bu hepde</div>'}
+      ${k.change!==null?`<div class="kpi-change ${k.change>=0?'up':'down'}">${k.change>=0?'▲':'▼'} ${Math.abs(k.change)}% ${T('kpi_prev_month')}</div>`:
+        k.warn?`<div class="kpi-change down">${T('kpi_attention')}</div>`:`<div class="kpi-change" style="color:var(--muted)">${T('kpi_this_week')}</div>`}
       <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${k.bar}%;background:${k.color}"></div></div>
     </div>`).join('');
 }
@@ -2105,10 +2590,10 @@ function renderMiniCalendar(){
   let startDow=(first.getDay()+6)%7; // Mon=0
   document.getElementById('mini-cal').innerHTML=`
     <div class="mini-cal-header">
-      <span class="mini-cal-title">${MONTHS_TM[m]} ${y}</span>
+      <span class="mini-cal-title">${MONTHS_TM()[m]} ${y}</span>
     </div>
     <div class="mini-cal-grid">
-      ${DAYS_TM.map(d=>`<div class="mini-cal-dow">${d}</div>`).join('')}
+      ${DAYS_TM().map(d=>`<div class="mini-cal-dow">${d}</div>`).join('')}
       ${Array(startDow).fill('<div></div>').join('')}
       ${Array.from({length:last.getDate()},(_,i)=>{
         const day=i+1;
@@ -2145,7 +2630,7 @@ function renderRevenueChart(){
   const bookings=DB.get('bookings');
   for(let i=5;i>=0;i--){
     const d=new Date(now);d.setMonth(d.getMonth()-i);
-    labels.push(MONTHS_SHORT[d.getMonth()]);
+    labels.push(MONTHS_SHORT()[d.getMonth()]);
     const rev=bookings.filter(b=>{
       const bd=new Date(b.weddingDate);
       return bd.getMonth()===d.getMonth()&&bd.getFullYear()===d.getFullYear()&&b.status!=='cancelled';
@@ -2195,7 +2680,7 @@ function renderBookings(){
     return true;
   }).sort((a,b)=>new Date(a.weddingDate)-new Date(b.weddingDate));
 
-  document.getElementById('bookings-count-label').textContent=`${filtered.length} bron tapyldy`;
+  document.getElementById('bookings-count-label').textContent=`${filtered.length} ${T('bookings_found')}`;
 
   const pageSize=parseInt(document.getElementById('bk-page-size').value)||10;
   const totalPages=Math.ceil(filtered.length/pageSize)||1;
@@ -2252,7 +2737,7 @@ function setBookingView(v){
 let fullCalDate=new Date();
 function renderFullCalendar(){
   const y=fullCalDate.getFullYear(),m=fullCalDate.getMonth();
-  document.getElementById('full-cal-title').textContent=`${MONTHS_TM[m]} ${y}`;
+  document.getElementById('full-cal-title').textContent=`${MONTHS_TM()[m]} ${y}`;
   const bookings=DB.get('bookings').filter(b=>b.status!=='cancelled');
   const first=new Date(y,m,1);
   const last=new Date(y,m+1,0);
@@ -2316,52 +2801,52 @@ function viewBooking(id){
         </div>
       </div>
       <div>
-        <div class="form-section-title">Toý Maglumatlary</div>
+        <div class="form-section-title">${T('wedding_info')}</div>
         <div style="display:flex;flex-direction:column;gap:6px;font-size:0.875rem">
-          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--gold)">${svgI('calendar',13,'currentColor')}</span><span><strong>Toý güni:</strong> ${fmtDate(b.weddingDate)}</span></div>
-          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--muted)">${svgI('clock',13,'currentColor')}</span><span><strong>Wagt:</strong> ${b.weddingTime} — ${b.endTime||'?'}</span></div>
-          <div style="display:flex;align-items:center;gap:6px"><span style="color:#06B6D4">${svgI('building',13,'currentColor')}</span><span><strong>Zal:</strong> ${hallName(b.hall)}</span></div>
-          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--muted)">${svgI('users',13,'currentColor')}</span><span><strong>Myhmanlar:</strong> ${b.guestCount} adam</span></div>
-          <div style="display:flex;align-items:center;gap:6px"><span style="color:#8B5CF6">${svgI('box',13,'currentColor')}</span><span><strong>Paket:</strong> ${packageLabel(b.package)}</span></div>
-          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--muted)">${svgI('signal',13,'currentColor')}</span><span><strong>Çeşme:</strong> ${sourceLabel(b.source)}</span></div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--gold)">${svgI('calendar',13,'currentColor')}</span><span><strong>${T('wedding_day')}:</strong> ${fmtDate(b.weddingDate)}</span></div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--muted)">${svgI('clock',13,'currentColor')}</span><span><strong>${T('time_lbl')}:</strong> ${b.weddingTime} — ${b.endTime||'?'}</span></div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:#06B6D4">${svgI('building',13,'currentColor')}</span><span><strong>${T('hall_lbl')}:</strong> ${hallName(b.hall)}</span></div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--muted)">${svgI('users',13,'currentColor')}</span><span><strong>${T('guests_lbl')}:</strong> ${b.guestCount}</span></div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:#8B5CF6">${svgI('box',13,'currentColor')}</span><span><strong>${T('package_lbl')}:</strong> ${packageLabel(b.package)}</span></div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--muted)">${svgI('signal',13,'currentColor')}</span><span><strong>${T('source_lbl')}:</strong> ${sourceLabel(b.source)}</span></div>
         </div>
         ${svcList?`<div style="margin-top:8px">${svcList}</div>`:''}
       </div>
     </div>
-    <div class="form-section-title">Maliýe Ýagdaýy</div>
+    <div class="form-section-title">${T('finance_status')}</div>
     <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:4px">
-      <span>Umumy baha: <strong>${fmtMoney(b.totalPrice)} TMT</strong></span>
-      <span>${payPct}% tölenildi</span>
+      <span>${T('total_price')}: <strong>${fmtMoney(b.totalPrice)} TMT</strong></span>
+      <span>${payPct}% ${T('percent_paid')}</span>
     </div>
     <div class="progress-bar-wrap" style="height:10px">
       <div class="progress-bar-fill" style="width:${payPct}%;background:var(--success)"></div>
     </div>
     <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-top:6px;color:var(--muted)">
-      <span>Tölenilen: <strong style="color:var(--success)">${fmtMoney(b.totalPrice-b.remainingAmount)} TMT</strong></span>
-      <span>Galany: <strong style="color:${b.remainingPaid?'var(--success)':'var(--warning)'}">${fmtMoney(b.remainingAmount)} TMT</strong></span>
+      <span>${T('paid_lbl')}: <strong style="color:var(--success)">${fmtMoney(b.totalPrice-b.remainingAmount)} TMT</strong></span>
+      <span>${T('remaining_lbl')}: <strong style="color:${b.remainingPaid?'var(--success)':'var(--warning)'}">${fmtMoney(b.remainingAmount)} TMT</strong></span>
     </div>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-      ${b.depositPaid?`<span class="badge badge-confirmed" style="display:inline-flex;align-items:center;gap:3px">${svgI('checkCircle',11,'#10B981')} Öňpul tölenildi — ${b.depositDate?fmtDate(b.depositDate):''}</span>`:`<span class="badge badge-pending" style="display:inline-flex;align-items:center;gap:3px">${svgI('hourglass',11,'#F59E0B')} Öňpul garaşylýar — ${fmtMoney(b.deposit)} TMT</span>`}
-      ${b.remainingPaid?`<span class="badge badge-confirmed" style="display:inline-flex;align-items:center;gap:3px">${svgI('checkCircle',11,'#10B981')} Doly tölenildi</span>`:`<span class="badge badge-warning" style="background:rgba(245,158,11,0.15);color:var(--warning);display:inline-flex;align-items:center;gap:3px">${svgI('hourglass',11,'#F59E0B')} Galany: ${fmtMoney(b.remainingAmount)} TMT</span>`}
+      ${b.depositPaid?`<span class="badge badge-confirmed" style="display:inline-flex;align-items:center;gap:3px">${svgI('checkCircle',11,'#10B981')} ${T('deposit_paid_badge')} — ${b.depositDate?fmtDate(b.depositDate):''}</span>`:`<span class="badge badge-pending" style="display:inline-flex;align-items:center;gap:3px">${svgI('hourglass',11,'#F59E0B')} ${T('deposit_pending_badge')} — ${fmtMoney(b.deposit)} TMT</span>`}
+      ${b.remainingPaid?`<span class="badge badge-confirmed" style="display:inline-flex;align-items:center;gap:3px">${svgI('checkCircle',11,'#10B981')} ${T('fully_paid_badge')}</span>`:`<span class="badge badge-warning" style="background:rgba(245,158,11,0.15);color:var(--warning);display:inline-flex;align-items:center;gap:3px">${svgI('hourglass',11,'#F59E0B')} ${T('remaining_badge')}: ${fmtMoney(b.remainingAmount)} TMT</span>`}
     </div>
-    ${b.specialNotes?`<div style="margin-top:12px;background:var(--surface2);border-radius:8px;padding:10px;font-size:0.83rem"><strong>Bellik:</strong> ${b.specialNotes}</div>`:''}
-    ${b.internalNote?`<div style="margin-top:8px;background:rgba(201,168,67,0.08);border:1px solid rgba(201,168,67,0.2);border-radius:8px;padding:10px;font-size:0.83rem"><strong>Içerki bellik:</strong> ${b.internalNote}</div>`:''}
-    <div class="form-section-title" style="margin-top:16px">Habarlaşma Taryhy</div>
+    ${b.specialNotes?`<div style="margin-top:12px;background:var(--surface2);border-radius:8px;padding:10px;font-size:0.83rem"><strong>${T('note_lbl')}:</strong> ${b.specialNotes}</div>`:''}
+    ${b.internalNote?`<div style="margin-top:8px;background:rgba(201,168,67,0.08);border:1px solid rgba(201,168,67,0.2);border-radius:8px;padding:10px;font-size:0.83rem"><strong>${T('internal_note_lbl')}:</strong> ${b.internalNote}</div>`:''}
+    <div class="form-section-title" style="margin-top:16px">${T('comm_history')}</div>
     <div class="comm-timeline" id="comm-timeline-${b.id}">
       ${renderCommTimeline(b.communications||[])}
     </div>
-    <button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="openCommModal('${b.id}')"><i data-lucide="plus"></i> Bellik goş</button>
+    <button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="openCommModal('${b.id}')"><i data-lucide="plus"></i> ${T('add_note')}</button>
   `;
   document.getElementById('bk-detail-footer').innerHTML=`
-    <button class="btn btn-success" onclick="updateBookingStatus('${b.id}','confirmed');closeModal('modal-booking-detail')"><i data-lucide="check"></i> Tassykla</button>
-    <button class="btn btn-danger" onclick="updateBookingStatus('${b.id}','cancelled');closeModal('modal-booking-detail')"><i data-lucide="x"></i> Ýatyrt</button>
-    <button class="btn btn-outline" onclick="openPaymentModal('${b.id}')"><i data-lucide="banknote"></i> Töleg Giriş</button>
+    <button class="btn btn-success" onclick="updateBookingStatus('${b.id}','confirmed');closeModal('modal-booking-detail')"><i data-lucide="check"></i> ${T('confirm_booking')}</button>
+    <button class="btn btn-danger" onclick="updateBookingStatus('${b.id}','cancelled');closeModal('modal-booking-detail')"><i data-lucide="x"></i> ${T('cancel_booking')}</button>
+    <button class="btn btn-outline" onclick="openPaymentModal('${b.id}')"><i data-lucide="banknote"></i> ${T('payment_entry_btn')}</button>
     <button class="btn btn-outline btn-sm" onclick="printBooking('${b.id}')"><i data-lucide="printer"></i></button>
   `;
   openModal('modal-booking-detail');
 }
 function renderCommTimeline(comms){
-  if(!comms.length) return '<div style="color:var(--muted);font-size:0.8rem;padding:8px 0">Habarlaşma taryhy ýok</div>';
+  if(!comms.length) return `<div style="color:var(--muted);font-size:0.8rem;padding:8px 0">${T('no_comm')}</div>`;
   const commIcons={call:['phone','#06B6D4'],whatsapp:['messageCircle','#10B981'],telegram:['send','#4F46E5'],visit:['home','#F59E0B'],email:['mail','#C9A843']};
   const colors={call:'rgba(6,182,212,0.15)',whatsapp:'rgba(16,185,129,0.15)',telegram:'rgba(79,70,229,0.15)',visit:'rgba(245,158,11,0.15)',email:'rgba(201,168,67,0.15)'};
   return comms.map(c=>`
@@ -2381,7 +2866,7 @@ function openCommModal(bookingId){
 function saveComm(){
   const id=document.getElementById('comm-booking-id').value;
   const note=document.getElementById('comm-note').value.trim();
-  if(!note){showToast('Bellik ýaz!','warning');return;}
+  if(!note){showToast(T('toast_note_required'),'warning');return;}
   const type=document.getElementById('comm-type').value;
   const b=DB.get('bookings').find(x=>x.id===id);
   if(!b) return;
@@ -2389,20 +2874,20 @@ function saveComm(){
   DB.update('bookings',id,{communications:comms});
   closeModal('modal-comm');
   viewBooking(id);
-  showToast('Bellik goşuldy!');
+  showToast(T('toast_comm_saved'));
 }
 function updateBookingStatus(id,status){
   DB.update('bookings',id,{status});
   renderBookings();
   renderDashboard();
-  showToast(`Ýagdaý üýtgedildi: ${statusLabel(status)}`);
+  showToast(`${T('toast_status_changed')}: ${statusLabel(status)}`);
 }
 function deleteBooking(id){
-  confirmAction('Bu brony öçürjekmi? Bu ädim yzyna alynmaz.',()=>{
+  confirmAction(T('confirm_delete_booking'),()=>{
     DB.remove('bookings',id);
     renderBookings();
     renderDashboard();
-    showToast('Bron öçürildi','warning');
+    showToast(T('toast_booking_deleted'),'warning');
   },true,'trash','#EF4444');
 }
 function callBooking(id){
@@ -2487,7 +2972,7 @@ function saveBooking(){
   const brideName=document.getElementById('bk-bride-name').value.trim();
   const date=document.getElementById('bk-date').value;
   const guests=parseInt(document.getElementById('bk-guests').value)||0;
-  if(!groomName||!brideName||!date||!guests){showToast('Hökmany meýdanlary dolduryň!','error');return;}
+  if(!groomName||!brideName||!date||!guests){showToast(T('toast_fill_required'),'error');return;}
   const svcs=[...document.querySelectorAll('.svc-check:checked')].map(c=>c.value);
   const total=parseInt(document.getElementById('bk-total').value)||guests*(parseInt(document.getElementById('bk-price-pp').value)||0);
   const dep=parseInt(document.getElementById('bk-deposit').value)||0;
@@ -2512,7 +2997,7 @@ function saveBooking(){
   };
   if(editingBookingId){
     DB.update('bookings',editingBookingId,data);
-    showToast('Bron täzelendi!');
+    showToast(T('toast_booking_updated'));
   } else {
     // Generate ID
     const bks=DB.get('bookings');
@@ -2522,7 +3007,7 @@ function saveBooking(){
     data.communications=[];
     DB.add('bookings',data);
     addNotification({type:'new_booking',icon:'calendar',iconColor:'#C9A843',msg:`Täze bron — ${groomName} & ${brideName}`,sub:`${data.id} · Häzir`});
-    showToast('Täze bron goşuldy!');
+    showToast(T('toast_booking_saved'));
   }
   closeModal('modal-booking-form');
   renderBookings();
@@ -2560,7 +3045,7 @@ function renderHalls(){
       <div class="hall-card-header">
         <div class="hall-card-name"><span class="hall-card-name-icon" style="background:${h.iconColor||'#C9A843'}20">${hIcon}</span>${h.name}</div>
         <div style="display:flex;gap:6px;align-items:center">
-          <span class="badge ${statusCls}">${{open:'Açyk',maintenance:'Abatlaýyş',closed:'Ýapyk'}[h.status]||'Açyk'}</span>
+          <span class="badge ${statusCls}">${{open:T('hall_status_open'),maintenance:T('hall_status_maintenance'),closed:T('hall_status_closed')}[h.status]||T('hall_status_open')}</span>
           <button class="tbl-btn" onclick="openHallModal('${h.id}')"><i data-lucide="edit-2" style="width:12px;height:12px"></i></button>
         </div>
       </div>
@@ -2603,7 +3088,7 @@ function openHallModal(id){
 }
 function saveHall(){
   const name=document.getElementById('hall-name').value.trim();
-  if(!name){showToast('Zal adyny giriziň!','error');return;}
+  if(!name){showToast(T('toast_fill_required'),'error');return;}
   const features=[...document.querySelectorAll('.hall-feature:checked')].map(c=>c.value);
   const data={
     name,emoji:document.getElementById('hall-emoji').value,
@@ -2616,11 +3101,11 @@ function saveHall(){
   };
   if(editingHallId){
     DB.update('halls',editingHallId,data);
-    showToast('Zal maglumatlary täzelendi!');
+    showToast(T('toast_hall_saved'));
   } else {
     data.id='hall_'+Date.now();
     DB.add('halls',data);
-    showToast('Täze zal goşuldy!');
+    showToast(T('toast_hall_saved'));
   }
   closeModal('modal-hall');
   renderHalls();
@@ -2690,7 +3175,7 @@ function openServiceModal(id){
 }
 function saveService(){
   const name=document.getElementById('svc-name').value.trim();
-  if(!name){showToast('Hyzmat adyny giriziň!','error');return;}
+  if(!name){showToast(T('toast_fill_required'),'error');return;}
   const data={
     name,category:document.getElementById('svc-category').value,
     priceType:document.getElementById('svc-price-type').value,
@@ -2700,22 +3185,22 @@ function saveService(){
   };
   if(editingServiceId){
     DB.update('services',editingServiceId,data);
-    showToast('Hyzmat täzelendi!');
+    showToast(T('toast_svc_saved'));
   } else {
     data.id='svc_'+Date.now();data.bookingsCount=0;
     DB.add('services',data);
-    showToast('Täze hyzmat goşuldy!');
+    showToast(T('toast_svc_saved'));
   }
   closeModal('modal-service');
   renderServices();
 }
 function toggleService(id,active){
   DB.update('services',id,{active});
-  showToast(active?'Hyzmat işjeňleşdirildi':'Hyzmat öçürildi',active?'success':'warning');
+  showToast(active?T('toast_svc_saved'):T('toast_svc_deleted'),active?'success':'warning');
 }
 function deleteService(id){
-  confirmAction('Bu hyzmaty öçürjekmi?',()=>{
-    DB.remove('services',id);renderServices();showToast('Hyzmat öçürildi','warning');
+  confirmAction(T('confirm_delete_svc'),()=>{
+    DB.remove('services',id);renderServices();showToast(T('toast_svc_deleted'),'warning');
   },true,'trash','#EF4444');
 }
 
@@ -2770,17 +3255,17 @@ function saveGalleryItem(){
   const src=document.getElementById('gallery-url').value.trim();
   const label=document.getElementById('gallery-label').value.trim();
   const category=document.getElementById('gallery-cat').value;
-  if(!src){showToast('URL ýa-da faýl saýlaň!','error');return;}
+  if(!src){showToast(T('toast_fill_required'),'error');return;}
   const items=DB.get('gallery');
   const type=src.startsWith('data:')?'base64':src.startsWith('http')?'url':'gradient';
   DB.add('gallery',{type,src,label,category,order:items.length+1,active:true});
   closeModal('modal-gallery');
   renderGallery();
-  showToast('Surat goşuldy!');
+  showToast(T('toast_gallery_saved'));
 }
 function deleteGalleryItem(id){
-  confirmAction('Suraty öçürjekmi?',()=>{
-    DB.remove('gallery',id);renderGallery();showToast('Öçürildi','warning');
+  confirmAction(T('confirm_delete_gallery'),()=>{
+    DB.remove('gallery',id);renderGallery();showToast(T('toast_gallery_deleted'),'warning');
   },true,'trash','#EF4444');
 }
 
@@ -2841,7 +3326,7 @@ function openStaffModal(id){
 }
 function saveStaff(){
   const name=document.getElementById('staff-name').value.trim();
-  if(!name){showToast('Işgär adyny giriziň!','error');return;}
+  if(!name){showToast(T('toast_fill_required'),'error');return;}
   const data={
     name,position:document.getElementById('staff-position').value,
     department:document.getElementById('staff-dept-input').value,
@@ -2854,15 +3339,15 @@ function saveStaff(){
     assignedEvents:0
   };
   if(editingStaffId){
-    DB.update('staff',editingStaffId,data);showToast('Işgär maglumatlary täzelendi!');
+    DB.update('staff',editingStaffId,data);showToast(T('toast_staff_saved'));
   } else {
-    DB.add('staff',{...data,id:Date.now()});showToast('Täze işgär goşuldy!');
+    DB.add('staff',{...data,id:Date.now()});showToast(T('toast_staff_saved'));
   }
   closeModal('modal-staff');renderStaff();
 }
 function deleteStaff(id){
-  confirmAction('Bu işgäri öçürjekmi?',()=>{
-    DB.remove('staff',id);renderStaff();showToast('Işgär öçürildi','warning');
+  confirmAction(T('confirm_delete_staff'),()=>{
+    DB.remove('staff',id);renderStaff();showToast(T('toast_staff_deleted'),'warning');
   },true,'trash','#EF4444');
 }
 
@@ -2879,10 +3364,10 @@ function renderFinance(){
   const avg=bookings.length?Math.round(total/bookings.length):0;
 
   document.getElementById('fin-summary').innerHTML=[
-    {label:'Bu Ýyl Jemi',val:fmtMoney(total)+' TMT',color:'var(--gold)'},
-    {label:'Tölenilen',val:fmtMoney(paid)+' TMT',color:'var(--success)'},
-    {label:'Alynmaly',val:fmtMoney(remaining)+' TMT',color:'var(--warning)'},
-    {label:'Ortaça Bron',val:fmtMoney(avg)+' TMT',color:'var(--info)'}
+    {label:T('total_income'),val:fmtMoney(total)+' TMT',color:'var(--gold)'},
+    {label:T('paid'),val:fmtMoney(paid)+' TMT',color:'var(--success)'},
+    {label:T('outstanding'),val:fmtMoney(remaining)+' TMT',color:'var(--warning)'},
+    {label:T('fin_paid'),val:bookings.filter(b=>b.remainingPaid).length+' '+T('bookings_found'),color:'var(--info)'}
   ].map(c=>`<div class="fin-card"><div class="fin-card-label">${c.label}</div><div class="fin-card-val" style="color:${c.color}">${c.val}</div></div>`).join('');
 
   let filtered=bookings;
@@ -2893,9 +3378,9 @@ function renderFinance(){
   document.getElementById('finance-tbody').innerHTML=filtered.map(b=>{
     const paidAmt=b.totalPrice-b.remainingAmount;
     let payStatus='';
-    if(b.remainingPaid) payStatus=`<span class="badge badge-confirmed" style="display:inline-flex;align-items:center;gap:3px">${svgI('checkCircle',11,'#10B981')} Tölendi</span>`;
-    else if(b.depositPaid) payStatus='<span class="badge badge-pending">Bölekli</span>';
-    else payStatus='<span class="badge badge-cancelled">Tölenilmedik</span>';
+    if(b.remainingPaid) payStatus=`<span class="badge badge-confirmed" style="display:inline-flex;align-items:center;gap:3px">${svgI('checkCircle',11,'#10B981')} ${T('fin_paid')}</span>`;
+    else if(b.depositPaid) payStatus=`<span class="badge badge-pending">${T('fin_partial')}</span>`;
+    else payStatus=`<span class="badge badge-cancelled">${T('fin_unpaid')}</span>`;
     return `<tr>
       <td><a style="color:var(--gold);cursor:pointer;font-size:0.8rem;font-weight:600" onclick="viewBooking('${b.id}')">${b.id}</a></td>
       <td>${b.groom.name.split(' ')[0]} H.</td>
@@ -2920,7 +3405,7 @@ function renderFinanceCharts(){
     const labels=[],tot=[],paidArr=[],remArr=[];
     for(let i=5;i>=0;i--){
       const d=new Date(now);d.setMonth(d.getMonth()-i);
-      labels.push(MONTHS_SHORT[d.getMonth()]);
+      labels.push(MONTHS_SHORT()[d.getMonth()]);
       const mb=bookings.filter(b=>{const bd=new Date(b.weddingDate);return bd.getMonth()===d.getMonth()&&bd.getFullYear()===d.getFullYear();});
       const t=mb.reduce((a,b)=>a+b.totalPrice,0);
       const p=mb.reduce((a,b)=>a+(b.totalPrice-b.remainingAmount),0);
@@ -2958,7 +3443,7 @@ function openPaymentModal(bookingId){
 function savePayment(){
   const id=document.getElementById('pay-booking-id').value;
   const amount=parseInt(document.getElementById('pay-amount').value)||0;
-  if(!amount){showToast('Töleg möçberini giriziň!','error');return;}
+  if(!amount){showToast(T('toast_fill_required'),'error');return;}
   const b=DB.get('bookings').find(x=>x.id===id);
   if(!b) return;
   const newRemaining=Math.max(0,b.remainingAmount-amount);
@@ -2968,7 +3453,7 @@ function savePayment(){
   addNotification({type:'payment',icon:'revenue',iconColor:'#10B981',msg:`Töleg alyndy — ${id}`,sub:`${fmtMoney(amount)} TMT`});
   closeModal('modal-payment');
   renderFinance();
-  showToast(`Töleg ${fmtMoney(amount)} TMT hasaba alyndy!`);
+  showToast(`${T('toast_payment_saved')} ${fmtMoney(amount)} TMT`);
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -2990,7 +3475,7 @@ function setPeriod(btn,period){
 }
 function generateReport(){
   const type=document.querySelector('[name=rtype]:checked').value;
-  showToast(`${type} hasabaty döredildi!`,'info');
+  showToast(`${T('generate_report')} ✓`,'info');
 }
 function renderSourceChart(){
   const ctx=document.getElementById('source-chart');if(!ctx) return;
@@ -3016,15 +3501,15 @@ function renderMonthlyBkChart(){
   const now=new Date();
   const labels=[],thisYear=[],lastYear=[];
   for(let i=0;i<12;i++){
-    labels.push(MONTHS_SHORT[i]);
+    labels.push(MONTHS_SHORT()[i]);
     const ty=bookings.filter(b=>{const d=new Date(b.weddingDate);return d.getMonth()===i&&d.getFullYear()===now.getFullYear();}).length;
     const ly=bookings.filter(b=>{const d=new Date(b.weddingDate);return d.getMonth()===i&&d.getFullYear()===now.getFullYear()-1;}).length;
     thisYear.push(ty||Math.floor(Math.random()*8));
     lastYear.push(ly||Math.floor(Math.random()*6));
   }
   monthBkChart=new Chart(ctx,{type:'line',data:{labels,datasets:[
-    {label:'Bu ýyl',data:thisYear,borderColor:'#C9A843',backgroundColor:'rgba(201,168,67,0.08)',borderWidth:2,tension:0.4,fill:true,pointRadius:3},
-    {label:'Geçen ýyl',data:lastYear,borderColor:'#4F46E5',backgroundColor:'rgba(79,70,229,0.05)',borderWidth:2,tension:0.4,fill:true,pointRadius:3,borderDash:[4,4]}
+    {label:T('chart_this_year'),data:thisYear,borderColor:'#C9A843',backgroundColor:'rgba(201,168,67,0.08)',borderWidth:2,tension:0.4,fill:true,pointRadius:3},
+    {label:T('chart_last_year'),data:lastYear,borderColor:'#4F46E5',backgroundColor:'rgba(79,70,229,0.05)',borderWidth:2,tension:0.4,fill:true,pointRadius:3,borderDash:[4,4]}
   ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#6B5F80'}}},scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#6B5F80'}},y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#6B5F80',stepSize:1}}}}});
 }
 
@@ -3074,12 +3559,12 @@ function markAllRead(){
   const notifs=DB.get('notifications').map(n=>({...n,read:true}));
   DB.set('notifications',notifs);
   renderNotifications();
-  showToast('Ähli bildirişler okaldy');
+  showToast(T('toast_all_read'));
 }
 function toggleNotifSetting(id,enabled){
   const settings=DB.get('notif_settings').map(s=>s.id===id?{...s,enabled}:s);
   DB.set('notif_settings',settings);
-  showToast(enabled?'Bildiriş açyldy':'Bildiriş ýapyldy',enabled?'success':'warning');
+  showToast(enabled?T('toast_notif_on'):T('toast_notif_off'),enabled?'success':'warning');
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -3098,8 +3583,8 @@ function renderUsers(){
       </td>
       <td style="color:var(--muted)">${u.login}</td>
       <td><span class="badge ${u.role==='superadmin'?'badge-confirmed':u.role==='manager'?'badge-new':'badge-pending'}">${roleLabel(u.role)}</span></td>
-      <td style="color:var(--muted);font-size:0.8rem">${u.lastLogin?timeSince(new Date(u.lastLogin)):'Hiç girmedik'}</td>
-      <td><span class="badge ${u.active!==false?'badge-confirmed':'badge-cancelled'}">${u.active!==false?'Aktiw':'Ýapyk'}</span></td>
+      <td style="color:var(--muted);font-size:0.8rem">${u.lastLogin?timeSince(new Date(u.lastLogin)):T('never_logged')}</td>
+      <td><span class="badge ${u.active!==false?'badge-confirmed':'badge-cancelled'}">${u.active!==false?T('user_active'):T('user_inactive')}</span></td>
       <td>
         <div class="actions-cell">
           <button class="tbl-btn" onclick="openUserModal(${u.id})"><i data-lucide="edit-2" style="width:12px;height:12px"></i></button>
@@ -3125,7 +3610,7 @@ function saveUser(){
   const name=document.getElementById('user-name').value.trim();
   const login=document.getElementById('user-login').value.trim();
   const pwd=document.getElementById('user-password').value;
-  if(!name||!login||!pwd){showToast('Ähli meýdanlary dolduryň!','error');return;}
+  if(!name||!login||!pwd){showToast(T('toast_fill_required'),'error');return;}
   const data={
     name,login,password:pwd,
     role:document.getElementById('user-role').value,
@@ -3134,19 +3619,19 @@ function saveUser(){
     color:['#C9A843','#4F46E5','#10B981','#06B6D4','#F59E0B','#EF4444'][Math.floor(Math.random()*6)]
   };
   if(editingUserId){
-    DB.update('users',editingUserId,data);showToast('Ulanyjy täzelendi!');
+    DB.update('users',editingUserId,data);showToast(T('toast_user_saved'));
   } else {
     const users=DB.get('users');
-    if(users.find(u=>u.login===login)){showToast('Bu login eýýäm bar!','error');return;}
+    if(users.find(u=>u.login===login)){showToast(T('toast_login_exists'),'error');return;}
     DB.add('users',{...data,id:Date.now()});
-    showToast('Täze ulanyjy goşuldy!');
+    showToast(T('toast_user_added'));
   }
   closeModal('modal-user');renderUsers();
 }
 function deleteUser(id){
-  if(id===currentUser.id){showToast('Özüňizi öçürip bilmersiňiz!','error');return;}
-  confirmAction('Bu ulanyjyny öçürjekmi?',()=>{
-    DB.remove('users',id);renderUsers();showToast('Ulanyjy öçürildi','warning');
+  if(id===currentUser.id){showToast(T('toast_cant_delete_self'),'error');return;}
+  confirmAction(T('confirm_delete_user'),()=>{
+    DB.remove('users',id);renderUsers();showToast(T('toast_user_deleted'),'warning');
   },true,'trash','#EF4444');
 }
 
@@ -3172,7 +3657,7 @@ function loadSettings(){
   renderHoursForm(cfg.hours||DEFAULT_SETTINGS.hours);
 }
 function renderHoursForm(hours){
-  const days=[{k:'mon',l:'Duşenbe'},{k:'tue',l:'Sişenbe'},{k:'wed',l:'Çarşenbe'},{k:'thu',l:'Penşenbe'},{k:'fri',l:'Anna'},{k:'sat',l:'Şenbe'},{k:'sun',l:'Ýekşenbe'}];
+  const days=[{k:'mon',l:T('day_mon')},{k:'tue',l:T('day_tue')},{k:'wed',l:T('day_wed')},{k:'thu',l:T('day_thu')},{k:'fri',l:T('day_fri')},{k:'sat',l:T('day_sat')},{k:'sun',l:T('day_sun')}];
   document.getElementById('hours-form').innerHTML=days.map(d=>`
     <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
       <label class="checkbox-wrap" style="width:130px;flex-shrink:0">
@@ -3196,7 +3681,7 @@ function saveSettings(){
   cfg.instagram=document.getElementById('cfg-instagram').value;
   DB.set('settings',cfg);
   document.getElementById('sb-venue-name').textContent=cfg.name||'Toý Mekany';
-  showToast('Sazlamalar saklandi!');
+  showToast(T('toast_settings_saved'));
 }
 function saveHours(){
   const cfg=DB.getObj('settings',DEFAULT_SETTINGS);
@@ -3210,7 +3695,7 @@ function saveHours(){
     };
   });
   DB.set('settings',cfg);
-  showToast('Iş wagty saklandi!');
+  showToast(T('toast_hours_saved'));
 }
 function savePaymentSettings(){
   const cfg=DB.getObj('settings',DEFAULT_SETTINGS);
@@ -3220,7 +3705,7 @@ function savePaymentSettings(){
   cfg.transfer=document.getElementById('cfg-transfer').checked;
   cfg.card=document.getElementById('cfg-card').checked;
   DB.set('settings',cfg);
-  showToast('Töleg sazlamalary saklandi!');
+  showToast(T('toast_payment_settings_saved'));
 }
 function showStab(btn,id){
   document.querySelectorAll('.stab').forEach(b=>b.classList.remove('active'));
@@ -3231,7 +3716,7 @@ function showStab(btn,id){
 function exportAllData(){
   const data={bookings:DB.get('bookings'),halls:DB.get('halls'),services:DB.get('services'),gallery:DB.get('gallery'),staff:DB.get('staff'),settings:DB.getObj('settings')};
   downloadJSON(data,'venue_backup_'+new Date().toISOString().split('T')[0]+'.json');
-  showToast('Maglumatlar eksport edildi!');
+  showToast(T('toast_export_done'));
 }
 function importData(input){
   const file=input.files[0];if(!file) return;
@@ -3245,31 +3730,31 @@ function importData(input){
       if(data.gallery) DB.set('gallery',data.gallery);
       if(data.staff) DB.set('staff',data.staff);
       if(data.settings) DB.set('settings',data.settings);
-      showToast('Maglumatlar import edildi!');
-    }catch{showToast('Ýalňyş faýl formaty!','error');}
+      showToast(T('toast_import_done'));
+    }catch{showToast(T('toast_file_error'),'error');}
   };
   reader.readAsText(file);
 }
 function loadDemoData(){
-  confirmAction('Demo maglumatlaryny ýüklemek mevcut maglumatlary bozup biler. Dowam etjekmi?',()=>{
+  confirmAction(T('confirm_load_demo'),()=>{
     DB.set('bookings',SAMPLE_BOOKINGS);DB.set('halls',SAMPLE_HALLS);
     DB.set('services',SAMPLE_SERVICES);DB.set('gallery',SAMPLE_GALLERY);
     DB.set('staff',SAMPLE_STAFF);
-    showToast('Demo maglumatlar ýüklendi!');
+    showToast(T('toast_demo_loaded'));
     renderSection('dashboard');
   });
 }
 function confirmClearCompleted(){
-  confirmAction('Tamamlanan we ýatyryldy statusly bronlary öçürjekmi?',()=>{
+  confirmAction(T('confirm_clear'),()=>{
     const bks=DB.get('bookings').filter(b=>b.status!=='completed'&&b.status!=='cancelled');
-    DB.set('bookings',bks);showToast('Arassalandy!');
+    DB.set('bookings',bks);showToast(T('toast_cleared'));
   },true,'trash','#EF4444');
 }
 function confirmNuke(){
-  confirmAction('ÄHLI MAGLUMATLARY POZMAK! Bu ädim yzyna alynmaz!',()=>{
+  confirmAction(T('confirm_nuke'),()=>{
     ['bookings','halls','services','gallery','staff','notifications'].forEach(k=>DB.set(k,[]));
     localStorage.removeItem('venue_initialized');
-    showToast('Ähli maglumatlar pozuldy!','warning');
+    showToast(T('toast_nuked'),'warning');
   },true,'xCircle','#EF4444');
 }
 
@@ -3278,18 +3763,18 @@ function confirmNuke(){
 // ═══════════════════════════════════════════════════════════════════
 function exportCSV(collection){
   const data=collection==='finance'?DB.get('bookings').filter(b=>b.status!=='cancelled'):DB.get(collection);
-  if(!data.length){showToast('Maglumat ýok!','warning');return;}
+  if(!data.length){showToast(T('toast_no_data'),'warning');return;}
   const keys=Object.keys(data[0]).filter(k=>typeof data[0][k]!=='object'||Array.isArray(data[0][k]));
   let csv=keys.join(',')+'\n';
   data.forEach(row=>{
     csv+=keys.map(k=>{const v=row[k];return Array.isArray(v)?'"'+v.join(',')+'"':typeof v==='string'&&v.includes(',')?'"'+v+'"':v??'';}).join(',')+'\n';
   });
   downloadText(csv,collection+'_'+new Date().toISOString().split('T')[0]+'.csv','text/csv');
-  showToast('CSV eksport edildi!');
+  showToast(T('toast_csv_done'));
 }
 function exportJSON(collection){
   downloadJSON(DB.get(collection),collection+'_'+new Date().toISOString().split('T')[0]+'.json');
-  showToast('JSON eksport edildi!');
+  showToast(T('toast_json_done'));
 }
 function downloadText(content,filename,type){
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=filename;a.click();
@@ -3324,25 +3809,24 @@ function fmtMoney(n){return n?n.toLocaleString('ru-RU'):0;}
 function fmtDate(s){
   if(!s) return '—';
   const d=new Date(s+'T00:00:00');
-  return `${d.getDate()} ${MONTHS_TM[d.getMonth()]} ${d.getFullYear()}`;
+  return `${d.getDate()} ${MONTHS_TM()[d.getMonth()]} ${d.getFullYear()}`;
 }
-function hallName(id){return{sha:'Şa Zaly',bahar:'Bahar Zaly',altyn:'Altyn Zal',howly:'Açyk Howly'}[id]||id;}
+function hallName(id){return{sha:T('hall_sha'),bahar:T('hall_bahar'),altyn:T('hall_altyn'),howly:T('hall_howly')}[id]||id;}
 function statusBadge(s){
-  const labels={new:'Täze',pending:'Garaşyl',confirmed:'Tassykly',completed:'Tamamlanan',cancelled:'Ýatyryldy'};
   const iconMap={new:['fileText','#C9A843'],pending:['hourglass','#F59E0B'],confirmed:['checkCircle','#10B981'],completed:['trophy','#C9A843'],cancelled:['xCircle','#EF4444']};
   const [ic,col]=(iconMap[s]||['info','#888']);
-  return `<span class="badge badge-${s}" style="display:inline-flex;align-items:center;gap:4px">${svgI(ic,11,col)} ${labels[s]||s}</span>`;
+  return `<span class="badge badge-${s}" style="display:inline-flex;align-items:center;gap:4px">${svgI(ic,11,col)} ${statusLabel(s)}</span>`;
 }
-function statusLabel(s){return{new:'Täze',pending:'Garaşyl',confirmed:'Tassykly',completed:'Tamamlanan',cancelled:'Ýatyryldy'}[s]||s;}
-function packageLabel(p){return{basic:'Başlangyç',premium:'Premium',luxury:'Lýuks'}[p]||p;}
-function sourceLabel(s){return{website:'Saýt',phone:'Telefon',instagram:'Instagram',referral:'Maslahat',walk_in:'Şahsy'}[s]||s;}
+function statusLabel(s){return{new:T('status_new'),pending:T('status_pending'),confirmed:T('status_confirmed'),completed:T('status_completed'),cancelled:T('status_cancelled')}[s]||s;}
+function packageLabel(p){return{basic:T('pkg_basic'),premium:T('pkg_premium'),luxury:T('pkg_luxury')}[p]||p;}
+function sourceLabel(s){return{website:T('src_website'),phone:T('src_phone'),instagram:T('src_instagram'),referral:T('src_referral'),walk_in:T('src_walk_in')}[s]||s;}
 function timeSince(date){
   const sec=Math.floor((new Date()-date)/1000);
-  if(sec<60) return 'Biraz öň';
-  const min=Math.floor(sec/60);if(min<60) return min+' min öň';
-  const hr=Math.floor(min/60);if(hr<24) return hr+' sag öň';
-  const day=Math.floor(hr/24);if(day===1) return 'Düýn';
-  return day+' gün öň';
+  if(sec<60) return T('time_just_now');
+  const min=Math.floor(sec/60);if(min<60) return min+' '+T('time_min_ago');
+  const hr=Math.floor(min/60);if(hr<24) return hr+' '+T('time_hr_ago');
+  const day=Math.floor(hr/24);if(day===1) return T('time_yesterday');
+  return day+' '+T('time_days_ago');
 }
 function strColor(str){
   let h=0;for(let c of str) h=((h<<5)-h)+c.charCodeAt(0);
