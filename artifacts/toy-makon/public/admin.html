@@ -22,9 +22,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 a{color:inherit;text-decoration:none;}
 button{cursor:pointer;font-family:inherit;}
 input,select,textarea{font-family:inherit;}
-::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:var(--surface);}
-::-webkit-scrollbar-thumb{background:rgba(201,168,67,0.3);border-radius:3px;}
+::-webkit-scrollbar-thumb{background:rgba(201,168,67,0.25);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(201,168,67,0.45);}
 
 /* ─── LOGIN ──────────────────────────────────────────── */
 #login-screen{
@@ -603,6 +604,163 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
 /* ─── SEARCH RESULT HIGHLIGHT ──────────────────────────  */
 .hl{background:rgba(201,168,67,0.25);border-radius:2px;padding:0 2px;}
 
+/* ═══ PREMIUM SIDEBAR REDESIGN ════════════════════════════ */
+.sidebar{
+  background:linear-gradient(170deg,#0E0B1E 0%,#0B0918 60%,#09071A 100%);
+  box-shadow:4px 0 40px rgba(0,0,0,0.55),1px 0 0 rgba(201,168,67,0.1);
+  border-right:1px solid rgba(201,168,67,0.1);
+}
+.sidebar-logo{
+  background:linear-gradient(135deg,rgba(201,168,67,0.07) 0%,rgba(201,168,67,0.01) 60%,transparent 100%);
+  border-bottom:1px solid rgba(201,168,67,0.1);
+  padding:20px 18px;
+  position:relative;
+}
+.sidebar-logo::after{
+  content:'';position:absolute;bottom:0;left:18px;right:18px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,168,67,0.18),transparent);
+}
+.sidebar-logo-icon{
+  background:linear-gradient(145deg,#C9A843 0%,#E8C96B 40%,#B8922E 100%);
+  box-shadow:0 4px 20px rgba(201,168,67,0.35),0 1px 0 rgba(255,255,255,0.15) inset,0 -1px 0 rgba(0,0,0,0.2) inset;
+  border-radius:12px;
+  position:relative;overflow:hidden;
+}
+.sidebar-logo-icon::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.18) 0%,transparent 55%);
+  border-radius:inherit;
+}
+.sidebar-logo-name{
+  font-size:0.98rem;letter-spacing:0.03em;
+  background:linear-gradient(135deg,#EDD87A 0%,#C9A843 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.sidebar-logo-sub{font-size:0.68rem;color:rgba(107,95,128,0.8);letter-spacing:0.5px;}
+.sidebar-user{
+  background:rgba(201,168,67,0.03);
+  border-bottom:1px solid rgba(201,168,67,0.07);
+  padding:13px 18px;
+}
+.sidebar-nav{flex:1;overflow-y:auto;padding:10px 8px 6px;}
+.nav-section-label{
+  font-size:0.58rem;letter-spacing:2.5px;font-weight:700;
+  color:rgba(107,95,128,0.6);text-transform:uppercase;
+  padding:14px 12px 6px;white-space:nowrap;overflow:hidden;
+  display:flex;align-items:center;
+}
+.nav-section-label::after{
+  content:'';flex:1;height:1px;margin-left:10px;
+  background:linear-gradient(90deg,rgba(201,168,67,0.22),transparent);
+}
+.sidebar.collapsed .nav-section-label::after{display:none;}
+.nav-item{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 12px;border-radius:10px;cursor:pointer;
+  transition:all 0.18s;white-space:nowrap;overflow:hidden;
+  color:rgba(107,95,128,0.9);font-size:0.845rem;font-weight:500;
+  border:none;background:none;width:100%;text-align:left;
+  position:relative;letter-spacing:0.01em;
+}
+.nav-item svg{width:17px;height:17px;flex-shrink:0;transition:color 0.18s;}
+.nav-item:hover{
+  background:rgba(201,168,67,0.07);
+  color:rgba(241,238,248,0.9);
+}
+.nav-item.active{
+  background:linear-gradient(90deg,rgba(201,168,67,0.17) 0%,rgba(201,168,67,0.05) 80%,transparent 100%);
+  color:var(--gold);
+  box-shadow:none;
+}
+.nav-item.active::before{
+  content:'';position:absolute;left:0;top:14%;bottom:14%;
+  width:2.5px;border-radius:0 2px 2px 0;
+  background:linear-gradient(180deg,transparent 0%,var(--gold) 35%,var(--gold) 65%,transparent 100%);
+}
+.sidebar-footer{
+  padding:8px 8px 14px;
+  border-top:1px solid rgba(201,168,67,0.08);
+  background:rgba(0,0,0,0.08);
+}
+.sidebar-collapse-btn{margin-top:4px;border-radius:8px;}
+
+/* ═══ PREMIUM LOGIN SCREEN ═════════════════════════════════ */
+.login-wrap{
+  background:radial-gradient(ellipse at 50% 0%,rgba(201,168,67,0.1) 0%,transparent 65%),
+             linear-gradient(170deg,#130F22 0%,#0D0A1A 100%);
+  border:1px solid rgba(201,168,67,0.18);
+  box-shadow:0 40px 80px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.03);
+}
+.login-logo-icon{
+  background:linear-gradient(145deg,#C9A843 0%,#E8C96B 45%,#B8922E 100%);
+  box-shadow:0 8px 32px rgba(201,168,67,0.45),0 1px 0 rgba(255,255,255,0.2) inset;
+  border-radius:18px;position:relative;overflow:hidden;
+}
+.login-logo-icon::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.2) 0%,transparent 55%);
+}
+.login-title{
+  background:linear-gradient(135deg,#EDD87A 0%,#C9A843 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+/* ═══ ICON STYLING ════════════════════════════════════════ */
+.kpi-icon{
+  border-radius:11px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+}
+.kpi-icon svg{display:block;}
+.notif-icon svg{display:block;}
+.toast-icon{display:flex;align-items:center;flex-shrink:0;}
+.toast-icon svg{width:18px;height:18px;}
+.confirm-icon{display:flex;align-items:center;justify-content:center;}
+.confirm-icon svg{width:52px;height:52px;}
+.comm-dot svg{width:14px;height:14px;display:block;}
+.badge svg{width:12px;height:12px;vertical-align:middle;margin-right:1px;}
+.hall-meta-icon svg{width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:3px;}
+.hall-card-name-icon{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;margin-right:4px;vertical-align:middle;}
+.hall-card-name-icon svg{width:15px;height:15px;}
+.svc-cat-icon{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-right:4px;vertical-align:middle;}
+.svc-cat-icon svg{width:14px;height:14px;}
+.info-row-icon{display:inline-flex;align-items:center;width:18px;height:18px;vertical-align:middle;margin-right:4px;flex-shrink:0;}
+.info-row-icon svg{width:14px;height:14px;}
+
+/* ═══ PREMIUM CARD & TOPBAR REFINEMENTS ════════════════════ */
+.topbar{
+  background:linear-gradient(90deg,var(--sidebar) 0%,rgba(13,10,26,0.98) 100%);
+  box-shadow:0 1px 0 rgba(201,168,67,0.08),0 4px 20px rgba(0,0,0,0.25);
+  border-bottom:1px solid rgba(201,168,67,0.08);
+}
+.card{
+  background:linear-gradient(160deg,#130F22 0%,#110E1F 100%);
+  border:1px solid rgba(201,168,67,0.12);
+}
+.card:hover{
+  border-color:rgba(201,168,67,0.3);
+  box-shadow:0 8px 40px rgba(0,0,0,0.45),0 0 0 1px rgba(201,168,67,0.06);
+  transform:translateY(-2px);
+}
+.kpi-card{
+  background:linear-gradient(160deg,#130F22 0%,#110E1F 100%);
+  border:1px solid rgba(201,168,67,0.12);
+  border-radius:16px;padding:20px;transition:all 0.25s;
+}
+.kpi-card:hover{
+  border-color:rgba(201,168,67,0.32);
+  box-shadow:0 8px 32px rgba(0,0,0,0.45);transform:translateY(-2px);
+}
+.surface-glow{
+  background:linear-gradient(135deg,rgba(201,168,67,0.08),transparent);
+  border-radius:50%;width:80px;height:80px;position:absolute;top:-20px;right:-20px;
+  filter:blur(20px);pointer-events:none;
+}
+.notif-item.unread{background:rgba(201,168,67,0.04);}
+.section-title{
+  background:linear-gradient(90deg,var(--text) 60%,rgba(241,238,248,0.7));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
 /* ─── STAFF CARD ─────────────────────────────────────── */
 .staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
 .staff-card{
@@ -650,7 +808,7 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
 <!-- CONFIRM DIALOG -->
 <div id="confirm-overlay">
   <div class="confirm-box">
-    <div class="confirm-icon" id="confirm-icon">⚠️</div>
+    <div class="confirm-icon" id="confirm-icon"></div>
     <div class="confirm-title" id="confirm-title">Tassyklama</div>
     <div class="confirm-msg" id="confirm-msg"></div>
     <div class="confirm-actions">
@@ -664,7 +822,9 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
 <div id="login-screen">
   <div class="login-wrap" id="login-card">
     <div class="login-logo">
-      <div class="login-logo-icon">👑</div>
+      <div class="login-logo-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(26,20,0,0.85)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="position:relative;z-index:1"><path d="M2 20h20M3 20l2-10 4.5 4.5L12 5l2.5 9.5L19 10l2 10H3z"/><circle cx="12" cy="5" r="1.5" fill="rgba(26,20,0,0.85)" stroke="none"/></svg>
+      </div>
       <div class="login-title">Toý Mekany</div>
       <div class="login-sub">Admin Paneli</div>
     </div>
@@ -699,7 +859,9 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
   <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
-      <div class="sidebar-logo-icon">👑</div>
+      <div class="sidebar-logo-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(26,20,0,0.85)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="position:relative;z-index:1;display:block"><path d="M2 20h20M3 20l2-10 4.5 4.5L12 5l2.5 9.5L19 10l2 10H3z"/><circle cx="12" cy="5" r="1.5" fill="rgba(26,20,0,0.85)" stroke="none"/></svg>
+      </div>
       <div class="sidebar-logo-text">
         <div class="sidebar-logo-name" id="sb-venue-name">Toý Mekany</div>
         <div class="sidebar-logo-sub">Admin Panel</div>
@@ -1500,11 +1662,11 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
       <input type="hidden" id="comm-booking-id"/>
       <div class="form-group"><label class="form-label">Görnüş</label>
         <select class="form-select" id="comm-type">
-          <option value="call">📞 Jaň</option>
-          <option value="whatsapp">💬 WhatsApp</option>
-          <option value="telegram">✈️ Telegram</option>
-          <option value="visit">🏠 Şahsy gelmek</option>
-          <option value="email">📧 E-poçta</option>
+          <option value="call">Jaň</option>
+          <option value="whatsapp">WhatsApp</option>
+          <option value="telegram">Telegram</option>
+          <option value="visit">Şahsy gelmek</option>
+          <option value="email">E-poçta</option>
         </select>
       </div>
       <div class="form-group"><label class="form-label">Bellik *</label><textarea class="form-textarea" id="comm-note" placeholder="Habarlaşmanyň mazmuny..."></textarea></div>
@@ -1517,6 +1679,60 @@ tbody td{padding:13px 16px;font-size:0.875rem;}
 </div>
 
 <script>
+// ═══════════════════════════════════════════════════════════════════
+//  CUSTOM SVG ICON SYSTEM
+// ═══════════════════════════════════════════════════════════════════
+const IC={
+  crown:`<path d="M2 20h20M3 20l2-10 4.5 4.5L12 5l2.5 9.5L19 10l2 10H3z"/><circle cx="12" cy="5" r="1.5"/>`,
+  warning:`<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="17" r=".5" fill="currentColor"/>`,
+  calendar:`<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>`,
+  revenue:`<circle cx="12" cy="12" r="10"/><path d="M9 8h4.5a2 2 0 010 4H11a2 2 0 000 4H15M12 6v2M12 16v2"/>`,
+  hourglass:`<path d="M5 22h14M5 2h14"/><path d="M17 22v-5a2 2 0 00-.59-1.41L12 11M7 22v-5a2 2 0 01.59-1.41L12 11"/><path d="M17 2v5a2 2 0 01-.59 1.41L12 13M7 2v5a2 2 0 00.59 1.41L12 13"/>`,
+  building:`<path d="M3 22V8l9-6 9 6v14H3z"/><rect x="9" y="14" width="6" height="8"/><line x1="3" y1="22" x2="21" y2="22"/>`,
+  trash:`<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>`,
+  checkCircle:`<path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>`,
+  xCircle:`<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>`,
+  info:`<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r=".5" fill="currentColor"/>`,
+  phone:`<path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012.18 0h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.38 6.38l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z"/>`,
+  messageCircle:`<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>`,
+  send:`<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>`,
+  home:`<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>`,
+  mail:`<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>`,
+  mapPin:`<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>`,
+  utensils:`<line x1="8" y1="2" x2="8" y2="22"/><path d="M5 2h6v10a3 3 0 01-6 0z"/><line x1="18" y1="2" x2="18" y2="22"/><path d="M15 2c0 5 6 5 6 0"/>`,
+  flower:`<circle cx="12" cy="12" r="2.5"/><path d="M12 2a3 3 0 010 6M12 16a3 3 0 000 6M2 12a3 3 0 016 0M16 12a3 3 0 006 0"/><path d="M5.64 5.64a3 3 0 014.24 4.24M14.12 14.12a3 3 0 004.24 4.24M5.64 18.36a3 3 0 014.24-4.24M14.12 9.88a3 3 0 014.24-4.24"/>`,
+  music:`<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>`,
+  camera:`<path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/>`,
+  hotel:`<rect x="3" y="2" width="18" height="22" rx="1"/><line x1="3" y1="14" x2="21" y2="14"/><rect x="7" y="6" width="3" height="3" rx=".5"/><rect x="14" y="6" width="3" height="3" rx=".5"/><rect x="10" y="14" width="4" height="8"/>`,
+  car:`<path d="M5 17H3a2 2 0 01-2-2V9a5 5 0 015-5h12a5 5 0 015 5v6a2 2 0 01-2 2h-2M5 17h14M5 17a2 2 0 100 4 2 2 0 000-4zM19 17a2 2 0 100 4 2 2 0 000-4zM1 9h22"/>`,
+  starFill:`<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor" stroke="none"/>`,
+  trophy:`<path d="M6 9H4.5a2.5 2.5 0 010-5H6M18 9h1.5a2.5 2.5 0 000-5H18M4 22h16M3 4h18v7a6 6 0 01-12 0V4M9 22v-3M15 22v-3"/>`,
+  fileText:`<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>`,
+  users:`<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>`,
+  user:`<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>`,
+  box:`<path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>`,
+  signal:`<path d="M1.42 9a16 16 0 0121.16 0M5 12.55a11 11 0 0114.08 0M8.53 16.11a6 6 0 016.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/>`,
+  barChart:`<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/>`,
+  image:`<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>`,
+  stage:`<path d="M4 22V8h16v14H4z"/><path d="M3 8l9-6 9 6"/><line x1="8" y1="22" x2="8" y2="14"/><line x1="16" y1="22" x2="16" y2="14"/><rect x="8" y="14" width="8" height="8"/>`,
+  diamond:`<path d="M6 3h12l4 6-10 13L2 9z"/><path d="M2 9h20M11 3l-5 6 6 13M13 3l5 6-6 13"/>`,
+  zap:`<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>`,
+  door:`<path d="M3 22h18M3 22V2h14v20M14 12h.01"/>`,
+  parking:`<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 17V7h4a3 3 0 010 6H9"/>`,
+  clock:`<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>`,
+  check:`<polyline points="20 6 9 17 4 12"/>`,
+  rings:`<circle cx="8" cy="12" r="5"/><circle cx="16" cy="12" r="5"/>`,
+};
+function svgI(name,sz=16,color='currentColor'){
+  const d=IC[name];if(!d) return '';
+  const st=name==='starFill'?'':'fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;';
+  return `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" style="${st}color:${color}" xmlns="http://www.w3.org/2000/svg">${d}</svg>`;
+}
+function svgIFilled(name,sz=16,color='currentColor'){
+  const d=IC[name];if(!d) return '';
+  return `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" style="fill:currentColor;stroke:none;color:${color}" xmlns="http://www.w3.org/2000/svg">${d}</svg>`;
+}
+
 // ═══════════════════════════════════════════════════════════════════
 //  DATA LAYER
 // ═══════════════════════════════════════════════════════════════════
@@ -1551,10 +1767,10 @@ const SAMPLE_BOOKINGS=[
   {id:'BRN-2025-008',status:'new',groom:{name:'Nurmuhammet Orazdurdyýew',phone:'+993 65 890123'},bride:{name:'Gülälek Aşyrowa',phone:'+993 62 321098'},weddingDate:'2025-10-25',weddingTime:'17:00',endTime:'02:00',hall:'altyn',guestCount:130,package:'premium',services:['food_national','photo_video'],specialNotes:'',pricePerPerson:250,totalPrice:32500,deposit:9750,depositPaid:false,remainingAmount:32500,remainingPaid:false,source:'walk_in',createdAt:'2025-02-18T16:00:00',assignedTo:3,internalNote:'',communications:[]}
 ];
 const SAMPLE_HALLS=[
-  {id:'sha',name:'Şa Zaly',emoji:'👑',capacity:500,area:800,price:250,status:'open',desc:'Iň uly we lýuks zalymyz. Kristal çyralar we aýratyn giriş.',features:['stage','crystal','led','entrance','vip','parking']},
-  {id:'bahar',name:'Bahar Zaly',emoji:'🌸',capacity:300,area:500,price:210,status:'open',desc:'Ýakymly atmosfera bilen orta möçberli toýlar üçin amatly.',features:['stage','crystal','entrance']},
-  {id:'altyn',name:'Altyn Zal',emoji:'✨',capacity:150,area:280,price:200,status:'open',desc:'Kiçiräk we ýakyn toýlar üçin amatly, altyn bezeg.',features:['stage','led']},
-  {id:'howly',name:'Açyk Howly',emoji:'🌿',capacity:400,area:1200,price:180,status:'maintenance',desc:'Uly açyk howly meýdany, ýaz-tomus döwri üçin.',features:['parking']}
+  {id:'sha',name:'Şa Zaly',icon:'crown',iconColor:'#C9A843',capacity:500,area:800,price:250,status:'open',desc:'Iň uly we lýuks zalymyz. Kristal çyralar we aýratyn giriş.',features:['stage','crystal','led','entrance','vip','parking']},
+  {id:'bahar',name:'Bahar Zaly',icon:'flower',iconColor:'#EC4899',capacity:300,area:500,price:210,status:'open',desc:'Ýakymly atmosfera bilen orta möçberli toýlar üçin amatly.',features:['stage','crystal','entrance']},
+  {id:'altyn',name:'Altyn Zal',icon:'starFill',iconColor:'#F59E0B',capacity:150,area:280,price:200,status:'open',desc:'Kiçiräk we ýakyn toýlar üçin amatly, altyn bezeg.',features:['stage','led']},
+  {id:'howly',name:'Açyk Howly',icon:'mapPin',iconColor:'#10B981',capacity:400,area:1200,price:180,status:'maintenance',desc:'Uly açyk howly meýdany, ýaz-tomus döwri üçin.',features:['parking']}
 ];
 const SAMPLE_SERVICES=[
   {id:'food_national',category:'food',name:'Premium Milli Tagam',desc:'Türkmen milli tagamlary, doly hyzmat bilen',priceType:'per_person',price:120,active:true,bookingsCount:45},
@@ -1569,12 +1785,12 @@ const SAMPLE_SERVICES=[
   {id:'transport',category:'transport',name:'Gelin Awtoulag',desc:'Owadan bezelen awtoulag',priceType:'fixed',price:800,active:true,bookingsCount:35}
 ];
 const SAMPLE_GALLERY=[
-  {id:1,type:'gradient',src:'linear-gradient(135deg,#C9A843,#1C1730)',label:'Şa Zaly',category:'hall',order:1,active:true,emoji:'👑'},
-  {id:2,type:'gradient',src:'linear-gradient(135deg,#4F46E5,#0D0A1A)',label:'Bahar Zaly',category:'hall',order:2,active:true,emoji:'🌸'},
-  {id:3,type:'gradient',src:'linear-gradient(135deg,#10B981,#070510)',label:'Açyk Howly',category:'hall',order:3,active:true,emoji:'🌿'},
-  {id:4,type:'gradient',src:'linear-gradient(135deg,#EF4444,#1C1730)',label:'Toý Agşamy',category:'wedding',order:4,active:true,emoji:'💒'},
-  {id:5,type:'gradient',src:'linear-gradient(135deg,#F59E0B,#070510)',label:'Gül Bezeg',category:'decor',order:5,active:true,emoji:'💐'},
-  {id:6,type:'gradient',src:'linear-gradient(135deg,#06B6D4,#0D0A1A)',label:'Tagam',category:'food',order:6,active:true,emoji:'🍽️'}
+  {id:1,type:'gradient',src:'linear-gradient(135deg,#C9A843,#1C1730)',label:'Şa Zaly',category:'hall',order:1,active:true,icon:'crown',iconColor:'#C9A843'},
+  {id:2,type:'gradient',src:'linear-gradient(135deg,#4F46E5,#0D0A1A)',label:'Bahar Zaly',category:'hall',order:2,active:true,icon:'flower',iconColor:'#EC4899'},
+  {id:3,type:'gradient',src:'linear-gradient(135deg,#10B981,#070510)',label:'Açyk Howly',category:'hall',order:3,active:true,icon:'mapPin',iconColor:'#10B981'},
+  {id:4,type:'gradient',src:'linear-gradient(135deg,#EF4444,#1C1730)',label:'Toý Agşamy',category:'wedding',order:4,active:true,icon:'rings',iconColor:'#F8B4C8'},
+  {id:5,type:'gradient',src:'linear-gradient(135deg,#F59E0B,#070510)',label:'Gül Bezeg',category:'decor',order:5,active:true,icon:'flower',iconColor:'#F59E0B'},
+  {id:6,type:'gradient',src:'linear-gradient(135deg,#06B6D4,#0D0A1A)',label:'Tagam',category:'food',order:6,active:true,icon:'utensils',iconColor:'#06B6D4'}
 ];
 const SAMPLE_STAFF=[
   {id:1,name:'Maýagül Nurlyýewa',position:'Baş Florist',department:'decor',phone:'+993 65 111111',email:'mayagul@venue.tm',hireDate:'2020-03-15',salary:2500,active:true,assignedEvents:145,notes:''},
@@ -1593,11 +1809,11 @@ const DEFAULT_SETTINGS={
   hours:{mon:{open:'09:00',close:'20:00',active:true},tue:{open:'09:00',close:'20:00',active:true},wed:{open:'09:00',close:'20:00',active:true},thu:{open:'09:00',close:'20:00',active:true},fri:{open:'09:00',close:'20:00',active:true},sat:{open:'09:00',close:'18:00',active:true},sun:{open:'',close:'',active:false}}
 };
 const SAMPLE_NOTIFICATIONS=[
-  {id:1,type:'new_booking',icon:'📅',msg:'Täze bron geldi — Nurmuhammet & Gülälek',sub:'BRN-2025-008 · 2 min öň',read:false,link:'bookings'},
-  {id:2,type:'payment',icon:'💰',msg:'Töleg alyndy — BRN-2025-001',sub:'26,250 TMT öňpul · 30 min öň',read:false,link:'finance'},
-  {id:3,type:'conflict',icon:'⚠️',msg:'Üns: Garaşýan bronlar bar',sub:'7 bron tassyklanmadyk · 1 sag öň',read:false,link:'bookings'},
-  {id:4,type:'reminder',icon:'📅',msg:'Ertir toý bar — Serdar & Läle',sub:'Altyn Zal, 120 myhman · 14 sag öň',read:true,link:'bookings'},
-  {id:5,type:'info',icon:'ℹ️',msg:'Sistem sazlamalary täzelendi',sub:'Düýn',read:true,link:'settings'}
+  {id:1,type:'new_booking',icon:'calendar',iconColor:'#C9A843',msg:'Täze bron geldi — Nurmuhammet & Gülälek',sub:'BRN-2025-008 · 2 min öň',read:false,link:'bookings'},
+  {id:2,type:'payment',icon:'revenue',iconColor:'#10B981',msg:'Töleg alyndy — BRN-2025-001',sub:'26,250 TMT öňpul · 30 min öň',read:false,link:'finance'},
+  {id:3,type:'conflict',icon:'warning',iconColor:'#F59E0B',msg:'Üns: Garaşýan bronlar bar',sub:'7 bron tassyklanmadyk · 1 sag öň',read:false,link:'bookings'},
+  {id:4,type:'reminder',icon:'calendar',iconColor:'#C9A843',msg:'Ertir toý bar — Serdar & Läle',sub:'Altyn Zal, 120 myhman · 14 sag öň',read:true,link:'bookings'},
+  {id:5,type:'info',icon:'info',iconColor:'#06B6D4',msg:'Sistem sazlamalary täzelendi',sub:'Düýn',read:true,link:'settings'}
 ];
 const PACKAGES=[
   {id:'basic',name:'Başlangyç',price:'200',services:['food_national'],desc:'Esasy paket',visible:true},
@@ -1772,20 +1988,22 @@ function closeSidebar(){
 //  TOAST & CONFIRM
 // ═══════════════════════════════════════════════════════════════════
 function showToast(msg,type='success'){
-  const colors={success:getComputedStyle(document.documentElement).getPropertyValue('--success').trim(),error:'#EF4444',warning:'#F59E0B',info:'#06B6D4'};
-  const icons={success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
+  const colors={success:'#10B981',error:'#EF4444',warning:'#F59E0B',info:'#06B6D4'};
+  const iconMap={success:['checkCircle','#10B981'],error:['xCircle','#EF4444'],warning:['warning','#F59E0B'],info:['info','#06B6D4']};
+  const [ic,col]=iconMap[type]||iconMap.info;
   const t=document.createElement('div');
   t.className='toast';
   t.style.borderLeft=`3px solid ${colors[type]}`;
-  t.innerHTML=`<span>${icons[type]}</span><span>${msg}</span>`;
+  t.innerHTML=`<span class="toast-icon" style="color:${col}">${svgI(ic,18,col)}</span><span>${msg}</span>`;
   document.getElementById('toast-container').appendChild(t);
   setTimeout(()=>{t.style.animation='slideOutRight 0.3s ease forwards';setTimeout(()=>t.remove(),300);},3500);
 }
 let _confirmCb=null;
-function confirmAction(msg,cb,danger=false,icon='⚠️'){
+function confirmAction(msg,cb,danger=false,iconName='warning',iconColor=''){
   _confirmCb=cb;
   document.getElementById('confirm-msg').textContent=msg;
-  document.getElementById('confirm-icon').textContent=icon;
+  const col=iconColor||(danger?'#EF4444':'#F59E0B');
+  document.getElementById('confirm-icon').innerHTML=svgI(iconName,52,col);
   const btn=document.getElementById('confirm-ok-btn');
   btn.className='btn '+(danger?'btn-danger':'btn-primary');
   btn.textContent='Hawa, Dowam Et';
@@ -1842,15 +2060,15 @@ function renderKPIs(){
 
   const pct=(a,b)=>{if(!b)return 0;return Math.round((a-b)/b*100);};
   const kpis=[
-    {icon:'📅',label:'Bu Aý Bron',val:monthBk.length,change:pct(monthBk.length,prevBk.length),bar:Math.min(100,monthBk.length*5),color:'#C9A843'},
-    {icon:'💰',label:'Bu Aý Girdeji',val:fmtMoney(monthRev)+' TMT',change:pct(monthRev,prevRev),bar:Math.min(100,Math.round(monthRev/2000)),color:'#10B981'},
-    {icon:'⏳',label:'Garaşýan Bronlar',val:pending.length,change:null,bar:Math.min(100,pending.length*15),color:'#F59E0B',warn:pending.length>5},
-    {icon:'🏛️',label:'Açyk Zallar',val:halls.filter(h=>h.status==='open').length+'/'+halls.length,change:null,bar:activePct,color:'#06B6D4'}
+    {icon:'calendar',label:'Bu Aý Bron',val:monthBk.length,change:pct(monthBk.length,prevBk.length),bar:Math.min(100,monthBk.length*5),color:'#C9A843'},
+    {icon:'revenue',label:'Bu Aý Girdeji',val:fmtMoney(monthRev)+' TMT',change:pct(monthRev,prevRev),bar:Math.min(100,Math.round(monthRev/2000)),color:'#10B981'},
+    {icon:'hourglass',label:'Garaşýan Bronlar',val:pending.length,change:null,bar:Math.min(100,pending.length*15),color:'#F59E0B',warn:pending.length>5},
+    {icon:'building',label:'Açyk Zallar',val:halls.filter(h=>h.status==='open').length+'/'+halls.length,change:null,bar:activePct,color:'#06B6D4'}
   ];
   document.getElementById('pending-count').textContent=pending.length;
   document.getElementById('kpi-grid').innerHTML=kpis.map(k=>`
     <div class="kpi-card">
-      <div class="kpi-icon" style="background:${k.color}20;font-size:22px">${k.icon}</div>
+      <div class="kpi-icon" style="background:${k.color}20;width:42px;height:42px;border-radius:11px">${svgI(k.icon,22,k.color)}</div>
       <div class="kpi-value" style="color:${k.warn?'var(--warning)':'var(--text)'}">${k.val}</div>
       <div class="kpi-label">${k.label}</div>
       ${k.change!==null?`<div class="kpi-change ${k.change>=0?'up':'down'}">${k.change>=0?'▲':'▼'} ${Math.abs(k.change)}% geçen aý</div>`:
@@ -2073,7 +2291,7 @@ function viewBooking(id){
   document.getElementById('bk-detail-edit-btn').onclick=()=>{closeModal('modal-booking-detail');editBooking(id);};
 
   const svcNames=DB.get('services');
-  const svcList=(b.services||[]).map(s=>{const svc=svcNames.find(x=>x.id===s);return svc?`<span style="background:rgba(201,168,67,0.1);border-radius:6px;padding:2px 8px;font-size:0.75rem;margin:2px;display:inline-block">✅ ${svc.name}</span>`:'';}).join('');
+  const svcList=(b.services||[]).map(s=>{const svc=svcNames.find(x=>x.id===s);return svc?`<span style="background:rgba(16,185,129,0.1);border-radius:6px;padding:2px 8px;font-size:0.75rem;margin:2px;display:inline-flex;align-items:center;gap:3px;color:var(--text)">${svgI('checkCircle',11,'#10B981')} ${svc.name}</span>`:'';}).join('');
 
   const payPct=b.totalPrice?Math.round((b.totalPrice-b.remainingAmount)/b.totalPrice*100):0;
 
@@ -2100,12 +2318,12 @@ function viewBooking(id){
       <div>
         <div class="form-section-title">Toý Maglumatlary</div>
         <div style="display:flex;flex-direction:column;gap:6px;font-size:0.875rem">
-          <div>📅 <strong>Toý güni:</strong> ${fmtDate(b.weddingDate)}</div>
-          <div>⏰ <strong>Wagt:</strong> ${b.weddingTime} — ${b.endTime||'?'}</div>
-          <div>🏛️ <strong>Zal:</strong> ${hallName(b.hall)}</div>
-          <div>👥 <strong>Myhmanlar:</strong> ${b.guestCount} adam</div>
-          <div>📦 <strong>Paket:</strong> ${packageLabel(b.package)}</div>
-          <div>📡 <strong>Çeşme:</strong> ${sourceLabel(b.source)}</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--gold)">${svgI('calendar',13,'currentColor')}</span><span><strong>Toý güni:</strong> ${fmtDate(b.weddingDate)}</span></div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--muted)">${svgI('clock',13,'currentColor')}</span><span><strong>Wagt:</strong> ${b.weddingTime} — ${b.endTime||'?'}</span></div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:#06B6D4">${svgI('building',13,'currentColor')}</span><span><strong>Zal:</strong> ${hallName(b.hall)}</span></div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--muted)">${svgI('users',13,'currentColor')}</span><span><strong>Myhmanlar:</strong> ${b.guestCount} adam</span></div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:#8B5CF6">${svgI('box',13,'currentColor')}</span><span><strong>Paket:</strong> ${packageLabel(b.package)}</span></div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--muted)">${svgI('signal',13,'currentColor')}</span><span><strong>Çeşme:</strong> ${sourceLabel(b.source)}</span></div>
         </div>
         ${svcList?`<div style="margin-top:8px">${svcList}</div>`:''}
       </div>
@@ -2123,8 +2341,8 @@ function viewBooking(id){
       <span>Galany: <strong style="color:${b.remainingPaid?'var(--success)':'var(--warning)'}">${fmtMoney(b.remainingAmount)} TMT</strong></span>
     </div>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-      ${b.depositPaid?`<span class="badge badge-confirmed">✅ Öňpul tölenildi — ${b.depositDate?fmtDate(b.depositDate):''}</span>`:`<span class="badge badge-pending">⏳ Öňpul garaşylýar — ${fmtMoney(b.deposit)} TMT</span>`}
-      ${b.remainingPaid?`<span class="badge badge-confirmed">✅ Doly tölenildi</span>`:`<span class="badge badge-warning" style="background:rgba(245,158,11,0.15);color:var(--warning)">⏳ Galany: ${fmtMoney(b.remainingAmount)} TMT</span>`}
+      ${b.depositPaid?`<span class="badge badge-confirmed" style="display:inline-flex;align-items:center;gap:3px">${svgI('checkCircle',11,'#10B981')} Öňpul tölenildi — ${b.depositDate?fmtDate(b.depositDate):''}</span>`:`<span class="badge badge-pending" style="display:inline-flex;align-items:center;gap:3px">${svgI('hourglass',11,'#F59E0B')} Öňpul garaşylýar — ${fmtMoney(b.deposit)} TMT</span>`}
+      ${b.remainingPaid?`<span class="badge badge-confirmed" style="display:inline-flex;align-items:center;gap:3px">${svgI('checkCircle',11,'#10B981')} Doly tölenildi</span>`:`<span class="badge badge-warning" style="background:rgba(245,158,11,0.15);color:var(--warning);display:inline-flex;align-items:center;gap:3px">${svgI('hourglass',11,'#F59E0B')} Galany: ${fmtMoney(b.remainingAmount)} TMT</span>`}
     </div>
     ${b.specialNotes?`<div style="margin-top:12px;background:var(--surface2);border-radius:8px;padding:10px;font-size:0.83rem"><strong>Bellik:</strong> ${b.specialNotes}</div>`:''}
     ${b.internalNote?`<div style="margin-top:8px;background:rgba(201,168,67,0.08);border:1px solid rgba(201,168,67,0.2);border-radius:8px;padding:10px;font-size:0.83rem"><strong>Içerki bellik:</strong> ${b.internalNote}</div>`:''}
@@ -2144,11 +2362,11 @@ function viewBooking(id){
 }
 function renderCommTimeline(comms){
   if(!comms.length) return '<div style="color:var(--muted);font-size:0.8rem;padding:8px 0">Habarlaşma taryhy ýok</div>';
-  const icons={call:'📞',whatsapp:'💬',telegram:'✈️',visit:'🏠',email:'📧'};
+  const commIcons={call:['phone','#06B6D4'],whatsapp:['messageCircle','#10B981'],telegram:['send','#4F46E5'],visit:['home','#F59E0B'],email:['mail','#C9A843']};
   const colors={call:'rgba(6,182,212,0.15)',whatsapp:'rgba(16,185,129,0.15)',telegram:'rgba(79,70,229,0.15)',visit:'rgba(245,158,11,0.15)',email:'rgba(201,168,67,0.15)'};
   return comms.map(c=>`
     <div class="comm-item">
-      <div class="comm-dot" style="background:${colors[c.type]||'rgba(201,168,67,0.1)'}">${icons[c.type]||'📌'}</div>
+      <div class="comm-dot" style="background:${colors[c.type]||'rgba(201,168,67,0.1)'};">${svgI(...(commIcons[c.type]||['mapPin','#C9A843']),14)}</div>
       <div class="comm-body">
         <div class="comm-date">${fmtDate(c.date)}</div>
         <div class="comm-note">${c.note}</div>
@@ -2185,7 +2403,7 @@ function deleteBooking(id){
     renderBookings();
     renderDashboard();
     showToast('Bron öçürildi','warning');
-  },true,'🗑️');
+  },true,'trash','#EF4444');
 }
 function callBooking(id){
   const b=DB.get('bookings').find(x=>x.id===id);
@@ -2303,7 +2521,7 @@ function saveBooking(){
     data.id=`BRN-${year}-${num}`;
     data.communications=[];
     DB.add('bookings',data);
-    addNotification({type:'new_booking',icon:'📅',msg:`Täze bron — ${groomName} & ${brideName}`,sub:`${data.id} · Häzir`});
+    addNotification({type:'new_booking',icon:'calendar',iconColor:'#C9A843',msg:`Täze bron — ${groomName} & ${brideName}`,sub:`${data.id} · Häzir`});
     showToast('Täze bron goşuldy!');
   }
   closeModal('modal-booking-form');
@@ -2335,19 +2553,21 @@ function renderHalls(){
     const occ=Math.round(monthBk.length/daysInMonth*100);
     const next30=bookings.filter(b=>{const d=new Date(b.weddingDate);const diff=(d-now)/86400000;return diff>=0&&diff<=30&&b.hall===h.id;});
     const statusCls={open:'badge-open',maintenance:'badge-maintenance',closed:'badge-closed'}[h.status]||'badge-open';
-    const features=(h.features||[]).map(f=>({stage:'🎭',crystal:'💎',led:'🌈',entrance:'🚪',vip:'👑',parking:'🅿️'}[f]||f)).join(' ');
+    const ftIconMap={stage:['stage','#8B5CF6'],crystal:['diamond','#06B6D4'],led:['zap','#F59E0B'],entrance:['door','#10B981'],vip:['crown','#C9A843'],parking:['parking','#3B82F6']};
+    const features=(h.features||[]).map(f=>{const[ic,cl]=ftIconMap[f]||['check','#888'];return`<span title="${f}" style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:5px;background:${cl}18;color:${cl}">${svgI(ic,12,cl)}</span>`;}).join('');
+    const hIcon=svgI(h.icon||'building',15,h.iconColor||'#C9A843');
     return `<div class="hall-card">
       <div class="hall-card-header">
-        <div class="hall-card-name">${h.emoji||'🏛️'} ${h.name}</div>
+        <div class="hall-card-name"><span class="hall-card-name-icon" style="background:${h.iconColor||'#C9A843'}20">${hIcon}</span>${h.name}</div>
         <div style="display:flex;gap:6px;align-items:center">
           <span class="badge ${statusCls}">${{open:'Açyk',maintenance:'Abatlaýyş',closed:'Ýapyk'}[h.status]||'Açyk'}</span>
           <button class="tbl-btn" onclick="openHallModal('${h.id}')"><i data-lucide="edit-2" style="width:12px;height:12px"></i></button>
         </div>
       </div>
       <div class="hall-card-meta">
-        <div class="hall-meta-item">📐 <strong>${h.area||'—'}</strong> m²</div>
-        <div class="hall-meta-item">👥 <strong>${h.capacity}</strong> adam</div>
-        <div class="hall-meta-item">💰 <strong>${h.price}</strong> TMT/adam</div>
+        <div class="hall-meta-item"><span style="color:var(--muted)">${svgI('barChart',12,'currentColor')}</span> <strong>${h.area||'—'}</strong> m²</div>
+        <div class="hall-meta-item"><span style="color:var(--muted)">${svgI('users',12,'currentColor')}</span> <strong>${h.capacity}</strong> adam</div>
+        <div class="hall-meta-item"><span style="color:#10B981">${svgI('revenue',12,'#10B981')}</span> <strong>${h.price}</strong> TMT/adam</div>
       </div>
       ${h.desc?`<div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px">${h.desc}</div>`:''}
       <div class="hall-bar-label"><span>Bu aý dolulyk</span><span>${occ}%</span></div>
@@ -2370,7 +2590,7 @@ function openHallModal(id){
   document.getElementById('hall-modal-title').textContent=h?'Zal Düzetme: '+h.name:'Täze Zal';
   document.getElementById('hall-edit-id').value=id||'';
   document.getElementById('hall-name').value=h?h.name:'';
-  document.getElementById('hall-emoji').value=h?h.emoji||'':'🏛️';
+  if(document.getElementById('hall-emoji')) document.getElementById('hall-emoji').value=h?h.icon||'':'building';
   document.getElementById('hall-capacity').value=h?h.capacity:'';
   document.getElementById('hall-area').value=h?h.area||'':'';
   document.getElementById('hall-price').value=h?h.price:'';
@@ -2410,7 +2630,9 @@ function saveHall(){
 //  SERVICES
 // ═══════════════════════════════════════════════════════════════════
 let activeServiceCat='';
-const catLabels={food:'🍽️ Tagam',decor:'💐 Bezeg',music:'🎵 Saz',photo:'📸 Foto',hotel:'🏨 Myhmanhana',transport:'🚗 Ulag'};
+const catIconMap={food:['utensils','#F59E0B'],decor:['flower','#EC4899'],music:['music','#8B5CF6'],photo:['camera','#06B6D4'],hotel:['hotel','#10B981'],transport:['car','#3B82F6']};
+const catLabelText={food:'Tagam',decor:'Bezeg',music:'Saz',photo:'Foto',hotel:'Myhmanhana',transport:'Ulag'};
+const catLabels=Object.fromEntries(Object.entries(catIconMap).map(([k,[ic,cl]])=>[k,`<span class="svc-cat-icon" style="color:${cl}">${svgI(ic,14,cl)}</span>${catLabelText[k]}`]));
 
 function renderServices(){
   const cats=['','food','decor','music','photo','hotel','transport'];
@@ -2434,19 +2656,19 @@ function renderServices(){
         ${s.priceType==='per_person'?s.price+' TMT/adam':s.priceType==='fixed'?fmtMoney(s.price)+' TMT':'Gepleşik'}
       </div>
       ${s.desc?`<div style="font-size:0.78rem;color:var(--muted);margin-top:4px">${s.desc}</div>`:''}
-      <div style="font-size:0.72rem;color:var(--muted);margin-top:6px">📊 ${s.bookingsCount||0} gezek saýlandy</div>
+      <div style="font-size:0.72rem;color:var(--muted);margin-top:6px;display:flex;align-items:center;gap:3px">${svgI('barChart',11,'currentColor')} ${s.bookingsCount||0} gezek saýlandy</div>
     </div>`).join('');
 
   const packages=DB.get('packages');
   const allSvcs=DB.get('services');
   document.getElementById('packages-grid').innerHTML=packages.map(p=>`
     <div class="card" style="padding:16px;border-color:${p.id==='premium'?'rgba(201,168,67,0.4)':'var(--border)'}">
-      ${p.id==='premium'?'<div style="font-size:0.7rem;color:var(--gold);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">⭐ Meşhur</div>':''}
+      ${p.id==='premium'?`<div style="font-size:0.7rem;color:var(--gold);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center;gap:4px">${svgI('starFill',12,'#C9A843')} Meşhur</div>`:''}
       <div style="font-family:\'Space Grotesk\',sans-serif;font-weight:700;font-size:1rem;margin-bottom:4px">${p.name}</div>
       <div style="font-size:1.3rem;font-weight:700;color:var(--gold);margin-bottom:8px">${p.price} TMT/adam</div>
       <div style="font-size:0.78rem;color:var(--muted);margin-bottom:8px">${p.desc}</div>
       <div style="display:flex;flex-direction:column;gap:3px">
-        ${(p.services||[]).map(sid=>{const sv=allSvcs.find(x=>x.id===sid);return sv?`<span style="font-size:0.75rem">✅ ${sv.name}</span>`:''}).join('')}
+        ${(p.services||[]).map(sid=>{const sv=allSvcs.find(x=>x.id===sid);return sv?`<span style="font-size:0.75rem;display:inline-flex;align-items:center;gap:3px">${svgI('checkCircle',11,'#10B981')} ${sv.name}</span>`:''}).join('')}
       </div>
     </div>`).join('');
   lucide.createIcons();
@@ -2494,7 +2716,7 @@ function toggleService(id,active){
 function deleteService(id){
   confirmAction('Bu hyzmaty öçürjekmi?',()=>{
     DB.remove('services',id);renderServices();showToast('Hyzmat öçürildi','warning');
-  },true,'🗑️');
+  },true,'trash','#EF4444');
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -2507,8 +2729,8 @@ function renderGallery(){
       <div class="gallery-item" draggable="true">
         ${item.type==='url'||item.type==='base64'
           ?`<img src="${item.src}" alt="${item.label||''}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
-             <div class="gallery-gradient" style="display:none;background:var(--surface2);font-size:2rem">🖼️</div>`
-          :`<div class="gallery-gradient" style="background:${item.src};display:flex;align-items:center;justify-content:center;font-size:3rem">${item.emoji||'🖼️'}</div>`}
+             <div class="gallery-gradient" style="display:none;background:var(--surface2);align-items:center;justify-content:center;color:var(--muted)">${svgI('image',32,'currentColor')}</div>`
+          :`<div class="gallery-gradient" style="background:${item.src};display:flex;align-items:center;justify-content:center">${svgI(item.icon||'image',38,item.iconColor||'rgba(255,255,255,0.6)')}</div>`}
         <div class="gallery-label">${item.label||''}</div>
         <div class="gallery-item-overlay">
           <button class="btn btn-outline btn-sm" onclick="deleteGalleryItem(${item.id})"><i data-lucide="trash-2" style="width:13px;height:13px"></i></button>
@@ -2559,7 +2781,7 @@ function saveGalleryItem(){
 function deleteGalleryItem(id){
   confirmAction('Suraty öçürjekmi?',()=>{
     DB.remove('gallery',id);renderGallery();showToast('Öçürildi','warning');
-  },true,'🗑️');
+  },true,'trash','#EF4444');
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -2593,7 +2815,7 @@ function renderStaff(){
         ${s.email?`<div class="staff-meta-row"><i data-lucide="mail" style="width:13px;height:13px"></i> ${s.email}</div>`:''}
         <div class="staff-meta-row"><i data-lucide="calendar" style="width:13px;height:13px"></i> ${s.hireDate?fmtDate(s.hireDate):'—'}</div>
         <div class="staff-meta-row" style="margin-top:4px">
-          <span class="badge ${s.active!==false?'badge-confirmed':'badge-cancelled'}">${s.active!==false?'✅ Işleýär':'Işlemeýär'}</span>
+          <span class="badge ${s.active!==false?'badge-confirmed':'badge-cancelled'}" style="display:inline-flex;align-items:center;gap:3px">${s.active!==false?svgI('checkCircle',11,'#10B981'):svgI('xCircle',11,'#EF4444')} ${s.active!==false?'Işleýär':'Işlemeýär'}</span>
           ${s.assignedEvents?`<span style="font-size:0.72rem;color:var(--muted);margin-left:4px">${s.assignedEvents} çäre</span>`:''}
         </div>
       </div>
@@ -2641,7 +2863,7 @@ function saveStaff(){
 function deleteStaff(id){
   confirmAction('Bu işgäri öçürjekmi?',()=>{
     DB.remove('staff',id);renderStaff();showToast('Işgär öçürildi','warning');
-  },true,'🗑️');
+  },true,'trash','#EF4444');
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -2671,7 +2893,7 @@ function renderFinance(){
   document.getElementById('finance-tbody').innerHTML=filtered.map(b=>{
     const paidAmt=b.totalPrice-b.remainingAmount;
     let payStatus='';
-    if(b.remainingPaid) payStatus='<span class="badge badge-confirmed">✅ Tölendi</span>';
+    if(b.remainingPaid) payStatus=`<span class="badge badge-confirmed" style="display:inline-flex;align-items:center;gap:3px">${svgI('checkCircle',11,'#10B981')} Tölendi</span>`;
     else if(b.depositPaid) payStatus='<span class="badge badge-pending">Bölekli</span>';
     else payStatus='<span class="badge badge-cancelled">Tölenilmedik</span>';
     return `<tr>
@@ -2743,7 +2965,7 @@ function savePayment(){
   const updates={remainingAmount:newRemaining,remainingPaid:newRemaining===0};
   if(!b.depositPaid&&amount>=b.deposit){updates.depositPaid=true;updates.depositDate=document.getElementById('pay-date').value;}
   DB.update('bookings',id,updates);
-  addNotification({type:'payment',icon:'💰',msg:`Töleg alyndy — ${id}`,sub:`${fmtMoney(amount)} TMT`});
+  addNotification({type:'payment',icon:'revenue',iconColor:'#10B981',msg:`Töleg alyndy — ${id}`,sub:`${fmtMoney(amount)} TMT`});
   closeModal('modal-payment');
   renderFinance();
   showToast(`Töleg ${fmtMoney(amount)} TMT hasaba alyndy!`);
@@ -2825,7 +3047,7 @@ function renderNotifications(){
   document.getElementById('notif-list').innerHTML=notifs.slice(0,20).map(n=>`
     <div class="notif-item${n.read?'':' unread'}" onclick="markNotifRead(${n.id})">
       <div class="notif-dot ${n.read?'read':'new'}"></div>
-      <div class="notif-icon" style="background:rgba(201,168,67,0.1);font-size:18px">${n.icon}</div>
+      <div class="notif-icon" style="background:${n.iconColor||'rgba(201,168,67,0.12)'};display:flex;align-items:center;justify-content:center;border-radius:10px;width:36px;height:36px;flex-shrink:0">${svgI(n.icon||'info',18,n.iconColor||'#C9A843')}</div>
       <div class="notif-content">
         <div class="notif-msg">${n.msg}</div>
         <div class="notif-meta">${n.sub||n.time||''}</div>
@@ -2925,7 +3147,7 @@ function deleteUser(id){
   if(id===currentUser.id){showToast('Özüňizi öçürip bilmersiňiz!','error');return;}
   confirmAction('Bu ulanyjyny öçürjekmi?',()=>{
     DB.remove('users',id);renderUsers();showToast('Ulanyjy öçürildi','warning');
-  },true,'👤');
+  },true,'trash','#EF4444');
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -3041,14 +3263,14 @@ function confirmClearCompleted(){
   confirmAction('Tamamlanan we ýatyryldy statusly bronlary öçürjekmi?',()=>{
     const bks=DB.get('bookings').filter(b=>b.status!=='completed'&&b.status!=='cancelled');
     DB.set('bookings',bks);showToast('Arassalandy!');
-  },true,'🗑️');
+  },true,'trash','#EF4444');
 }
 function confirmNuke(){
   confirmAction('ÄHLI MAGLUMATLARY POZMAK! Bu ädim yzyna alynmaz!',()=>{
     ['bookings','halls','services','gallery','staff','notifications'].forEach(k=>DB.set(k,[]));
     localStorage.removeItem('venue_initialized');
     showToast('Ähli maglumatlar pozuldy!','warning');
-  },true,'⚠️');
+  },true,'xCircle','#EF4444');
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -3107,8 +3329,9 @@ function fmtDate(s){
 function hallName(id){return{sha:'Şa Zaly',bahar:'Bahar Zaly',altyn:'Altyn Zal',howly:'Açyk Howly'}[id]||id;}
 function statusBadge(s){
   const labels={new:'Täze',pending:'Garaşyl',confirmed:'Tassykly',completed:'Tamamlanan',cancelled:'Ýatyryldy'};
-  const icons={new:'📝',pending:'⏳',confirmed:'✅',completed:'🏆',cancelled:'❌'};
-  return `<span class="badge badge-${s}">${icons[s]||''} ${labels[s]||s}</span>`;
+  const iconMap={new:['fileText','#C9A843'],pending:['hourglass','#F59E0B'],confirmed:['checkCircle','#10B981'],completed:['trophy','#C9A843'],cancelled:['xCircle','#EF4444']};
+  const [ic,col]=(iconMap[s]||['info','#888']);
+  return `<span class="badge badge-${s}" style="display:inline-flex;align-items:center;gap:4px">${svgI(ic,11,col)} ${labels[s]||s}</span>`;
 }
 function statusLabel(s){return{new:'Täze',pending:'Garaşyl',confirmed:'Tassykly',completed:'Tamamlanan',cancelled:'Ýatyryldy'}[s]||s;}
 function packageLabel(p){return{basic:'Başlangyç',premium:'Premium',luxury:'Lýuks'}[p]||p;}
