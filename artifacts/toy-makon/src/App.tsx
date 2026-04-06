@@ -735,37 +735,6 @@ function LogoMark({ size = 36 }: { size?: number }) {
   );
 }
 
-/* ── FLAG COMPONENTS ── */
-function FlagTM() {
-  return (
-    <svg width="20" height="14" viewBox="0 0 20 14" fill="none" style={{ borderRadius:2, flexShrink:0, display:'block' }}>
-      <rect width="20" height="14" fill="#3A7A41"/>
-      <rect x="0" width="5" height="14" fill="#A8202A"/>
-      <rect x="0.6" y="1.2" width="0.7" height="11.6" fill="#3A7A41" opacity="0.5"/>
-      <rect x="1.5" y="2" width="0.6" height="10" fill="#D4A83A" opacity="0.7"/>
-      <rect x="2.3" y="1.2" width="0.7" height="11.6" fill="#3A7A41" opacity="0.5"/>
-      <rect x="3.2" y="2" width="0.6" height="10" fill="#D4A83A" opacity="0.7"/>
-      <circle cx="13" cy="6.5" r="2.5" fill="#fff"/>
-      <circle cx="14" cy="5.8" r="2" fill="#3A7A41"/>
-      <circle cx="16.5" cy="2.5" r="0.65" fill="#fff"/>
-      <circle cx="17.8" cy="4.5" r="0.65" fill="#fff"/>
-      <circle cx="18.2" cy="6.8" r="0.65" fill="#fff"/>
-      <circle cx="17.4" cy="9"   r="0.65" fill="#fff"/>
-      <circle cx="15.8" cy="10.6" r="0.65" fill="#fff"/>
-    </svg>
-  );
-}
-
-function FlagRU() {
-  return (
-    <svg width="20" height="14" viewBox="0 0 20 14" fill="none" style={{ borderRadius:2, flexShrink:0, display:'block' }}>
-      <rect width="20" height="4.67" fill="#FFFFFF"/>
-      <rect y="4.67" width="20" height="4.67" fill="#003DA5"/>
-      <rect y="9.33" width="20" height="4.67" fill="#CC0001"/>
-    </svg>
-  );
-}
-
 /* Nav-specific ornamental border */
 function NavBorderSVG() {
   return (
@@ -859,7 +828,6 @@ export default function App() {
   const [selHall,    setSelHall]    = useState('');
   const [selPkg,     setSelPkg]     = useState('');
   const [priceHint,  setPriceHint]  = useState('');
-  const [lang,       setLang]       = useState<'tm'|'ru'>('tm');
   const [showExtras, setShowExtras] = useState(false);
   const [success,    setSuccess]    = useState<null|{ name:string; partner:string; date:string; guests:string; hall:string }>(null);
   const [form, setForm] = useState({ name:'', partner:'', phone:'', email:'', date:'', guests:'', source:'', notes:'', foreign:false, ownPhoto:false, special:'' });
@@ -1134,24 +1102,6 @@ export default function App() {
             <DiamondGem size={9} />
             Bron Et
           </a>
-          <div className="lang-switcher" data-testid="lang-switcher">
-            <button
-              className={`lang-btn${lang === 'tm' ? ' active' : ''}`}
-              onClick={() => setLang('tm')}
-              aria-label="Türkmen dili"
-            >
-              <FlagTM />
-              <span>TM</span>
-            </button>
-            <button
-              className={`lang-btn${lang === 'ru' ? ' active' : ''}`}
-              onClick={() => setLang('ru')}
-              aria-label="Rus dili"
-            >
-              <FlagRU />
-              <span>RU</span>
-            </button>
-          </div>
           <button className="mobile-toggle" onClick={() => setMenuOpen(true)} data-testid="btn-open-menu">
             <Menu size={22} />
           </button>
@@ -1246,17 +1196,6 @@ export default function App() {
           <path d="M0 40 C360 80 1080 0 1440 40 L1440 70 L0 70 Z" fill="var(--bg)"/>
         </svg>
       </section>
-
-      {/* ── STATS BAR ── */}
-      <div className="stats-bar" data-testid="stats-bar">
-        <div className="pattern-lines" />
-        <div className="stats-bar-inner">
-          <AnimStat value={venue.guests+'+'} label="Iň köp myhman kabul edip bilýäris" Icon={IcPeople} suffix="+" />
-          <AnimStat value={venue.halls}       label="Premium Zal, dürli stilde"          Icon={IcCrown} />
-          <AnimStat value={venue.events}      label="Gurulan Toý Çäresi"                 Icon={IcMedal} suffix="+" />
-          <AnimStat value={venue.parking+'+'} label="Awtoulag Ýeri, mugt"                Icon={IcAuto} suffix="+" />
-        </div>
-      </div>
 
       {/* ── HALLS ── */}
       <section className="section" id="halls" data-testid="section-halls" style={{ background:'var(--bg)' }}>
